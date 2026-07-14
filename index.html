@@ -28,6 +28,8 @@
             --current-month-border: #0f5132;
             --mpesa-color: #00a651;
             --mpesa-light: #e8f5e9;
+            --daily-total-bg: #e3f2fd;
+            --daily-total-border: #0d6efd;
         }
 
         body {
@@ -54,6 +56,16 @@
             padding: 0.4rem 1rem;
             border-radius: 50px;
             font-size: 0.9rem;
+        }
+        .app-header .total-amount {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .app-header .total-amount i {
+            margin-right: 0.5rem;
         }
 
         /* ── Cards ── */
@@ -101,6 +113,28 @@
         .form-control-lg {
             font-size: 1.1rem;
             padding: 0.75rem 1rem;
+        }
+
+        /* ── Amount Input ── */
+        .amount-input-wrapper {
+            position: relative;
+        }
+        .amount-input-wrapper .currency-symbol {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #495057;
+            font-size: 1rem;
+            z-index: 5;
+        }
+        .amount-input-wrapper .form-control {
+            padding-left: 2.5rem;
+        }
+        .amount-input-wrapper .form-control-lg .currency-symbol {
+            font-size: 1.2rem;
+            left: 1.25rem;
         }
 
         /* ── M-Pesa Badge ── */
@@ -234,6 +268,46 @@
             font-size: 0.75rem;
             border-radius: 6px;
         }
+        .table .amount-cell {
+            font-weight: 600;
+            color: var(--success-color);
+        }
+        
+        /* ── Daily Total Row ── */
+        .table .daily-total-row td {
+            background: var(--daily-total-bg) !important;
+            border-top: 2px solid var(--daily-total-border);
+            border-bottom: 2px solid var(--daily-total-border);
+            font-weight: 700;
+            color: var(--daily-total-border);
+        }
+        .table .daily-total-row .daily-total-label {
+            font-weight: 600;
+            color: #0d6efd;
+        }
+        .table .daily-total-row .daily-total-amount {
+            font-weight: 700;
+            color: #0d6efd;
+            font-size: 1.05rem;
+        }
+
+        /* ── Grand Total Row ── */
+        .table .grand-total-row td {
+            background: #e8f5e9 !important;
+            border-top: 3px solid var(--success-color);
+            font-weight: 700;
+            color: var(--success-color);
+        }
+        .table .grand-total-row .grand-total-label {
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 1.1rem;
+        }
+        .table .grand-total-row .grand-total-amount {
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 1.2rem;
+        }
 
         /* ── Pagination ── */
         .pagination .page-link {
@@ -293,12 +367,41 @@
             background: var(--mpesa-light) !important;
         }
 
+        /* ── Stats Bar ── */
+        .stats-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+        .stats-bar .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .stats-bar .stat-item .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .stats-bar .stat-item .stat-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .stats-bar .stat-divider {
+            width: 1px;
+            background: #dee2e6;
+        }
+
         /* ── Responsive Tweaks ── */
         @media (max-width: 768px) {
             .app-header h1 {
                 font-size: 1.3rem;
             }
-            .app-header .badge-count {
+            .app-header .badge-count,
+            .app-header .total-amount {
                 font-size: 0.75rem;
                 padding: 0.25rem 0.75rem;
             }
@@ -325,6 +428,13 @@
                 right: 3rem;
                 font-size: 0.5rem;
                 padding: 0.1rem 0.4rem;
+            }
+            .stats-bar {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .stats-bar .stat-divider {
+                display: none;
             }
         }
 
@@ -382,6 +492,9 @@
                     <h1>Monthly Payment Ledger</h1>
                 </div>
                 <div class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="total-amount" id="totalAmount">
+                        <i class="bi bi-wallet2"></i> KES 0.00
+                    </span>
                     <span class="badge-count" id="recordCount">
                         <i class="bi bi-database"></i> 0 Records
                     </span>
@@ -445,6 +558,27 @@
                             id="entryDate"
                             required />
                             <div class="invalid-feedback">Please select a date.</div>
+                        </div>
+
+                        <!-- Amount Paid -->
+                        <div class="col-md-6">
+                            <label for="amountPaid" class="form-label">
+                                Amount Paid (KES) <span class="required-star">*</span>
+                            </label>
+                            <div class="amount-input-wrapper">
+                                <span class="currency-symbol">KES</span>
+                                <input type="number"
+                                class="form-control"
+                                id="amountPaid"
+                                placeholder="0.00"
+                                min="0.01"
+                                step="0.01"
+                                required />
+                            </div>
+                            <div class="invalid-feedback">Please enter a valid amount (minimum 0.01).</div>
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i> Enter the payment amount in Kenyan Shillings (KES)
+                            </small>
                         </div>
 
                         <!-- Account # -->
@@ -561,6 +695,29 @@
                 </div>
             </div>
             <div class="card-body p-0">
+                <!-- Stats Bar -->
+                <div class="stats-bar" id="statsBar">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Records:</span>
+                        <span class="stat-value" id="statTotalRecords">0</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Amount:</span>
+                        <span class="stat-value" id="statTotalAmount">KES 0.00</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-label">Average Payment:</span>
+                        <span class="stat-value" id="statAverageAmount">KES 0.00</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-label">Current Month:</span>
+                        <span class="stat-value" id="statCurrentMonth">-</span>
+                    </div>
+                </div>
+
                 <div class="table-container">
                     <table class="table table-hover" id="dataTable">
                         <thead>
@@ -571,6 +728,7 @@
                                 <th>Account</th>
                                 <th>Holder</th>
                                 <th>Depositor</th>
+                                <th>Amount (KES)</th>
                                 <th>Method</th>
                                 <th>Reference</th>
                                 <th style="width:140px;">Actions</th>
@@ -618,6 +776,10 @@
                                 <input type="date" class="form-control" id="editDate" required />
                             </div>
                             <div class="col-md-6">
+                                <label for="editAmount" class="form-label">Amount (KES) <span class="required-star">*</span></label>
+                                <input type="number" class="form-control" id="editAmount" min="0.01" step="0.01" required />
+                            </div>
+                            <div class="col-md-6">
                                 <label for="editAccount" class="form-label">Account # <span class="required-star">*</span></label>
                                 <input type="text" class="form-control" id="editAccount" required />
                             </div>
@@ -637,7 +799,7 @@
                                     <option value="Cheque">Cheque</option>
                                 </select>
                             </div>
-                            <div class="col-12">
+                            <div class="col-md-6">
                                 <label for="editReference" class="form-label">Reference #</label>
                                 <input type="text" class="form-control" id="editReference" placeholder="Required for M-Pesa and Bank Transfers" />
                             </div>
@@ -734,7 +896,7 @@
         // ════════════════════════════════════════════════
 
         // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
-        const firebaseConfig = {
+       const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
@@ -766,13 +928,14 @@
         let currentPage = 1;
         const PAGE_SIZE = 15;
         let isAdmin = false;
-        let currentMonth = new Date().toISOString().slice(0, 7); // "2026-07"
+        let currentMonth = new Date().toISOString().slice(0, 7);
 
         // ─── DOM References ───
         const $ = (id) => document.getElementById(id);
         const form = $('paymentForm');
         const receiptInput = $('receiptNumber');
         const dateInput = $('entryDate');
+        const amountInput = $('amountPaid');
         const accountInput = $('accountNumber');
         const holderInput = $('accountHolder');
         const depositorInput = $('depositorName');
@@ -785,6 +948,7 @@
         const tableBody = $('tableBody');
         const tableCount = $('tableCount');
         const recordCount = $('recordCount');
+        const totalAmount = $('totalAmount');
         const monthFilter = $('monthFilter');
         const searchInput = $('searchInput');
         const paginationControls = $('paginationControls');
@@ -795,6 +959,12 @@
         const clearMonthBtn = $('clearMonthBtn');
         const adminLoginBtn = $('adminLoginBtn');
         const adminLogoutBtn = $('adminLogoutBtn');
+
+        // Stats elements
+        const statTotalRecords = $('statTotalRecords');
+        const statTotalAmount = $('statTotalAmount');
+        const statAverageAmount = $('statAverageAmount');
+        const statCurrentMonth = $('statCurrentMonth');
 
         // ─── Modals ───
         const editModal = new bootstrap.Modal($('editModal'));
@@ -812,7 +982,8 @@
             const toastMessage = $('toastMessage');
             toastTitle.textContent = title;
             toastMessage.textContent = message;
-            toastEl.className = `toast border-0 text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'primary'}`;
+            toastEl.className =
+                `toast border-0 text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'primary'}`;
             toast.show();
         }
 
@@ -820,6 +991,11 @@
             if (!dateStr) return '-';
             const d = new Date(dateStr + 'T00:00:00');
             return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function formatCurrency(amount) {
+            if (!amount && amount !== 0) return 'KES 0.00';
+            return `KES ${parseFloat(amount).toFixed(2)}`;
         }
 
         function getMonthFromDate(dateStr) {
@@ -858,14 +1034,39 @@
             return `<span class="badge bg-${color}"><i class="bi ${icon} me-1"></i>${escapeHtml(method)}</span>`;
         }
 
+        // ─── Group Records by Date ───
+        function groupRecordsByDate(records) {
+            const groups = {};
+            records.forEach(r => {
+                if (!groups[r.date]) {
+                    groups[r.date] = [];
+                }
+                groups[r.date].push(r);
+            });
+            return groups;
+        }
+
+        // ─── Calculate Daily Totals ───
+        function calculateDailyTotals(records) {
+            const groups = groupRecordsByDate(records);
+            const dailyTotals = {};
+            Object.keys(groups).forEach(date => {
+                dailyTotals[date] = groups[date].reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            });
+            return dailyTotals;
+        }
+
+        // ─── Calculate Grand Total ───
+        function calculateGrandTotal(records) {
+            return records.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+        }
+
         // ════════════════════════════════════════════════
         //  FORM LOGIC
         // ════════════════════════════════════════════════
 
-        // Set default date to today
         dateInput.value = new Date().toISOString().slice(0, 10);
 
-        // Auto-fill Depositor from Account Holder
         holderInput.addEventListener('input', function() {
             if (!depositorInput.value || depositorInput.dataset.autoFilled === 'true') {
                 depositorInput.value = this.value;
@@ -878,7 +1079,6 @@
             }
         });
 
-        // Clear Depositor (user wants to enter different name)
         clearBtn.addEventListener('click', function() {
             depositorInput.value = '';
             depositorInput.dataset.autoFilled = 'false';
@@ -890,7 +1090,6 @@
                 '<i class="bi bi-pencil"></i> Enter the depositor\'s name (required).';
         });
 
-        // If user manually types in depositor, remove auto status
         depositorInput.addEventListener('input', function() {
             if (this.dataset.autoFilled === 'true' && this.value !== holderInput.value) {
                 this.dataset.autoFilled = 'false';
@@ -908,7 +1107,6 @@
             }
         });
 
-        // Payment Method → Reference # conditional
         paymentMethod.addEventListener('change', function() {
             const refLabel = $('refRequiredBadge');
             const refHint = $('refHint');
@@ -932,10 +1130,8 @@
                 referenceInput.placeholder = 'Optional';
             }
         });
-        // Trigger initial state
         paymentMethod.dispatchEvent(new Event('change'));
 
-        // ─── Reset Form ───
         resetBtn.addEventListener('click', function(e) {
             e.preventDefault();
             form.reset();
@@ -959,12 +1155,10 @@
         //  CRUD OPERATIONS
         // ════════════════════════════════════════════════
 
-        // ─── Submit ───
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             form.classList.remove('was-validated');
 
-            // Validate Depositor is not empty
             if (!depositorInput.value.trim()) {
                 showToast('Depositor name is required.', 'Validation Error', 'error');
                 depositorInput.focus();
@@ -972,7 +1166,14 @@
                 return;
             }
 
-            // Validate Reference for M-Pesa and Bank Transfer
+            const amount = parseFloat(amountInput.value);
+            if (!amount || amount <= 0) {
+                showToast('Please enter a valid amount (minimum 0.01).', 'Validation Error', 'error');
+                amountInput.focus();
+                amountInput.classList.add('is-invalid');
+                return;
+            }
+
             const isRefRequired = paymentMethod.value === 'M-Pesa' || paymentMethod.value === 'Bank Transfer';
             if (isRefRequired && !referenceInput.value.trim()) {
                 const methodName = paymentMethod.value === 'M-Pesa' ? 'M-Pesa' : 'Bank Transfers';
@@ -982,7 +1183,6 @@
                 return;
             }
 
-            // Validate form
             if (!form.checkValidity()) {
                 form.classList.add('was-validated');
                 showToast('Please fill in all required fields.', 'Validation Error', 'error');
@@ -999,6 +1199,7 @@
 
             const data = {
                 date,
+                amount: parseFloat(amount),
                 accountNumber: account,
                 accountHolder: holder,
                 depositorName: depositor,
@@ -1013,7 +1214,6 @@
 
             try {
                 if (editMode) {
-                    // ─── UPDATE ───
                     await db.collection(PAYMENTS_COLLECTION).doc(editDocId).update(data);
                     showToast(`Record ${receipt} updated successfully!`, 'Updated', 'success');
                     $('editMode').value = 'false';
@@ -1021,7 +1221,6 @@
                     $('editIndicator').style.display = 'none';
                     submitBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Submit Entry';
                 } else {
-                    // ─── CREATE ───
                     await db.collection(PAYMENTS_COLLECTION).doc(receipt).set(data);
                     showToast(`Record ${receipt} added successfully!`, 'Success', 'success');
                 }
@@ -1072,11 +1271,27 @@
 
                 const count = allRecords.length;
                 recordCount.innerHTML = `<i class="bi bi-database"></i> ${count} Record${count !== 1 ? 's' : ''}`;
+                updateTotals();
 
             } catch (error) {
                 console.error('Load records error:', error);
                 showToast('Failed to load records.', 'Error', 'error');
             }
+        }
+
+        // ─── Update Totals ───
+        function updateTotals() {
+            const total = allRecords.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            totalAmount.innerHTML = `<i class="bi bi-wallet2"></i> ${formatCurrency(total)}`;
+
+            const filteredTotal = filteredRecords.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            const filteredCount = filteredRecords.length;
+            const avg = filteredCount > 0 ? filteredTotal / filteredCount : 0;
+
+            statTotalRecords.textContent = filteredCount;
+            statTotalAmount.textContent = formatCurrency(filteredTotal);
+            statAverageAmount.textContent = formatCurrency(avg);
+            statCurrentMonth.textContent = getCurrentMonth();
         }
 
         // ─── Populate Month Filter ───
@@ -1121,7 +1336,8 @@
                 if (search) {
                     const searchable = [
                         r.id, r.accountNumber, r.accountHolder,
-                        r.depositorName, r.referenceNumber, r.paymentMethod
+                        r.depositorName, r.referenceNumber, r.paymentMethod,
+                        r.amount ? r.amount.toString() : ''
                     ].join(' ').toLowerCase();
                     if (!searchable.includes(search)) match = false;
                 }
@@ -1129,18 +1345,80 @@
             });
 
             renderTable();
+            updateTotals();
         }
 
-        // ─── Render Table ───
+        // ─── Render Table with Daily Totals ───
         function renderTable() {
-            const start = (currentPage - 1) * PAGE_SIZE;
-            const end = Math.min(start + PAGE_SIZE, filteredRecords.length);
-            const pageRecords = filteredRecords.slice(start, end);
+            // Sort records by date (newest first) for grouping
+            const sortedRecords = [...filteredRecords].sort((a, b) => {
+                if (a.date > b.date) return -1;
+                if (a.date < b.date) return 1;
+                return 0;
+            });
 
-            if (pageRecords.length === 0) {
+            // Group by date
+            const groups = groupRecordsByDate(sortedRecords);
+            const dates = Object.keys(groups).sort((a, b) => {
+                if (a > b) return -1;
+                if (a < b) return 1;
+                return 0;
+            });
+
+            // Calculate daily totals
+            const dailyTotals = calculateDailyTotals(sortedRecords);
+            const grandTotal = calculateGrandTotal(sortedRecords);
+
+            // Build flattened array with daily total rows
+            const flattenedRows = [];
+            let globalIndex = 0;
+
+            dates.forEach(date => {
+                const recordsForDate = groups[date].sort((a, b) => {
+                    // Sort by receipt number within the same date
+                    return a.id.localeCompare(b.id);
+                });
+
+                // Add each record
+                recordsForDate.forEach(r => {
+                    globalIndex++;
+                    flattenedRows.push({
+                        type: 'record',
+                        data: r,
+                        index: globalIndex,
+                        date: date
+                    });
+                });
+
+                // Add daily total row after the records
+                flattenedRows.push({
+                    type: 'daily-total',
+                    date: date,
+                    total: dailyTotals[date],
+                    index: globalIndex
+                });
+            });
+
+            // Add grand total row at the end
+            flattenedRows.push({
+                type: 'grand-total',
+                total: grandTotal,
+                recordCount: sortedRecords.length
+            });
+
+            // Pagination - we paginate by records, not by rows
+            // So we need to count actual records, not rows with totals
+            const totalRecords = sortedRecords.length;
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const end = Math.min(start + PAGE_SIZE, totalRecords);
+
+            // Get the records for this page
+            const pageRecords = sortedRecords.slice(start, end);
+
+            if (pageRecords.length === 0 && totalRecords === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="9">
+                        <td colspan="10">
                             <div class="empty-state">
                                 <i class="bi bi-inbox"></i>
                                 <p class="mb-0">No records found</p>
@@ -1155,20 +1433,62 @@
                 return;
             }
 
+            // Build HTML with paginated records and their daily totals
             let html = '';
+            let currentDate = '';
+            let dailyTotalAccumulator = 0;
+            let recordsInCurrentDate = 0;
+
+            // For pagination, we need to show the daily total for the date of the first record on this page
+            // and any subsequent dates that appear on this page
+
+            // Get unique dates in the page
+            const pageDates = new Set();
+            pageRecords.forEach(r => pageDates.add(r.date));
+
+            // For each date that appears on this page, collect all its records (including those before/after pagination)
+            // to calculate the correct daily total
+            const pageDateTotals = {};
+            pageDates.forEach(date => {
+                pageDateTotals[date] = dailyTotals[date] || 0;
+            });
+
+            // Build rows for this page
+            let rowIndex = 0;
+            let lastDate = null;
+
             pageRecords.forEach((r, idx) => {
-                const rowNum = start + idx + 1;
+                const actualIndex = start + idx + 1;
                 const isCurrent = isCurrentMonth(r.date);
                 const rowClass = isCurrent ? 'current-month' : '';
 
+                // Check if we need to add a daily total row before this record
+                if (lastDate !== r.date) {
+                    // Add daily total row for the previous date
+                    if (lastDate !== null && pageDateTotals[lastDate] !== undefined) {
+                        html += `
+                            <tr class="daily-total-row">
+                                <td colspan="6" class="text-end daily-total-label">
+                                    <i class="bi bi-calendar-day me-1"></i> Daily Total (${formatDate(lastDate)}):
+                                </td>
+                                <td class="daily-total-amount">${formatCurrency(pageDateTotals[lastDate])}</td>
+                                <td colspan="3"></td>
+                            </tr>
+                        `;
+                    }
+                    lastDate = r.date;
+                }
+
+                // Add the record
                 html += `
                     <tr class="${rowClass}">
-                        <td>${rowNum}</td>
+                        <td>${actualIndex}</td>
                         <td><strong>${escapeHtml(r.id)}</strong>${isCurrent ? ' <span class="month-badge">Current</span>' : ''}</td>
                         <td>${formatDate(r.date)}</td>
                         <td><code>${escapeHtml(r.accountNumber)}</code></td>
                         <td>${escapeHtml(r.accountHolder)}</td>
                         <td>${escapeHtml(r.depositorName)}</td>
+                        <td class="amount-cell">${formatCurrency(r.amount)}</td>
                         <td>${getPaymentMethodBadge(r.paymentMethod)}</td>
                         <td>${escapeHtml(r.referenceNumber) || '-'}</td>
                         <td class="row-actions">
@@ -1183,14 +1503,42 @@
                 `;
             });
 
+            // Add daily total for the last date on this page
+            if (lastDate !== null && pageDateTotals[lastDate] !== undefined) {
+                html += `
+                    <tr class="daily-total-row">
+                        <td colspan="6" class="text-end daily-total-label">
+                            <i class="bi bi-calendar-day me-1"></i> Daily Total (${formatDate(lastDate)}):
+                        </td>
+                        <td class="daily-total-amount">${formatCurrency(pageDateTotals[lastDate])}</td>
+                        <td colspan="3"></td>
+                    </tr>
+                `;
+            }
+
+            // Add grand total row (only if we're on the last page or showing all records)
+            const isLastPage = end >= totalRecords;
+            if (isLastPage && totalRecords > 0) {
+                html += `
+                    <tr class="grand-total-row">
+                        <td colspan="6" class="text-end grand-total-label">
+                            <i class="bi bi-trophy me-1"></i> GRAND TOTAL (${totalRecords} records):
+                        </td>
+                        <td class="grand-total-amount">${formatCurrency(grandTotal)}</td>
+                        <td colspan="3"></td>
+                    </tr>
+                `;
+            }
+
             tableBody.innerHTML = html;
-            tableCount.textContent = filteredRecords.length;
+            tableCount.textContent = totalRecords;
 
-            const total = filteredRecords.length;
+            // Pagination info
             paginationInfo.textContent =
-                `Showing ${total > 0 ? start+1 : 0}-${end} of ${total}`;
+                `Showing ${totalRecords > 0 ? start+1 : 0}-${end} of ${totalRecords}`;
 
-            const totalPages = Math.ceil(total / PAGE_SIZE);
+            // Pagination controls
+            const totalPages = Math.ceil(totalRecords / PAGE_SIZE);
             let pgHtml = '';
             if (totalPages > 1) {
                 pgHtml += `
@@ -1250,6 +1598,7 @@
                 $('editDocIdModal').value = docId;
                 $('editReceipt').value = docId;
                 $('editDate').value = data.date || '';
+                $('editAmount').value = data.amount || '';
                 $('editAccount').value = data.accountNumber || '';
                 $('editHolder').value = data.accountHolder || '';
                 $('editDepositor').value = data.depositorName || '';
@@ -1257,7 +1606,6 @@
                 $('editReference').value = data.referenceNumber || '';
 
                 $('editPaymentMethod').dispatchEvent(new Event('change'));
-
                 editModal.show();
 
             } catch (error) {
@@ -1270,14 +1618,15 @@
         $('saveEditBtn').addEventListener('click', async function() {
             const docId = $('editDocIdModal').value;
             const date = $('editDate').value;
+            const amount = parseFloat($('editAmount').value);
             const account = $('editAccount').value.trim();
             const holder = $('editHolder').value.trim();
             const depositor = $('editDepositor').value.trim();
             const method = $('editPaymentMethod').value;
             const reference = $('editReference').value.trim() || '';
 
-            if (!date || !account || !holder || !depositor) {
-                showToast('Please fill in all required fields.', 'Validation Error', 'error');
+            if (!date || !account || !holder || !depositor || !amount || amount <= 0) {
+                showToast('Please fill in all required fields with valid values.', 'Validation Error', 'error');
                 return;
             }
 
@@ -1291,6 +1640,7 @@
             try {
                 await db.collection(PAYMENTS_COLLECTION).doc(docId).update({
                     date,
+                    amount: amount,
                     accountNumber: account,
                     accountHolder: holder,
                     depositorName: depositor,
@@ -1343,7 +1693,7 @@
         }
 
         // ════════════════════════════════════════════════
-        //  EXPORT TO EXCEL
+        //  EXPORT TO EXCEL WITH TOTALS
         // ════════════════════════════════════════════════
 
         exportBtn.addEventListener('click', function() {
@@ -1353,36 +1703,105 @@
             }
 
             let dataToExport = filteredRecords.length > 0 ? filteredRecords : allRecords;
-            dataToExport = [...dataToExport].sort((a, b) => (a.date > b.date ? -1 : 1));
+            dataToExport = [...dataToExport].sort((a, b) => {
+                if (a.date > b.date) return -1;
+                if (a.date < b.date) return 1;
+                return 0;
+            });
 
-            const exportData = dataToExport.map((r, idx) => ({
-                '#': idx + 1,
-                'Receipt #': r.id,
-                'Date': r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('en-US') : '',
-                'Account #': r.accountNumber || '',
-                'Account Holder': r.accountHolder || '',
-                'Depositor Name': r.depositorName || '',
-                'Payment Method': r.paymentMethod || '',
-                'Reference #': r.referenceNumber || '',
-                'Month': r.month || '',
-                'Submitted': r.submittedAt ? new Date(r.submittedAt.seconds * 1000).toLocaleString() : '',
-            }));
+            // Group by date for daily totals
+            const groups = groupRecordsByDate(dataToExport);
+            const dates = Object.keys(groups).sort((a, b) => {
+                if (a > b) return -1;
+                if (a < b) return 1;
+                return 0;
+            });
+
+            // Build export data with daily totals
+            const exportRows = [];
+            let rowIndex = 0;
+
+            dates.forEach(date => {
+                const recordsForDate = groups[date].sort((a, b) => a.id.localeCompare(b.id));
+
+                // Add each record
+                recordsForDate.forEach(r => {
+                    rowIndex++;
+                    exportRows.push({
+                        '#': rowIndex,
+                        'Receipt #': r.id,
+                        'Date': r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('en-US') :
+                            '',
+                        'Amount (KES)': r.amount ? parseFloat(r.amount).toFixed(2) : '0.00',
+                        'Account #': r.accountNumber || '',
+                        'Account Holder': r.accountHolder || '',
+                        'Depositor Name': r.depositorName || '',
+                        'Payment Method': r.paymentMethod || '',
+                        'Reference #': r.referenceNumber || '',
+                        'Month': r.month || '',
+                        'Submitted': r.submittedAt ? new Date(r.submittedAt.seconds * 1000)
+                            .toLocaleString() : '',
+                    });
+                });
+
+                // Add daily total row
+                const dailyTotal = recordsForDate.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+                rowIndex++;
+                exportRows.push({
+                    '#': `🔹 DAILY TOTAL`,
+                    'Receipt #': '',
+                    'Date': formatDate(date),
+                    'Amount (KES)': dailyTotal.toFixed(2),
+                    'Account #': '',
+                    'Account Holder': '━━━━━━━━━━━━━━━━━━━━━━',
+                    'Depositor Name': '',
+                    'Payment Method': '',
+                    'Reference #': '',
+                    'Month': '',
+                    'Submitted': '',
+                });
+            });
+
+            // Add grand total row
+            const grandTotal = dataToExport.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            rowIndex++;
+            exportRows.push({
+                '#': `🎯 GRAND TOTAL`,
+                'Receipt #': '',
+                'Date': `${dataToExport.length} records`,
+                'Amount (KES)': grandTotal.toFixed(2),
+                'Account #': '',
+                'Account Holder': '━━━━━━━━━━━━━━━━━━━━━━',
+                'Depositor Name': '',
+                'Payment Method': '',
+                'Reference #': '',
+                'Month': '',
+                'Submitted': '',
+            });
 
             const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(exportData);
+            const ws = XLSX.utils.json_to_sheet(exportRows);
+
+            // Set column widths
             ws['!cols'] = [
-                { wch: 5 }, { wch: 16 }, { wch: 14 }, { wch: 14 },
-                { wch: 20 }, { wch: 20 }, { wch: 14 }, { wch: 16 },
-                { wch: 12 }, { wch: 20 }
+                { wch: 18 }, { wch: 16 }, { wch: 14 }, { wch: 16 },
+                { wch: 14 }, { wch: 20 }, { wch: 20 }, { wch: 16 },
+                { wch: 16 }, { wch: 12 }, { wch: 20 }
             ];
 
-            XLSX.utils.book_append_sheet(wb, ws, 'Payments');
+            // Style the worksheet (bold for totals)
+            // Note: SheetJS styling is limited in the free version
+            // We'll add a note in the sheet name instead
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Payments with Totals');
 
             const monthLabel = monthFilter.value !== 'all' ? monthFilter.value : 'All';
             const filename = `Payment_Records_${monthLabel}_${new Date().toISOString().slice(0,10)}.xlsx`;
             XLSX.writeFile(wb, filename);
 
-            showToast(`Exported ${exportData.length} records to Excel.`, 'Export Success', 'success');
+            const totalAmount = grandTotal.toFixed(2);
+            showToast(`Exported ${dataToExport.length} records with daily totals. Grand Total: KES ${totalAmount}`, 'Export Success',
+                'success');
         });
 
         // ════════════════════════════════════════════════
@@ -1578,8 +1997,9 @@
         console.log('📋 Monthly Payment Ledger initialized.');
         console.log(`📅 Current month: ${getCurrentMonth()}`);
         console.log(`🔑 Admin: ${ADMIN_EMAIL}`);
-        console.log('💳 Payment Methods: M-Pesa, Bank Transfer, Cheque');
-        console.log('📊 Export to Excel with filtered data');
+        console.log(`💰 Amount field with KES currency`);
+        console.log(`📊 Daily totals displayed in table`);
+        console.log(`📈 Excel export includes daily and grand totals`);
         console.log('🔄 Auto-refreshes every 30 seconds');
     </script>
 
