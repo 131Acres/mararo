@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Payment Ledger System</title>
+    <title>Payment Ledger · MPESA Extract</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- SheetJS for Excel Export -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+    </script>
     <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js">
+    </script>
 
     <style>
         /* ── Custom Styles ── */
@@ -40,7 +44,6 @@
             padding-bottom: 3rem;
         }
 
-        /* ── Header ── */
         .app-header {
             background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
             color: white;
@@ -81,7 +84,6 @@
             color: #ffd700;
         }
 
-        /* ── Cards ── */
         .card {
             border: none;
             border-radius: 16px;
@@ -99,7 +101,6 @@
             font-weight: 600;
         }
 
-        /* ── Form ── */
         .form-label {
             font-weight: 500;
             font-size: 0.875rem;
@@ -110,11 +111,22 @@
             color: var(--danger-color);
             margin-left: 2px;
         }
-        .form-label .field-hint {
-            font-weight: 400;
-            font-size: 0.75rem;
+        .form-label .field-badge {
+            display: inline-block;
+            font-size: 0.55rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 50px;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+            font-weight: 600;
+        }
+        .form-label .field-badge.primary-badge {
+            background: var(--primary-color);
+            color: white;
+        }
+        .form-label .field-badge.optional-badge {
+            background: #e9ecef;
             color: #6c757d;
-            display: block;
         }
         .form-control,
         .form-select {
@@ -129,16 +141,25 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
         }
-        .form-control-lg {
-            font-size: 1.1rem;
-            padding: 0.75rem 1rem;
+
+        .field-helper {
+            display: block;
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+            font-weight: 400;
         }
-        .form-control-sm {
-            font-size: 0.85rem;
-            padding: 0.4rem 0.75rem;
+        .field-helper i {
+            margin-right: 0.25rem;
         }
 
-        /* ── Date Field Styles ── */
+        #receiptNumber {
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            font-size: 1rem;
+            padding: 0.6rem 1rem;
+        }
+
         .date-field-primary .form-control {
             border-color: var(--primary-color);
             background: #f8fbff;
@@ -146,32 +167,7 @@
         .date-field-primary .form-control:focus {
             background: white;
         }
-        .date-field-primary .date-badge {
-            display: inline-block;
-            background: var(--primary-color);
-            color: white;
-            font-size: 0.6rem;
-            padding: 0.1rem 0.5rem;
-            border-radius: 50px;
-            margin-left: 0.5rem;
-            vertical-align: middle;
-        }
-        .date-field-optional .form-control {
-            border-color: #e0e4e8;
-            background: white;
-        }
-        .date-field-optional .optional-badge {
-            display: inline-block;
-            background: #e9ecef;
-            color: #6c757d;
-            font-size: 0.6rem;
-            padding: 0.1rem 0.5rem;
-            border-radius: 50px;
-            margin-left: 0.5rem;
-            vertical-align: middle;
-        }
 
-        /* ── System Dates Display ── */
         .system-dates {
             background: #f8f9fa;
             border-radius: 10px;
@@ -187,7 +183,6 @@
             font-weight: 400;
         }
 
-        /* ── Amount Input ── */
         .amount-input-wrapper {
             position: relative;
         }
@@ -205,7 +200,6 @@
             padding-left: 2.5rem;
         }
 
-        /* ── Depositor Field ── */
         .depositor-wrapper {
             position: relative;
         }
@@ -253,7 +247,6 @@
             opacity: 1;
         }
 
-        /* ── Mode Toggle ── */
         .mode-toggle {
             display: flex;
             gap: 0.5rem;
@@ -281,7 +274,6 @@
             background: rgba(255, 255, 255, 0.5);
         }
 
-        /* ── Table ── */
         .table-container {
             overflow-x: auto;
             border-radius: 12px;
@@ -289,7 +281,7 @@
         }
         .table {
             margin-bottom: 0;
-            font-size: 0.9rem;
+            font-size: 0.875rem;
         }
         .table thead th {
             background: #f8f9fa;
@@ -297,14 +289,18 @@
             font-weight: 600;
             color: #495057;
             white-space: nowrap;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.75rem;
             position: sticky;
             top: 0;
             z-index: 10;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
         .table tbody td {
-            padding: 0.75rem 1rem;
+            padding: 0.5rem 0.75rem;
             vertical-align: middle;
+            font-size: 0.85rem;
         }
         .table .current-month {
             background: var(--current-month-bg) !important;
@@ -313,14 +309,14 @@
         .table .current-month .month-badge {
             background: var(--current-month-border);
             color: white;
-            font-size: 0.6rem;
-            padding: 0.15rem 0.5rem;
+            font-size: 0.55rem;
+            padding: 0.1rem 0.4rem;
             border-radius: 50px;
-            margin-left: 0.5rem;
+            margin-left: 0.3rem;
         }
         .table .row-actions .btn {
-            padding: 0.2rem 0.5rem;
-            font-size: 0.75rem;
+            padding: 0.15rem 0.4rem;
+            font-size: 0.7rem;
             border-radius: 6px;
         }
         .table .amount-cell {
@@ -328,14 +324,107 @@
             color: var(--success-color);
         }
         .table .banking-date-cell {
-            font-weight: 600;
+            font-weight: 500;
         }
         .table .receipt-date-cell {
             color: #6c757d;
+            font-size: 0.8rem;
+        }
+        .table .receipt-cell {
+            font-weight: 600;
             font-size: 0.85rem;
         }
+        .table .account-cell code {
+            font-size: 0.8rem;
+            background: #f1f3f5;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+        }
+        .table .holder-cell {
+            font-weight: 500;
+            font-size: 0.85rem;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .table .depositor-cell {
+            font-size: 0.85rem;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .table .method-cell .badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+        }
+        .table .reference-cell {
+            font-size: 0.8rem;
+            color: #6c757d;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
-        /* ── Amended Record ── */
+        .table .col-index {
+            width: 40px;
+            min-width: 40px;
+            max-width: 40px;
+            text-align: center;
+        }
+        .table .col-receipt {
+            width: 90px;
+            min-width: 80px;
+            max-width: 120px;
+        }
+        .table .col-banking-date {
+            width: 95px;
+            min-width: 85px;
+            max-width: 110px;
+        }
+        .table .col-receipt-date {
+            width: 85px;
+            min-width: 75px;
+            max-width: 100px;
+        }
+        .table .col-account {
+            width: 85px;
+            min-width: 75px;
+            max-width: 100px;
+        }
+        .table .col-holder {
+            width: 100px;
+            min-width: 80px;
+            max-width: 130px;
+        }
+        .table .col-depositor {
+            width: 100px;
+            min-width: 80px;
+            max-width: 130px;
+        }
+        .table .col-amount {
+            width: 90px;
+            min-width: 80px;
+            max-width: 110px;
+        }
+        .table .col-method {
+            width: 80px;
+            min-width: 70px;
+            max-width: 100px;
+        }
+        .table .col-reference {
+            width: 90px;
+            min-width: 70px;
+            max-width: 120px;
+        }
+        .table .col-actions {
+            width: 150px;
+            min-width: 130px;
+            max-width: 180px;
+        }
+
         .table .amended-record {
             background: var(--amended-bg) !important;
             border-left: 4px solid var(--amended-border);
@@ -343,50 +432,50 @@
         .table .amended-record .amended-badge {
             background: var(--amended-border);
             color: #000;
-            font-size: 0.6rem;
-            padding: 0.15rem 0.5rem;
+            font-size: 0.55rem;
+            padding: 0.1rem 0.4rem;
             border-radius: 50px;
-            margin-left: 0.5rem;
+            margin-left: 0.3rem;
             font-weight: 600;
         }
 
-        /* ── Daily Total Row ── */
         .table .daily-total-row td {
             background: var(--daily-total-bg) !important;
             border-top: 2px solid var(--daily-total-border);
             border-bottom: 2px solid var(--daily-total-border);
             font-weight: 700;
             color: var(--daily-total-border);
+            padding: 0.4rem 0.75rem;
         }
         .table .daily-total-row .daily-total-label {
             font-weight: 600;
             color: #0d6efd;
+            font-size: 0.8rem;
         }
         .table .daily-total-row .daily-total-amount {
             font-weight: 700;
             color: #0d6efd;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
         }
 
-        /* ── Grand Total Row ── */
         .table .grand-total-row td {
             background: #e8f5e9 !important;
             border-top: 3px solid var(--success-color);
             font-weight: 700;
             color: var(--success-color);
+            padding: 0.5rem 0.75rem;
         }
         .table .grand-total-row .grand-total-label {
             font-weight: 700;
             color: var(--success-color);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
         .table .grand-total-row .grand-total-amount {
             font-weight: 700;
             color: var(--success-color);
-            font-size: 1.2rem;
+            font-size: 1.05rem;
         }
 
-        /* ── Stats Bar ── */
         .stats-bar {
             display: flex;
             flex-wrap: wrap;
@@ -414,7 +503,6 @@
             background: #dee2e6;
         }
 
-        /* ── Modal ── */
         .modal-content {
             border-radius: 16px;
             border: none;
@@ -459,7 +547,6 @@
             color: #6c757d;
         }
 
-        /* ── Toast ── */
         .toast-container {
             position: fixed;
             top: 1.5rem;
@@ -472,7 +559,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
         }
 
-        /* ── Empty State ── */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -484,7 +570,6 @@
             margin-bottom: 1rem;
         }
 
-        /* ── Pagination ── */
         .pagination .page-link {
             border-radius: 8px;
             margin: 0 2px;
@@ -495,7 +580,173 @@
             border-color: var(--primary-color);
         }
 
-        /* ── Responsive ── */
+        .ref-required-badge {
+            font-size: 0.7rem;
+            color: var(--danger-color);
+            font-weight: 500;
+        }
+
+        .mpesa-extract-section {
+            background: #f8faff;
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #e3eaf3;
+            margin-bottom: 1.5rem;
+        }
+        .mpesa-extract-section textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            border: 1px solid #d0dae8;
+            border-radius: 12px;
+            background: #fafcff;
+            resize: vertical;
+            font-family: 'Segoe UI', 'Roboto', monospace;
+            transition: border 0.15s, box-shadow 0.15s;
+            color: #142b3f;
+        }
+        .mpesa-extract-section textarea:focus {
+            border-color: #2b6a9e;
+            box-shadow: 0 0 0 3px rgba(43, 106, 158, 0.2);
+            outline: none;
+            background: #ffffff;
+        }
+        .mpesa-extract-section .extract-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem 1.5rem;
+            margin-top: 1rem;
+        }
+        .mpesa-extract-section .extract-grid .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .mpesa-extract-section .extract-grid .field label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #4a6785;
+        }
+        .mpesa-extract-section .extract-grid .field .value {
+            background: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid #d9e2ef;
+            font-weight: 500;
+            color: #0a263c;
+            font-size: 0.85rem;
+            min-height: 2.4rem;
+            display: flex;
+            align-items: center;
+        }
+        .mpesa-extract-section .extract-grid .field .value.placeholder {
+            color: #8da0b9;
+            font-weight: 400;
+        }
+        .mpesa-extract-section .extract-grid .field.ref-block {
+            grid-column: 1 / -1;
+        }
+        .mpesa-extract-section .extract-grid .field.ref-block .value {
+            background: #ecf3fd;
+            border-color: #b6cce5;
+            font-family: 'SF Mono', 'Roboto Mono', monospace;
+        }
+        .mpesa-extract-section .extract-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-items: center;
+            margin-top: 0.8rem;
+        }
+        .mpesa-extract-section .extract-actions .btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: none;
+            transition: all 0.15s;
+        }
+        .mpesa-extract-section .extract-actions .btn-primary {
+            background: #1f4b74;
+            color: white;
+        }
+        .mpesa-extract-section .extract-actions .btn-primary:hover {
+            background: #123a5e;
+            transform: scale(0.97);
+        }
+        .mpesa-extract-section .extract-actions .btn-outline {
+            background: transparent;
+            border: 1px solid #bcc9db;
+            color: #1a3852;
+        }
+        .mpesa-extract-section .extract-actions .btn-outline:hover {
+            background: #e3ebf5;
+        }
+        .mpesa-extract-section .sender-recipient {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            background: #eef4fc;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            color: #1b3f5e;
+            margin-top: 0.5rem;
+        }
+        .mpesa-extract-section .sender-recipient strong {
+            font-weight: 500;
+        }
+
+        .manual-badge {
+            display: inline-block;
+            font-size: 0.6rem;
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.1rem 0.5rem;
+            border-radius: 50px;
+            margin-left: 0.4rem;
+            font-weight: 600;
+        }
+        .receipt-manual-indicator {
+            font-size: 0.7rem;
+            color: #6c757d;
+            background: #f1f3f5;
+            padding: 0.1rem 0.6rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+
+        .mpesa-date-badge {
+            font-size: 0.6rem;
+            background: #00a651;
+            color: white;
+            padding: 0.1rem 0.5rem;
+            border-radius: 50px;
+            margin-left: 0.4rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 540px) {
+            .mpesa-extract-section .extract-grid {
+                grid-template-columns: 1fr;
+            }
+            .mpesa-extract-section .extract-grid .field.ref-block {
+                grid-column: 1;
+            }
+            .mpesa-extract-section .extract-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .mpesa-extract-section .extract-actions .btn {
+                justify-content: center;
+            }
+        }
+
         @media (max-width: 768px) {
             .app-header h1 {
                 font-size: 1.3rem;
@@ -509,14 +760,21 @@
             .table-container {
                 border-radius: 8px;
             }
-            .table thead th,
+            .table thead th {
+                font-size: 0.7rem;
+                padding: 0.4rem 0.5rem;
+            }
             .table tbody td {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.8rem;
+                padding: 0.4rem 0.5rem;
+                font-size: 0.75rem;
             }
             .form-control,
             .form-select {
                 font-size: 0.9rem;
+                padding: 0.5rem 0.75rem;
+            }
+            #receiptNumber {
+                font-size: 0.95rem;
                 padding: 0.5rem 0.75rem;
             }
             .mode-toggle .btn {
@@ -537,6 +795,34 @@
                 font-size: 0.75rem;
                 padding: 0.5rem 0.75rem;
             }
+            .field-helper {
+                font-size: 0.7rem;
+            }
+            .table .col-holder {
+                max-width: 70px;
+            }
+            .table .col-depositor {
+                max-width: 70px;
+            }
+            .table .col-reference {
+                max-width: 60px;
+            }
+            .table .col-actions {
+                min-width: 100px;
+                max-width: 130px;
+            }
+            .table .row-actions .btn {
+                padding: 0.1rem 0.3rem;
+                font-size: 0.6rem;
+            }
+            .table .col-account {
+                min-width: 60px;
+                max-width: 80px;
+            }
+            .table .col-receipt {
+                min-width: 60px;
+                max-width: 90px;
+            }
         }
 
         @media (max-width: 576px) {
@@ -550,14 +836,18 @@
                 padding: 0.75rem 1rem;
                 font-size: 0.9rem;
             }
-            .table thead th,
+            .table thead th {
+                font-size: 0.6rem;
+                padding: 0.3rem 0.4rem;
+                letter-spacing: 0;
+            }
             .table tbody td {
-                padding: 0.4rem 0.5rem;
+                padding: 0.3rem 0.4rem;
                 font-size: 0.7rem;
             }
             .table .row-actions .btn {
-                padding: 0.1rem 0.35rem;
-                font-size: 0.65rem;
+                padding: 0.08rem 0.25rem;
+                font-size: 0.55rem;
             }
             .toast-container {
                 top: 0.75rem;
@@ -569,6 +859,34 @@
             }
             .version-history {
                 max-height: 200px;
+            }
+            .form-label .field-badge {
+                font-size: 0.5rem;
+                padding: 0.05rem 0.4rem;
+            }
+            .table .col-holder,
+            .table .col-depositor {
+                max-width: 50px;
+            }
+            .table .col-receipt {
+                min-width: 50px;
+                max-width: 70px;
+            }
+            .table .col-actions {
+                min-width: 80px;
+                max-width: 100px;
+            }
+            .table .col-account {
+                min-width: 50px;
+                max-width: 60px;
+            }
+            .table .col-banking-date {
+                min-width: 60px;
+                max-width: 75px;
+            }
+            .table .col-receipt-date {
+                min-width: 55px;
+                max-width: 70px;
             }
         }
     </style>
@@ -640,6 +958,38 @@
             </span>
         </div>
 
+        <!-- ─── MPESA EXTRACT SECTION ─── -->
+        <div class="mpesa-extract-section" id="mpesaExtractSection">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                <h6 class="mb-0"><i class="bi bi-phone me-2"></i>MPESA Message Extractor</h6>
+                <small class="text-muted">Paste transaction SMS to auto-fill form fields</small>
+            </div>
+            <textarea id="mpesaMessage" placeholder="Paste M-PESA message here …"></textarea>
+            <div class="extract-actions">
+                <button class="btn btn-primary" id="extractBtn">🔍 Extract & Fill</button>
+                <button class="btn btn-outline" id="clearMpesaBtn">✕ Clear</button>
+                <span style="margin-left:auto; font-size:0.7rem; color:#4d6e8c;">auto‑extract to form</span>
+            </div>
+            <div class="extract-grid" id="extractGrid">
+                <div class="field">
+                    <label>📅 MPESA Date → Banking Date</label>
+                    <div class="value placeholder" id="extractDate">—</div>
+                </div>
+                <div class="field">
+                    <label>💰 Amount (KES)</label>
+                    <div class="value placeholder" id="extractAmount">—</div>
+                </div>
+                <div class="field ref-block">
+                    <label>🔖 MPESA Reference</label>
+                    <div class="value placeholder" id="extractRef">—</div>
+                </div>
+                <div class="sender-recipient">
+                    <span id="extractSender">Sender: <strong>—</strong></span>
+                    <span id="extractRecipient">Recipient: <strong>—</strong></span>
+                </div>
+            </div>
+        </div>
+
         <!-- ─── FORM CARD ─── -->
         <div class="card mb-4" id="formCard">
             <div class="card-header">
@@ -656,50 +1006,55 @@
 
                     <div class="row g-3">
 
-                        <!-- Receipt # (Hero) -->
-                        <div class="col-12 receipt-hero">
+                        <div class="col-md-6">
                             <label for="receiptNumber" class="form-label">
                                 Receipt # <span class="required-star">*</span>
+                                <span class="manual-badge">Manual</span>
                             </label>
                             <input type="text"
-                            class="form-control form-control-lg"
+                            class="form-control"
                             id="receiptNumber"
-                            placeholder="e.g. R-2026-001"
+                            placeholder="Enter receipt number"
                             required
                             autofocus />
                             <div class="invalid-feedback">Receipt number is required and must be unique.</div>
+                            <span class="field-helper">
+                                <i class="bi bi-pencil"></i> Enter your internal receipt serial number
+                            </span>
+                            <span class="receipt-manual-indicator">
+                                <i class="bi bi-person"></i> Manual entry required
+                            </span>
                         </div>
 
-                        <!-- Banking Date (Primary) -->
                         <div class="col-md-6 date-field-primary">
                             <label for="bankingDate" class="form-label">
                                 Banking Date <span class="required-star">*</span>
-                                <span class="date-badge">PRIMARY</span>
-                                <span class="field-hint">Date when bank cleared the payment (matches bank statement)</span>
+                                <span class="field-badge primary-badge">PRIMARY</span>
+                                <span class="mpesa-date-badge">📱 MPESA Date</span>
                             </label>
                             <input type="date"
                             class="form-control"
                             id="bankingDate"
                             required />
                             <div class="invalid-feedback">Banking date is required for reconciliation.</div>
+                            <span class="field-helper">
+                                <i class="bi bi-phone"></i> Auto-filled from MPESA date. Matches bank statement.
+                            </span>
                         </div>
 
-                        <!-- Receipt Date (Optional) -->
                         <div class="col-md-6 date-field-optional">
                             <label for="receiptDate" class="form-label">
                                 Receipt Date
-                                <span class="optional-badge">OPTIONAL</span>
-                                <span class="field-hint">Date printed on the physical receipt</span>
+                                <span class="field-badge optional-badge">OPTIONAL</span>
                             </label>
                             <input type="date"
                             class="form-control"
                             id="receiptDate" />
-                            <small class="text-muted">
-                                <i class="bi bi-info-circle"></i> Leave blank if receipt date is unknown
-                            </small>
+                            <span class="field-helper">
+                                <i class="bi bi-receipt"></i> Date printed on the physical receipt
+                            </span>
                         </div>
 
-                        <!-- Amount Paid -->
                         <div class="col-md-6">
                             <label for="amountPaid" class="form-label">
                                 Amount (KES) <span class="required-star">*</span>
@@ -715,27 +1070,33 @@
                                 required />
                             </div>
                             <div class="invalid-feedback">Please enter a valid amount (minimum 0.01).</div>
+                            <span class="field-helper">
+                                <i class="bi bi-currency-dollar"></i> Enter the payment amount in Kenyan Shillings
+                            </span>
                         </div>
 
-                        <!-- Account # -->
                         <div class="col-md-6">
                             <label for="accountNumber" class="form-label">
                                 Account # <span class="required-star">*</span>
                             </label>
                             <input type="text" class="form-control" id="accountNumber" placeholder="e.g. ACC-12345" required />
                             <div class="invalid-feedback">Account number is required.</div>
+                            <span class="field-helper">
+                                <i class="bi bi-person-badge"></i> Customer account number
+                            </span>
                         </div>
 
-                        <!-- Account Holder -->
                         <div class="col-md-6">
                             <label for="accountHolder" class="form-label">
                                 Account Holder <span class="required-star">*</span>
                             </label>
                             <input type="text" class="form-control" id="accountHolder" placeholder="Full name" required />
                             <div class="invalid-feedback">Account holder name is required.</div>
+                            <span class="field-helper">
+                                <i class="bi bi-person"></i> Full name of account holder
+                            </span>
                         </div>
 
-                        <!-- Depositor Name -->
                         <div class="col-md-6">
                             <label for="depositorName" class="form-label">
                                 Depositor Name <span class="required-star">*</span>
@@ -752,12 +1113,11 @@
                                 </button>
                             </div>
                             <div class="invalid-feedback">Depositor name is required.</div>
-                            <small class="text-muted" id="depositorHint">
+                            <span class="field-helper" id="depositorHint">
                                 <i class="bi bi-info-circle"></i> Auto-filled from account holder. Click <strong>✕</strong> to enter a different name.
-                            </small>
+                            </span>
                         </div>
 
-                        <!-- Payment Method -->
                         <div class="col-md-6">
                             <label for="paymentMethod" class="form-label">
                                 Payment Method <span class="required-star">*</span>
@@ -769,9 +1129,11 @@
                                 <option value="Cheque">Cheque</option>
                             </select>
                             <div class="invalid-feedback">Please select a payment method.</div>
+                            <span class="field-helper">
+                                <i class="bi bi-credit-card"></i> Select the payment method used
+                            </span>
                         </div>
 
-                        <!-- Reference # -->
                         <div class="col-md-6">
                             <label for="referenceNumber" class="form-label">
                                 Reference #
@@ -782,10 +1144,11 @@
                             id="referenceNumber"
                             placeholder="e.g. TRF-789-2026 or M-Pesa Code" />
                             <div class="invalid-feedback">Reference number is required for Bank Transfers and M-Pesa.</div>
-                            <small class="text-muted" id="refHint">Required for M-Pesa and Bank Transfers</small>
+                            <span class="field-helper" id="refHint">
+                                <i class="bi bi-info-circle"></i> For M-Pesa, this is the MPESA Reference number
+                            </span>
                         </div>
 
-                        <!-- System Dates (Read-only) -->
                         <div class="col-12">
                             <div class="system-dates">
                                 <span class="label"><i class="bi bi-clock-history"></i> System Dates:</span>
@@ -797,7 +1160,6 @@
                             </div>
                         </div>
 
-                        <!-- Amendment Reason (Admin Only) -->
                         <div class="col-12 d-none" id="amendmentReasonContainer">
                             <label for="amendmentReason" class="form-label">
                                 Amendment Reason <span class="required-star">*</span>
@@ -807,12 +1169,11 @@
                             rows="2"
                             placeholder="Explain why you are amending this record..."></textarea>
                             <div class="invalid-feedback">Please provide a reason for the amendment.</div>
-                            <small class="text-muted">
-                                <i class="bi bi-info-circle"></i> Required when making changes to existing records.
-                            </small>
+                            <span class="field-helper">
+                                <i class="bi bi-pencil"></i> Required when making changes to existing records
+                            </span>
                         </div>
 
-                        <!-- Submit / Reset -->
                         <div class="col-12 mt-3">
                             <button type="submit" class="btn btn-primary" id="submitBtn">
                                 <i class="bi bi-check2-circle"></i> Submit Entry
@@ -839,11 +1200,9 @@
                     <span class="badge bg-secondary ms-2" id="tableCount">0</span>
                 </span>
                 <div class="d-flex flex-wrap align-items-center gap-2">
-                    <!-- Month Filter -->
                     <select class="form-select form-select-sm" id="monthFilter" style="width:auto;">
                         <option value="all">All Months</option>
                     </select>
-                    <!-- Search -->
                     <div class="input-group input-group-sm" style="width:200px;">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>
                         <input type="text" class="form-control" id="searchInput" placeholder="Search..." />
@@ -851,7 +1210,6 @@
                 </div>
             </div>
             <div class="card-body p-0">
-                <!-- Stats Bar -->
                 <div class="stats-bar" id="statsBar">
                     <div class="stat-item">
                         <span class="stat-label">Records:</span>
@@ -875,33 +1233,30 @@
                 </div>
 
                 <div class="table-container">
-                    <table class="table table-hover" id="dataTable">
+                    <table class="table" id="dataTable">
                         <thead>
                             <tr>
-                                <th style="width:50px;">#</th>
-                                <th>Receipt</th>
-                                <th style="min-width:120px;">Banking Date</th>
-                                <th style="min-width:100px;">Receipt Date</th>
-                                <th>Account</th>
-                                <th>Holder</th>
-                                <th>Depositor</th>
-                                <th>Amount</th>
-                                <th>Method</th>
-                                <th>Reference</th>
-                                <th style="width:180px;">Actions</th>
+                                <th class="col-index text-center">#</th>
+                                <th class="col-receipt">Receipt</th>
+                                <th class="col-banking-date">Banking<br>Date</th>
+                                <th class="col-receipt-date">Receipt<br>Date</th>
+                                <th class="col-account">Account</th>
+                                <th class="col-holder">Holder</th>
+                                <th class="col-depositor">Depositor</th>
+                                <th class="col-amount text-end">Amount</th>
+                                <th class="col-method">Method</th>
+                                <th class="col-reference">Reference</th>
+                                <th class="col-actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <!-- Dynamically populated -->
                         </tbody>
                     </table>
                 </div>
-                <!-- Pagination -->
                 <div class="d-flex justify-content-between align-items-center p-3 border-top">
                     <span class="text-muted small" id="paginationInfo">Showing 0-0 of 0</span>
                     <nav>
                         <ul class="pagination pagination-sm mb-0" id="paginationControls">
-                            <!-- Dynamically populated -->
                         </ul>
                     </nav>
                 </div>
@@ -1019,7 +1374,6 @@
                         <p class="mb-0 small">Only admins can view version history.</p>
                     </div>
                     <div id="historyContent">
-                        <!-- Dynamically populated -->
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1108,8 +1462,7 @@
         //  FIREBASE CONFIGURATION
         // ════════════════════════════════════════════════
 
-        // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
-       const firebaseConfig = {
+        const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
@@ -1119,17 +1472,14 @@
   measurementId: "G-H80MK8SSQ1"
 };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // ─── Collections ───
         const PAYMENTS_COLLECTION = 'payments';
         const ARCHIVE_COLLECTION = 'payments_archive';
         const AMENDMENTS_COLLECTION = 'amendments';
 
-        // ─── Admin Credentials ───
         const ADMIN_EMAIL = 'admin@ledger.com';
         const ADMIN_PASSWORD = 'Admin@2026';
 
@@ -1144,9 +1494,7 @@
         let isAdmin = false;
         let currentUser = null;
         let currentMode = 'active';
-        let currentMonth = new Date().toISOString().slice(0, 7);
 
-        // ─── DOM References ───
         const $ = (id) => document.getElementById(id);
         const form = $('paymentForm');
         const receiptInput = $('receiptNumber');
@@ -1184,13 +1532,18 @@
         const systemEntryDate = $('systemEntryDate');
         const systemModifiedDate = $('systemModifiedDate');
 
-        // Stats elements
+        const mpesaMessage = $('mpesaMessage');
+        const extractDate = $('extractDate');
+        const extractAmount = $('extractAmount');
+        const extractRef = $('extractRef');
+        const extractSender = $('extractSender');
+        const extractRecipient = $('extractRecipient');
+
         const statTotalRecords = $('statTotalRecords');
         const statTotalAmount = $('statTotalAmount');
         const statAverageAmount = $('statAverageAmount');
         const statCurrentMonth = $('statCurrentMonth');
 
-        // ─── Modals ───
         const editModal = new bootstrap.Modal($('editModal'));
         const historyModal = new bootstrap.Modal($('historyModal'));
         const clearModal = new bootstrap.Modal($('clearModal'));
@@ -1266,13 +1619,6 @@
             return `<span class="badge bg-success">✅ v${version}</span>`;
         }
 
-        function getVersionBadge(version, isCurrent) {
-            if (isCurrent) {
-                return `<span class="badge bg-success">v${version} (Current)</span>`;
-            }
-            return `<span class="badge bg-secondary">v${version}</span>`;
-        }
-
         function groupRecordsByBankingDate(records) {
             const groups = {};
             records.forEach(r => {
@@ -1303,7 +1649,6 @@
             return isAdmin && currentUser && currentUser.email === ADMIN_EMAIL;
         }
 
-        // ─── Update UI based on role ───
         function updateUIBasedOnRole() {
             const isAdmin = isAdminUser();
 
@@ -1343,12 +1688,11 @@
             }
         }
 
-        // ─── Update System Dates ───
         function updateSystemDates() {
             const now = new Date();
-            const dateStr = now.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
+            const dateStr = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
@@ -1357,17 +1701,183 @@
             systemModifiedDate.textContent = dateStr;
         }
 
+        function parseMpesaDateToISO(dateStr) {
+            if (!dateStr || dateStr === '—') return null;
+
+            const monthMap = {
+                'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+                'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+            };
+
+            const dateMatch = dateStr.match(/(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})/i);
+            if (!dateMatch) return null;
+
+            const day = String(dateMatch[1]).padStart(2, '0');
+            const month = monthMap[dateMatch[2]];
+            const year = dateMatch[3];
+
+            if (!month) return null;
+
+            return `${year}-${month}-${day}`;
+        }
+
+        // ════════════════════════════════════════════════
+        //  MPESA EXTRACT LOGIC
+        // ════════════════════════════════════════════════
+
+        function extractMpesaFields(text) {
+            let date = '—',
+                amount = '—',
+                ref = '—',
+                sender = '—',
+                recipient = '—';
+
+            if (!text || text.trim() === '') {
+                return { date, amount, ref, sender, recipient };
+            }
+
+            const datePattern = /(\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4})\s+at\s+(\d{1,2}:\d{2}:\d{2}\s*(?:AM|PM)?)/i;
+            const dateMatch = text.match(datePattern);
+            if (dateMatch) {
+                date = dateMatch[1] + ' at ' + dateMatch[3];
+            } else {
+                const fallbackDate = text.match(/\b(\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4})\b/i);
+                if (fallbackDate) date = fallbackDate[1];
+            }
+
+            const amountPattern = /KES\s*([\d,]+\.\d{2})/i;
+            const amountMatch = text.match(amountPattern);
+            if (amountMatch) {
+                let raw = amountMatch[1].replace(/,/g, '');
+                if (!isNaN(parseFloat(raw))) {
+                    amount = parseFloat(raw).toFixed(2);
+                } else {
+                    amount = amountMatch[1];
+                }
+            } else {
+                const altAmount = text.match(/([\d,]+\.\d{2})\s*(?:KES|from)/i);
+                if (altAmount) {
+                    let raw = altAmount[1].replace(/,/g, '');
+                    if (!isNaN(parseFloat(raw))) amount = parseFloat(raw).toFixed(2);
+                    else amount = altAmount[1];
+                }
+            }
+
+            let refMatch = text.match(/MPESA\s*Ref\s*([A-Za-z0-9]+)/i);
+            if (!refMatch) {
+                refMatch = text.match(/ReferenceNo\.?\s*([A-Za-z0-9]+)/i);
+            }
+            if (!refMatch) {
+                refMatch = text.match(/Ref\s*[:\-]?\s*([A-Za-z0-9]+)/i);
+            }
+            if (refMatch && refMatch[1]) {
+                ref = refMatch[1].trim();
+            } else {
+                const phoneRef = text.match(/for\s+([\d*]+)/i);
+                if (phoneRef && phoneRef[1]) ref = phoneRef[1];
+            }
+
+            const senderPattern = /from\s+([A-Z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$)/i;
+            const senderMatch = text.match(senderPattern);
+            if (senderMatch && senderMatch[1]) {
+                sender = senderMatch[1].trim();
+            } else {
+                const fallbackSender = text.match(/from\s+([A-Za-z\s]+?)(?=\s+on\s+|\s+for\s+|\s*$)/i);
+                if (fallbackSender && fallbackSender[1]) sender = fallbackSender[1].trim();
+            }
+
+            const recipientPattern = /Dear\s+([A-Za-z0-9]+)/i;
+            const recipientMatch = text.match(recipientPattern);
+            if (recipientMatch && recipientMatch[1]) {
+                recipient = recipientMatch[1].trim();
+            }
+
+            return { date, amount, ref, sender, recipient };
+        }
+
+        function updateMpesaExtractUI() {
+            const text = mpesaMessage.value;
+            const { date, amount, ref, sender, recipient } = extractMpesaFields(text);
+
+            extractDate.textContent = date;
+            extractDate.classList.remove('placeholder');
+            if (date === '—') extractDate.classList.add('placeholder');
+
+            extractAmount.textContent = amount !== '—' ? `KES ${amount}` : '—';
+            extractAmount.classList.remove('placeholder');
+            if (amount === '—') extractAmount.classList.add('placeholder');
+
+            extractRef.textContent = ref;
+            extractRef.classList.remove('placeholder');
+            if (ref === '—') extractRef.classList.add('placeholder');
+
+            extractSender.innerHTML = `Sender: <strong>${sender}</strong>`;
+            extractRecipient.innerHTML = `Recipient: <strong>${recipient}</strong>`;
+        }
+
+        function fillFormFromMpesa() {
+            const text = mpesaMessage.value;
+            const { date, amount, ref, sender, recipient } = extractMpesaFields(text);
+
+            if (date !== '—') {
+                const isoDate = parseMpesaDateToISO(date);
+                if (isoDate) {
+                    bankingDateInput.value = isoDate;
+                }
+            }
+
+            if (amount !== '—') {
+                amountInput.value = amount;
+            }
+
+            if (ref !== '—') {
+                referenceInput.value = ref;
+            }
+
+            if (sender !== '—' && sender !== 'MARARO') {
+                depositorInput.value = sender;
+                depositorInput.dataset.autoFilled = 'false';
+                autoBadge.classList.remove('visible');
+                clearBtn.classList.remove('visible');
+                depositorInput.style.background = '';
+                $('depositorHint').innerHTML =
+                    '<i class="bi bi-pencil"></i> Enter the depositor\'s name (required).';
+            }
+
+            paymentMethod.value = 'M-Pesa';
+            paymentMethod.dispatchEvent(new Event('change'));
+
+            showToast('Form filled from MPESA message.', 'Extract Complete', 'success');
+        }
+
+        // ─── MPESA Extract Event Listeners ───
+        $('extractBtn').addEventListener('click', function() {
+            updateMpesaExtractUI();
+            fillFormFromMpesa();
+        });
+
+        $('clearMpesaBtn').addEventListener('click', function() {
+            mpesaMessage.value = '';
+            extractDate.textContent = '—';
+            extractDate.classList.add('placeholder');
+            extractAmount.textContent = '—';
+            extractAmount.classList.add('placeholder');
+            extractRef.textContent = '—';
+            extractRef.classList.add('placeholder');
+            extractSender.innerHTML = 'Sender: <strong>—</strong>';
+            extractRecipient.innerHTML = 'Recipient: <strong>—</strong>';
+        });
+
         // ════════════════════════════════════════════════
         //  FORM LOGIC
         // ════════════════════════════════════════════════
 
-        // Set default dates
         const today = new Date().toISOString().slice(0, 10);
         bankingDateInput.value = today;
         receiptDateInput.value = '';
         updateSystemDates();
 
-        // Auto-fill Depositor
         holderInput.addEventListener('input', function() {
             if (!depositorInput.value || depositorInput.dataset.autoFilled === 'true') {
                 depositorInput.value = this.value;
@@ -1421,7 +1931,8 @@
                 refHint.innerHTML =
                     `<i class="bi bi-exclamation-triangle text-danger"></i> Required for ${methodName}`;
                 referenceInput.required = true;
-                referenceInput.placeholder = this.value === 'M-Pesa' ? 'e.g. M-Pesa Code' : 'e.g. TRF-789-2026';
+                referenceInput.placeholder = this.value === 'M-Pesa' ? 'e.g. MPESA Reference' :
+                'e.g. TRF-789-2026';
             } else {
                 refLabel.style.display = 'inline';
                 refLabel.textContent = '(Optional)';
@@ -1433,7 +1944,6 @@
         });
         paymentMethod.dispatchEvent(new Event('change'));
 
-        // ─── Reset Form ───
         resetBtn.addEventListener('click', function(e) {
             e.preventDefault();
             form.reset();
@@ -1476,9 +1986,11 @@
 
             if (currentMode === 'archive') {
                 $('formCard').style.display = 'none';
+                $('mpesaExtractSection').style.display = 'none';
                 showToast('Viewing archived records. Switch to Active to add new entries.', 'Archive Mode', 'info');
             } else {
                 $('formCard').style.display = 'block';
+                $('mpesaExtractSection').style.display = 'block';
             }
 
             loadRecords();
@@ -1488,7 +2000,6 @@
         //  CRUD OPERATIONS
         // ════════════════════════════════════════════════
 
-        // ─── Submit ───
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             form.classList.remove('was-validated');
@@ -1504,7 +2015,6 @@
                 return;
             }
 
-            // Validate Depositor
             if (!depositorInput.value.trim()) {
                 showToast('Depositor name is required.', 'Validation Error', 'error');
                 depositorInput.focus();
@@ -1512,7 +2022,6 @@
                 return;
             }
 
-            // Validate Amount
             const amount = parseFloat(amountInput.value);
             if (!amount || amount <= 0) {
                 showToast('Please enter a valid amount (minimum 0.01).', 'Validation Error', 'error');
@@ -1521,7 +2030,6 @@
                 return;
             }
 
-            // Validate Banking Date
             if (!bankingDateInput.value) {
                 showToast('Banking date is required.', 'Validation Error', 'error');
                 bankingDateInput.focus();
@@ -1529,7 +2037,6 @@
                 return;
             }
 
-            // Validate Reference
             const isRefRequired = paymentMethod.value === 'M-Pesa' || paymentMethod.value === 'Bank Transfer';
             if (isRefRequired && !referenceInput.value.trim()) {
                 const methodName = paymentMethod.value === 'M-Pesa' ? 'M-Pesa' : 'Bank Transfers';
@@ -1539,7 +2046,6 @@
                 return;
             }
 
-            // Validate amendment reason (if editing)
             if (editMode && !amendmentReason.value.trim()) {
                 showToast('Please provide a reason for the amendment.', 'Validation Error', 'error');
                 amendmentReason.focus();
@@ -1591,7 +2097,6 @@
 
             try {
                 if (editMode) {
-                    // ─── UPDATE (Admin Only) ───
                     const docRef = db.collection(PAYMENTS_COLLECTION).doc(editDocId);
                     const doc = await docRef.get();
 
@@ -1628,7 +2133,6 @@
                     data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
                     data.updatedBy = currentUser ? currentUser.email : 'admin';
 
-                    // Log to amendments collection
                     await db.collection(AMENDMENTS_COLLECTION).doc(`${editDocId}_v${data.version}`).set({
                         receiptNumber: receipt,
                         version: data.version,
@@ -1666,7 +2170,6 @@
                     updateSystemDates();
 
                 } else {
-                    // ─── CREATE ───
                     await db.collection(PAYMENTS_COLLECTION).doc(receipt).set(data);
                     showToast(`Record ${receipt} added successfully!`, 'Success', 'success');
 
@@ -1700,7 +2203,6 @@
             }
         });
 
-        // ─── Load Records ───
         async function loadRecords() {
             try {
                 let collection = PAYMENTS_COLLECTION;
@@ -1735,7 +2237,6 @@
             }
         }
 
-        // ─── Update Totals ───
         function updateTotals() {
             const total = allRecords.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
             totalAmount.innerHTML = `<i class="bi bi-wallet2"></i> ${formatCurrency(total)}`;
@@ -1750,7 +2251,6 @@
             statCurrentMonth.textContent = getCurrentMonth();
         }
 
-        // ─── Populate Month Filter ───
         function populateMonthFilter() {
             const months = new Set();
             allRecords.forEach(r => {
@@ -1781,7 +2281,6 @@
             }
         }
 
-        // ─── Apply Filters ───
         function applyFilters() {
             const month = monthFilter.value;
             const search = searchInput.value.toLowerCase().trim();
@@ -1806,7 +2305,6 @@
             updateTotals();
         }
 
-        // ─── Render Table ───
         function renderTable() {
             const sortedRecords = [...filteredRecords].sort((a, b) => {
                 if (a.bankingDate > b.bankingDate) return -1;
@@ -1832,18 +2330,18 @@
             if (pageRecords.length === 0 && totalRecords === 0) {
                 const modeLabel = currentMode === 'active' ? 'Active' : 'Archived';
                 tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="11">
-                            <div class="empty-state">
-                                <i class="bi bi-${currentMode === 'active' ? 'inbox' : 'archive'}"></i>
-                                <p class="mb-0">No ${modeLabel.toLowerCase()} records found</p>
-                                <small class="text-muted">
-                                    ${currentMode === 'active' ? 'Add your first payment record above.' : 'Switch to Active to see current records.'}
-                                </small>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td colspan="11">
+                                <div class="empty-state">
+                                    <i class="bi bi-${currentMode === 'active' ? 'inbox' : 'archive'}"></i>
+                                    <p class="mb-0">No ${modeLabel.toLowerCase()} records found</p>
+                                    <small class="text-muted">
+                                        ${currentMode === 'active' ? 'Add your first payment record above.' : 'Switch to Active to see current records.'}
+                                    </small>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
                 tableCount.textContent = '0';
                 paginationInfo.textContent = 'Showing 0-0 of 0';
                 paginationControls.innerHTML = '';
@@ -1866,14 +2364,14 @@
                 if (lastDate !== r.bankingDate) {
                     if (lastDate !== null && dailyTotals[lastDate] !== undefined) {
                         html += `
-                            <tr class="daily-total-row">
-                                <td colspan="7" class="text-end daily-total-label">
-                                    <i class="bi bi-calendar-day me-1"></i> Daily Total (${formatDate(lastDate)}):
-                                </td>
-                                <td class="daily-total-amount">${formatCurrency(dailyTotals[lastDate])}</td>
-                                <td colspan="3"></td>
-                            </tr>
-                        `;
+                                <tr class="daily-total-row">
+                                    <td colspan="7" class="text-end daily-total-label">
+                                        <i class="bi bi-calendar-day me-1"></i> Daily Total (${formatDate(lastDate)}):
+                                    </td>
+                                    <td class="daily-total-amount">${formatCurrency(dailyTotals[lastDate])}</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                            `;
                     }
                     lastDate = r.bankingDate;
                 }
@@ -1887,62 +2385,66 @@
                 let actionsHtml = '';
                 if (currentMode === 'archive') {
                     actionsHtml = `
-                        <button class="btn btn-outline-success btn-sm restore-btn" data-id="${r.id}" title="Restore to Active">
-                            <i class="bi bi-arrow-counterclockwise"></i> Restore
-                        </button>
-                    `;
+                            <button class="btn btn-outline-success btn-sm restore-btn" data-id="${r.id}" title="Restore to Active">
+                                <i class="bi bi-arrow-counterclockwise"></i> Restore
+                            </button>
+                        `;
                 } else {
                     actionsHtml = `
-                        ${showEdit ? `<button class="btn btn-outline-primary btn-sm edit-btn" data-id="${r.id}" title="Edit"><i class="bi bi-pencil"></i></button>` : `<button class="btn btn-outline-secondary btn-sm" disabled title="Admin only"><i class="bi bi-lock"></i></button>`}
-                        ${showHistory ? `<button class="btn btn-outline-info btn-sm history-btn" data-id="${r.id}" title="View History"><i class="bi bi-clock-history"></i></button>` : `<button class="btn btn-outline-secondary btn-sm" disabled title="Admin only"><i class="bi bi-lock"></i></button>`}
-                        ${showDelete ? `<button class="btn btn-outline-danger btn-sm delete-btn" data-id="${r.id}" title="Delete"><i class="bi bi-trash"></i></button>` : `<button class="btn btn-outline-secondary btn-sm" disabled title="Admin only"><i class="bi bi-lock"></i></button>`}
-                    `;
+                            ${showEdit ? `<button class="btn btn-outline-primary btn-sm edit-btn" data-id="${r.id}" title="Edit"><i class="bi bi-pencil"></i></button>` : `<button class="btn btn-outline-secondary btn-sm" disabled title="Admin only"><i class="bi bi-lock"></i></button>`}
+                            ${showHistory ? `<button class="btn btn-outline-info btn-sm history-btn" data-id="${r.id}" title="View History"><i class="bi bi-clock-history"></i></button>` : `<button class="btn btn-outline-secondary btn-sm" disabled title="Admin only"><i class="bi bi-lock"></i></button>`}
+                            ${showDelete ? `<button class="btn btn-outline-danger btn-sm delete-btn" data-id="${r.id}" title="Delete"><i class="bi bi-trash"></i></button>` : `<button class="btn btn-outline-secondary btn-sm" disabled title="Admin only"><i class="bi bi-lock"></i></button>`}
+                        `;
                 }
 
+                const holderDisplay = r.accountHolder.length > 15 ? r.accountHolder.substring(0, 14) + '…' : r.accountHolder;
+                const depositorDisplay = r.depositorName.length > 15 ? r.depositorName.substring(0, 14) + '…' : r
+                .depositorName;
+
                 html += `
-                    <tr class="${rowClass}">
-                        <td>${actualIndex}</td>
-                        <td>
-                            <strong>${escapeHtml(r.id)}</strong>
-                            ${isCurrent ? ' <span class="month-badge">Current</span>' : ''}
-                            ${isAmended ? getStatusBadge(true, version) : getStatusBadge(false, version)}
-                        </td>
-                        <td class="banking-date-cell">${formatDate(r.bankingDate)}</td>
-                        <td class="receipt-date-cell">${r.receiptDate ? formatDate(r.receiptDate) : '-'}</td>
-                        <td><code>${escapeHtml(r.accountNumber)}</code></td>
-                        <td>${escapeHtml(r.accountHolder)}</td>
-                        <td>${escapeHtml(r.depositorName)}</td>
-                        <td class="amount-cell">${formatCurrency(r.amount)}</td>
-                        <td>${getPaymentMethodBadge(r.paymentMethod)}</td>
-                        <td>${escapeHtml(r.referenceNumber) || '-'}</td>
-                        <td class="row-actions">${actionsHtml}</td>
-                    </tr>
-                `;
+                        <tr class="${rowClass}">
+                            <td class="text-center">${actualIndex}</td>
+                            <td class="receipt-cell">
+                                <strong>${escapeHtml(r.id)}</strong>
+                                ${isCurrent ? ' <span class="month-badge">Current</span>' : ''}
+                                ${isAmended ? getStatusBadge(true, version) : getStatusBadge(false, version)}
+                            </td>
+                            <td class="banking-date-cell">${formatDate(r.bankingDate)}</td>
+                            <td class="receipt-date-cell">${r.receiptDate ? formatDate(r.receiptDate) : '-'}</td>
+                            <td class="account-cell"><code>${escapeHtml(r.accountNumber)}</code></td>
+                            <td class="holder-cell" title="${escapeHtml(r.accountHolder)}">${escapeHtml(holderDisplay)}</td>
+                            <td class="depositor-cell" title="${escapeHtml(r.depositorName)}">${escapeHtml(depositorDisplay)}</td>
+                            <td class="amount-cell text-end">${formatCurrency(r.amount)}</td>
+                            <td class="method-cell">${getPaymentMethodBadge(r.paymentMethod)}</td>
+                            <td class="reference-cell" title="${escapeHtml(r.referenceNumber) || ''}">${escapeHtml(r.referenceNumber) || '-'}</td>
+                            <td class="col-actions">${actionsHtml}</td>
+                        </tr>
+                    `;
             });
 
             if (lastDate !== null && dailyTotals[lastDate] !== undefined) {
                 html += `
-                    <tr class="daily-total-row">
-                        <td colspan="7" class="text-end daily-total-label">
-                            <i class="bi bi-calendar-day me-1"></i> Daily Total (${formatDate(lastDate)}):
-                        </td>
-                        <td class="daily-total-amount">${formatCurrency(dailyTotals[lastDate])}</td>
-                        <td colspan="3"></td>
-                    </tr>
-                `;
+                        <tr class="daily-total-row">
+                            <td colspan="7" class="text-end daily-total-label">
+                                <i class="bi bi-calendar-day me-1"></i> Daily Total (${formatDate(lastDate)}):
+                            </td>
+                            <td class="daily-total-amount">${formatCurrency(dailyTotals[lastDate])}</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    `;
             }
 
             const isLastPage = end >= totalRecords;
             if (isLastPage && totalRecords > 0) {
                 html += `
-                    <tr class="grand-total-row">
-                        <td colspan="7" class="text-end grand-total-label">
-                            <i class="bi bi-trophy me-1"></i> GRAND TOTAL (${totalRecords} records):
-                        </td>
-                        <td class="grand-total-amount">${formatCurrency(grandTotal)}</td>
-                        <td colspan="3"></td>
-                    </tr>
-                `;
+                        <tr class="grand-total-row">
+                            <td colspan="7" class="text-end grand-total-label">
+                                <i class="bi bi-trophy me-1"></i> GRAND TOTAL (${totalRecords} records):
+                            </td>
+                            <td class="grand-total-amount">${formatCurrency(grandTotal)}</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    `;
             }
 
             tableBody.innerHTML = html;
@@ -1955,22 +2457,22 @@
             let pgHtml = '';
             if (totalPages > 1) {
                 pgHtml += `
-                    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="#" data-page="${currentPage-1}">‹</a>
-                    </li>
-                `;
-                for (let i = 1; i <= totalPages; i++) {
-                    pgHtml += `
-                        <li class="page-item ${i === currentPage ? 'active' : ''}">
-                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="#" data-page="${currentPage-1}">‹</a>
                         </li>
                     `;
+                for (let i = 1; i <= totalPages; i++) {
+                    pgHtml += `
+                            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                                <a class="page-link" href="#" data-page="${i}">${i}</a>
+                            </li>
+                        `;
                 }
                 pgHtml += `
-                    <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                        <a class="page-link" href="#" data-page="${currentPage+1}">›</a>
-                    </li>
-                `;
+                        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="#" data-page="${currentPage+1}">›</a>
+                        </li>
+                    `;
             }
             paginationControls.innerHTML = pgHtml;
 
@@ -2004,14 +2506,13 @@
             updateUIBasedOnRole();
         }
 
-        // ─── Filters Change ───
         monthFilter.addEventListener('change', () => { currentPage = 1;
             applyFilters(); });
         searchInput.addEventListener('input', () => { currentPage = 1;
             applyFilters(); });
 
         // ════════════════════════════════════════════════
-        //  EDIT MODAL (Admin Only)
+        //  EDIT MODAL
         // ════════════════════════════════════════════════
 
         async function openEditModal(docId) {
@@ -2061,7 +2562,6 @@
             }
         }
 
-        // ─── Save Edit ───
         $('saveEditBtn').addEventListener('click', async function() {
             if (!isAdminUser()) {
                 showToast('Admin access required.', 'Access Denied', 'error');
@@ -2184,7 +2684,6 @@
             }
         });
 
-        // ─── Edit Payment Method Change ───
         $('editPaymentMethod').addEventListener('change', function() {
             const refInput = $('editReference');
             const label = document.querySelector('label[for="editReference"]');
@@ -2212,7 +2711,7 @@
         });
 
         // ════════════════════════════════════════════════
-        //  VERSION HISTORY MODAL (Admin Only)
+        //  VERSION HISTORY MODAL
         // ════════════════════════════════════════════════
 
         async function openHistoryModal(docId) {
@@ -2235,24 +2734,24 @@
                 const currentVersion = data.version || 1;
 
                 let html = `
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        <strong>Current Version: v${currentVersion}</strong>
-                        <br>
-                        <small>Last updated: ${data.updatedAt ? new Date(data.updatedAt.seconds * 1000).toLocaleString() : 'N/A'}</small>
-                        <br>
-                        <small>By: ${data.updatedBy || data.createdBy || 'Unknown'}</small>
-                    </div>
-                    <div class="version-history">
-                `;
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Current Version: v${currentVersion}</strong>
+                            <br>
+                            <small>Last updated: ${data.updatedAt ? new Date(data.updatedAt.seconds * 1000).toLocaleString() : 'N/A'}</small>
+                            <br>
+                            <small>By: ${data.updatedBy || data.createdBy || 'Unknown'}</small>
+                        </div>
+                        <div class="version-history">
+                    `;
 
                 if (history.length === 0) {
                     html += `
-                        <div class="text-center text-muted py-3">
-                            <i class="bi bi-info-circle"></i>
-                            <p class="mb-0">No version history available. This record has not been amended.</p>
-                        </div>
-                    `;
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-info-circle"></i>
+                                <p class="mb-0">No version history available. This record has not been amended.</p>
+                            </div>
+                        `;
                 } else {
                     const reversedHistory = [...history].reverse();
                     reversedHistory.forEach((v, idx) => {
@@ -2260,41 +2759,41 @@
                         const dateStr = v.modifiedAt ? new Date(v.modifiedAt).toLocaleString() : 'N/A';
 
                         html += `
-                            <div class="version-item ${isCurrent ? 'current' : ''}">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="version-badge ${isCurrent ? 'current-badge' : 'old-badge'}">
-                                            ${isCurrent ? '📌 Current' : `v${v.version}`}
-                                        </span>
-                                        <small class="text-muted ms-2">${dateStr}</small>
+                                <div class="version-item ${isCurrent ? 'current' : ''}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="version-badge ${isCurrent ? 'current-badge' : 'old-badge'}">
+                                                ${isCurrent ? '📌 Current' : `v${v.version}`}
+                                            </span>
+                                            <small class="text-muted ms-2">${dateStr}</small>
+                                        </div>
+                                        <small>By: ${v.modifiedBy || 'Unknown'}</small>
                                     </div>
-                                    <small>By: ${v.modifiedBy || 'Unknown'}</small>
-                                </div>
-                                <div class="mt-1">
-                                    <small>
-                                        <strong>Reason:</strong> ${escapeHtml(v.reason || 'No reason provided')}
-                                    </small>
-                                </div>
-                                <div class="mt-1">
-                                    <small class="text-muted">
-                                        <strong>Data:</strong>
-                                        Banking: ${formatDate(v.data.bankingDate)},
-                                        Amount: ${formatCurrency(v.data.amount)},
-                                        Account: ${escapeHtml(v.data.accountNumber)}
-                                    </small>
-                                </div>
-                                ${!isCurrent ? `
                                     <div class="mt-1">
-                                        <button class="btn btn-outline-warning btn-sm revert-btn" 
-                                                data-docid="${docId}" 
-                                                data-version="${v.version}"
-                                                data-receipt="${docId}">
-                                            <i class="bi bi-arrow-counterclockwise"></i> Revert to v${v.version}
-                                        </button>
+                                        <small>
+                                            <strong>Reason:</strong> ${escapeHtml(v.reason || 'No reason provided')}
+                                        </small>
                                     </div>
-                                ` : ''}
-                            </div>
-                        `;
+                                    <div class="mt-1">
+                                        <small class="text-muted">
+                                            <strong>Data:</strong>
+                                            Banking: ${formatDate(v.data.bankingDate)},
+                                            Amount: ${formatCurrency(v.data.amount)},
+                                            Account: ${escapeHtml(v.data.accountNumber)}
+                                        </small>
+                                    </div>
+                                    ${!isCurrent ? `
+                                        <div class="mt-1">
+                                            <button class="btn btn-outline-warning btn-sm revert-btn" 
+                                                    data-docid="${docId}" 
+                                                    data-version="${v.version}"
+                                                    data-receipt="${docId}">
+                                                <i class="bi bi-arrow-counterclockwise"></i> Revert to v${v.version}
+                                            </button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
                     });
                 }
 
@@ -2302,12 +2801,12 @@
 
                 if (history.length > 0) {
                     html += `
-                        <div class="alert alert-warning mt-2">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            <strong>Note:</strong> Reverting to a previous version will create a new version with the old data.
-                            This action is logged in the audit trail.
-                        </div>
-                    `;
+                            <div class="alert alert-warning mt-2">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <strong>Note:</strong> Reverting to a previous version will create a new version with the old data.
+                                This action is logged in the audit trail.
+                            </div>
+                        `;
                 }
 
                 $('historyContent').innerHTML = html;
@@ -2329,7 +2828,6 @@
             }
         }
 
-        // ─── Revert to Version ───
         async function revertToVersion(docId, version, receipt) {
             if (!isAdminUser()) {
                 showToast('Admin access required to revert.', 'Access Denied', 'error');
@@ -2418,7 +2916,7 @@
         }
 
         // ════════════════════════════════════════════════
-        //  DELETE RECORD (Admin Only)
+        //  DELETE / RESTORE RECORD
         // ════════════════════════════════════════════════
 
         async function deleteRecord(docId) {
@@ -2453,10 +2951,6 @@
                 showToast('Failed to delete record.', 'Error', 'error');
             }
         }
-
-        // ════════════════════════════════════════════════
-        //  RESTORE RECORD (Admin Only - Archive Mode)
-        // ════════════════════════════════════════════════
 
         async function restoreRecord(docId) {
             if (!isAdminUser()) {
@@ -2642,7 +3136,7 @@
         });
 
         // ════════════════════════════════════════════════
-        //  CLEAR / ARCHIVE MONTH (Admin Only)
+        //  CLEAR / ARCHIVE MONTH
         // ════════════════════════════════════════════════
 
         clearMonthBtn.addEventListener('click', function() {
@@ -2835,13 +3329,11 @@
         console.log('📋 Payment Ledger System initialized.');
         console.log(`📅 Current month: ${getCurrentMonth()}`);
         console.log(`🔑 Admin: ${ADMIN_EMAIL}`);
-        console.log(`👤 Current user: ${currentUser ? currentUser.email : 'Not logged in'}`);
         console.log(`📊 Mode: ${currentMode}`);
-        console.log(`🏦 Banking Date is PRIMARY date for reconciliation`);
-        console.log(`📄 Receipt Date is OPTIONAL`);
+        console.log('🏦 Banking Date is PRIMARY - auto-filled from MPESA Date');
+        console.log('🔢 Receipt numbers are manually entered');
         console.log('💳 Payment Methods: M-Pesa, Bank Transfer, Cheque');
-        console.log('📈 Features: Version History, Amendments, Archive, Restore');
-        console.log('🔄 Auto-refreshes every 30 seconds');
+        console.log('📈 Features: MPESA Extract, Manual Receipts, Version History, Amendments, Archive, Restore');
     </script>
 
 </body>
