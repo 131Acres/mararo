@@ -38,6 +38,8 @@
             --amended-border: #ffc107;
             --bluebar-even: #f5f9ff;
             --bluebar-odd: #ffffff;
+            --duplicate-warning-bg: #fff8e7;
+            --duplicate-warning-border: #ffc107;
         }
 
         body {
@@ -875,6 +877,88 @@
             font-weight: 600;
         }
 
+        /* ── Duplicate Warning Styles ── */
+        .duplicate-warning {
+            background: var(--duplicate-warning-bg);
+            border: 2px solid var(--duplicate-warning-border);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-top: 1rem;
+            animation: slideDown 0.3s ease;
+            display: none;
+        }
+        .duplicate-warning.show {
+            display: block;
+        }
+        .duplicate-warning .warning-icon {
+            font-size: 1.2rem;
+            color: var(--warning-color);
+            margin-right: 0.5rem;
+        }
+        .duplicate-warning .warning-title {
+            font-weight: 600;
+            color: #856404;
+        }
+        .duplicate-warning .duplicate-details {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        .duplicate-warning .duplicate-match {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            margin: 0.2rem 0;
+            border-left: 3px solid var(--warning-color);
+        }
+        .duplicate-warning .btn-override {
+            background: #ffc107;
+            border: none;
+            color: #000;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .duplicate-warning .btn-override:hover {
+            background: #e0a800;
+            transform: scale(0.97);
+        }
+        .duplicate-warning .btn-cancel {
+            background: #e9ecef;
+            border: none;
+            color: #495057;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .duplicate-warning .btn-cancel:hover {
+            background: #d5d8dd;
+            transform: scale(0.97);
+        }
+        .duplicate-warning .duplicate-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @media (max-width: 540px) {
             .mpesa-extract-section .extract-grid {
                 grid-template-columns: 1fr;
@@ -905,6 +989,13 @@
             }
             .nav-icon-clickable i {
                 font-size: 0.9rem;
+            }
+            .duplicate-warning {
+                padding: 0.75rem 1rem;
+            }
+            .duplicate-warning .duplicate-actions {
+                flex-direction: column;
+                align-items: stretch;
             }
         }
 
@@ -1328,6 +1419,31 @@
                             </div>
                         </div>
 
+                        <!-- ─── Duplicate Warning ─── -->
+                        <div class="col-12">
+                            <div class="duplicate-warning" id="duplicateWarning">
+                                <div class="d-flex align-items-start">
+                                    <span class="warning-icon">⚠️</span>
+                                    <div class="flex-grow-1">
+                                        <div class="warning-title" id="duplicateTitle">Potential Duplicate Detected</div>
+                                        <div class="duplicate-details" id="duplicateDetails">
+                                            This record matches one or more existing entries.
+                                        </div>
+                                        <div id="duplicateMatches"></div>
+                                        <div class="duplicate-actions">
+                                            <span class="text-muted small">What would you like to do?</span>
+                                            <button class="btn btn-sm btn-success" id="duplicateOverrideBtn">
+                                                <i class="bi bi-check2"></i> Submit Anyway
+                                            </button>
+                                            <button class="btn btn-sm btn-secondary" id="duplicateCancelBtn">
+                                                <i class="bi bi-x"></i> Cancel & Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-12 d-none" id="amendmentReasonContainer">
                             <label for="amendmentReason" class="form-label">
                                 Amendment Reason <span class="required-star">*</span>
@@ -1666,6 +1782,8 @@
         let currentMode = 'active';
         let lastScrollY = 0;
         let isLoading = false;
+        let pendingSubmission = null; // Store pending submission data
+        let isDuplicateOverride = false;
 
         const $ = (id) => document.getElementById(id);
         const form = $('paymentForm');
@@ -1709,6 +1827,14 @@
         const appHeader = $('appHeader');
         const navMpesa = $('navMpesa');
         const navRecords = $('navRecords');
+
+        // Duplicate warning elements
+        const duplicateWarning = $('duplicateWarning');
+        const duplicateTitle = $('duplicateTitle');
+        const duplicateDetails = $('duplicateDetails');
+        const duplicateMatches = $('duplicateMatches');
+        const duplicateOverrideBtn = $('duplicateOverrideBtn');
+        const duplicateCancelBtn = $('duplicateCancelBtn');
 
         const mpesaMessage = $('mpesaMessage');
         const extractDate = $('extractDate');
@@ -1927,6 +2053,140 @@
             return false;
         }
 
+        // ════════════════════════════════════════════════
+        //  DUPLICATE DETECTION
+        // ════════════════════════════════════════════════
+
+        function checkForDuplicates(newRecord) {
+            const duplicates = [];
+
+            // Skip check if we're overriding
+            if (isDuplicateOverride) {
+                return duplicates;
+            }
+
+            // Skip check if editing
+            if ($('editMode').value === 'true') {
+                return duplicates;
+            }
+
+            allRecords.forEach(r => {
+                let matchType = [];
+                let matchDetails = [];
+
+                // 1. Check receipt number (strict - highest priority)
+                if (r.id === newRecord.receiptNumber) {
+                    matchType.push('Receipt #');
+                    matchDetails.push(`Receipt # "${r.id}" already exists`);
+                }
+
+                // 2. Check reference + amount (M-Pesa unique)
+                if (r.referenceNumber && r.referenceNumber === newRecord.referenceNumber &&
+                    parseFloat(r.amount) === parseFloat(newRecord.amount)) {
+                    matchType.push('Reference + Amount');
+                    matchDetails.push(`Same Reference "${r.referenceNumber}" and Amount ${formatCurrency(r.amount)}`);
+                }
+
+                // 3. Check date + amount + depositor (likely duplicate)
+                if (r.bankingDate === newRecord.bankingDate &&
+                    parseFloat(r.amount) === parseFloat(newRecord.amount) &&
+                    r.depositorName === newRecord.depositorName) {
+                    matchType.push('Date + Amount + Depositor');
+                    matchDetails.push(
+                        `Same date (${formatDate(r.bankingDate)}), amount (${formatCurrency(r.amount)}), and depositor "${r.depositorName}"`
+                        );
+                }
+
+                // 4. Check date + amount + account (possible duplicate)
+                if (r.bankingDate === newRecord.bankingDate &&
+                    parseFloat(r.amount) === parseFloat(newRecord.amount) &&
+                    r.accountNumber === newRecord.accountNumber) {
+                    matchType.push('Date + Amount + Account');
+                    matchDetails.push(
+                        `Same date (${formatDate(r.bankingDate)}), amount (${formatCurrency(r.amount)}), and account "${r.accountNumber}"`
+                        );
+                }
+
+                if (matchType.length > 0) {
+                    duplicates.push({
+                        id: r.id,
+                        bankingDate: r.bankingDate,
+                        amount: r.amount,
+                        depositorName: r.depositorName,
+                        accountNumber: r.accountNumber,
+                        referenceNumber: r.referenceNumber,
+                        matchType: matchType,
+                        matchDetails: matchDetails
+                    });
+                }
+            });
+
+            return duplicates;
+        }
+
+        function showDuplicateWarning(duplicates) {
+            if (duplicates.length === 0) {
+                duplicateWarning.classList.remove('show');
+                return;
+            }
+
+            // Build the warning message
+            const primaryDuplicate = duplicates[0];
+            const matchTypes = primaryDuplicate.matchType.join(' & ');
+            const matchDetails = primaryDuplicate.matchDetails.join('; ');
+
+            duplicateTitle.textContent = `⚠️ Potential Duplicate Detected (${duplicates.length} match${duplicates.length > 1 ? 'es' : ''})`;
+            duplicateDetails.textContent = `This record matches existing entries by: ${matchTypes}`;
+
+            // Show matching records
+            let matchesHtml = '<div class="mt-2"><small><strong>Matching records:</strong></small></div>';
+            duplicates.forEach((d, index) => {
+                const matchTypeDisplay = d.matchType.join(' • ');
+                matchesHtml += `
+                        <div class="duplicate-match">
+                            <strong>#${index + 1}:</strong> 
+                            Receipt: <strong>${escapeHtml(d.id)}</strong> • 
+                            Date: ${formatDate(d.bankingDate)} • 
+                            Amount: ${formatCurrency(d.amount)} • 
+                            Depositor: ${escapeHtml(d.depositorName)} • 
+                            <span class="text-muted">Match: ${matchTypeDisplay}</span>
+                        </div>
+                    `;
+            });
+            matchesHtml +=
+                `<div class="mt-1"><small class="text-muted">If this is a legitimate duplicate, click "Submit Anyway". Otherwise, cancel and review your entry.</small></div>`;
+
+            duplicateMatches.innerHTML = matchesHtml;
+            duplicateWarning.classList.add('show');
+
+            // Store pending submission
+            pendingSubmission = duplicates;
+        }
+
+        function hideDuplicateWarning() {
+            duplicateWarning.classList.remove('show');
+            pendingSubmission = null;
+            isDuplicateOverride = false;
+        }
+
+        // ─── Duplicate button handlers ───
+        duplicateOverrideBtn.addEventListener('click', function() {
+            isDuplicateOverride = true;
+            hideDuplicateWarning();
+            // Re-submit the form
+            form.dispatchEvent(new Event('submit'));
+        });
+
+        duplicateCancelBtn.addEventListener('click', function() {
+            hideDuplicateWarning();
+            // Scroll to the top of the form to highlight issues
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Focus on the receipt number field for editing
+            receiptInput.focus();
+            receiptInput.select();
+            showToast('Duplicate entry cancelled. Please review your data.', 'Info', 'info');
+        });
+
         // ─── Navigation Functions ───
 
         function scrollToMpesaExtractor() {
@@ -2110,6 +2370,8 @@
             paymentMethod.dispatchEvent(new Event('change'));
 
             showExtractSuccess();
+            // Hide any previous duplicate warning when form is filled
+            hideDuplicateWarning();
         }
 
         // ─── MPESA Extract Event Listeners ───
@@ -2129,6 +2391,7 @@
             extractSender.innerHTML = 'Sender: <strong>—</strong>';
             extractRecipient.innerHTML = 'Recipient: <strong>—</strong>';
             extractSuccess.classList.remove('show');
+            hideDuplicateWarning();
         });
 
         // ════════════════════════════════════════════════
@@ -2149,6 +2412,7 @@
                 depositorInput.style.background = '#fff8e1';
                 $('depositorHint').innerHTML =
                     '<i class="bi bi-info-circle"></i> Auto-filled from account holder. Click <strong>✕</strong> to enter a different name.';
+                hideDuplicateWarning();
             }
         });
 
@@ -2161,6 +2425,7 @@
             depositorInput.focus();
             $('depositorHint').innerHTML =
                 '<i class="bi bi-pencil"></i> Enter the depositor\'s name (required).';
+            hideDuplicateWarning();
         });
 
         depositorInput.addEventListener('input', function() {
@@ -2171,12 +2436,14 @@
                 this.style.background = '';
                 $('depositorHint').innerHTML =
                     '<i class="bi bi-pencil"></i> Enter the depositor\'s name (required).';
+                hideDuplicateWarning();
             }
             if (!this.value) {
                 this.dataset.autoFilled = 'false';
                 autoBadge.classList.remove('visible');
                 clearBtn.classList.remove('visible');
                 this.style.background = '';
+                hideDuplicateWarning();
             }
         });
 
@@ -2203,8 +2470,8 @@
                 referenceInput.required = false;
                 referenceInput.placeholder = 'Optional';
             }
+            hideDuplicateWarning();
         });
-        paymentMethod.dispatchEvent(new Event('change'));
 
         resetBtn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -2229,6 +2496,8 @@
             amendmentReason.value = '';
             amendmentReason.classList.remove('is-valid', 'is-invalid');
             updateSystemDates();
+            hideDuplicateWarning();
+            isDuplicateOverride = false;
         });
 
         // ════════════════════════════════════════════════
@@ -2254,7 +2523,7 @@
                 $('formCard').style.display = 'block';
                 $('mpesaExtractSection').style.display = 'block';
             }
-
+            hideDuplicateWarning();
             loadRecords();
         });
 
@@ -2357,6 +2626,18 @@
 
             const editDocId = $('editDocId').value;
 
+            // ─── Duplicate Check (only for new records, not edits) ───
+            if (!editMode && !isDuplicateOverride) {
+                const duplicates = checkForDuplicates(data);
+                if (duplicates.length > 0) {
+                    showDuplicateWarning(duplicates);
+                    return; // Stop submission, show warning
+                }
+            }
+
+            // Reset override flag after checking
+            isDuplicateOverride = false;
+
             try {
                 if (editMode) {
                     const docRef = db.collection(PAYMENTS_COLLECTION).doc(editDocId);
@@ -2430,6 +2711,7 @@
                     submitBtn.disabled = false;
                     amendmentReason.value = '';
                     updateSystemDates();
+                    hideDuplicateWarning();
 
                 } else {
                     await db.collection(PAYMENTS_COLLECTION).doc(receipt).set(data);
@@ -2439,6 +2721,7 @@
                     bankingDateInput.value = today;
                     receiptDateInput.value = '';
                     updateSystemDates();
+                    hideDuplicateWarning();
                 }
 
                 depositorInput.dataset.autoFilled = 'false';
@@ -2920,6 +3203,7 @@
 
                 $('editPaymentMethod').dispatchEvent(new Event('change'));
                 editModal.show();
+                hideDuplicateWarning();
 
             } catch (error) {
                 console.error('Open edit error:', error);
@@ -3699,6 +3983,7 @@
         console.log('🔢 Receipt numbers are manually entered');
         console.log('💳 Payment Methods: M-Pesa, Bank Transfer, Cheque');
         console.log('📈 Features: MPESA Extract, Manual Receipts, Version History, Amendments, Archive, Restore');
+        console.log('🛡️ Duplicate Detection: Receipt #, Reference+Amount, Date+Amount+Depositor, Date+Amount+Account');
     </script>
 
 </body>
