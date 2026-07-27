@@ -1630,7 +1630,8 @@
         //  FIREBASE CONFIGURATION
         // ════════════════════════════════════════════════
 
-       const firebaseConfig = {
+        // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
+        const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
@@ -1640,6 +1641,7 @@
   measurementId: "G-H80MK8SSQ1"
 };
 
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
@@ -1663,6 +1665,7 @@
         let currentUser = null;
         let currentMode = 'active';
         let lastScrollY = 0;
+        let isLoading = false;
 
         const $ = (id) => document.getElementById(id);
         const form = $('paymentForm');
@@ -1903,6 +1906,25 @@
             extractSuccess._timeout = setTimeout(() => {
                 extractSuccess.classList.remove('show');
             }, 3000);
+        }
+
+        // ─── Safe DOM update helpers ───
+        function safeSetInnerHTML(element, html) {
+            if (element) {
+                element.innerHTML = html;
+                return true;
+            }
+            console.warn('Element not found for innerHTML update');
+            return false;
+        }
+
+        function safeSetTextContent(element, text) {
+            if (element) {
+                element.textContent = text;
+                return true;
+            }
+            console.warn('Element not found for textContent update');
+            return false;
         }
 
         // ─── Navigation Functions ───
@@ -2443,8 +2465,20 @@
             }
         });
 
+        // ─── Load Records with safe DOM updates ───
         async function loadRecords() {
+            if (isLoading) return;
+            isLoading = true;
+
             try {
+                if (!firebase.apps || firebase.apps.length === 0) {
+                    console.warn('Firebase not initialized');
+                    allRecords = [];
+                    filteredRecords = [];
+                    updateUIWithEmptyState();
+                    return;
+                }
+
                 let collection = PAYMENTS_COLLECTION;
                 if (currentMode === 'archive') {
                     collection = ARCHIVE_COLLECTION;
@@ -2468,31 +2502,103 @@
                 const count = allRecords.length;
                 const modeLabel = currentMode === 'active' ? 'Active' : 'Archived';
 
-                // Update both header and navigation record counts
-                recordCount.innerHTML = `<i class="bi bi-database"></i> ${count} ${modeLabel} Record${count !== 1 ? 's' : ''}`;
-                recordCount.setAttribute('title', `Click to view ${count} records`);
-                navRecordCount.textContent = count;
+                // Safe updates with null checks
+                if (recordCount) {
+                    recordCount.innerHTML = `<i class="bi bi-database"></i> ${count} ${modeLabel} Record${count !== 1 ? 's' : ''}`;
+                    recordCount.setAttribute('title', `Click to view ${count} records`);
+                }
+                if (navRecordCount) {
+                    navRecordCount.textContent = count;
+                }
 
                 updateTotals();
 
             } catch (error) {
                 console.error('Load records error:', error);
-                showToast('Failed to load records.', 'Error', 'error');
+
+                if (error.code === 'not-found' || error.message.includes('does not exist')) {
+                    allRecords = [];
+                    filteredRecords = [];
+                    updateUIWithEmptyState();
+                } else {
+                    // Only show toast for real errors
+                    showToast(`Failed to load records: ${error.message}`, 'Error', 'error');
+                    allRecords = [];
+                    filteredRecords = [];
+                    updateUIWithEmptyState();
+                }
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        function updateUIWithEmptyState() {
+            const count = 0;
+            const modeLabel = currentMode === 'active' ? 'Active' : 'Archived';
+
+            // Safe updates with null checks
+            if (recordCount) {
+                recordCount.innerHTML = `<i class="bi bi-database"></i> 0 ${modeLabel} Records`;
+                recordCount.setAttribute('title', 'Click to view records');
+            }
+            if (navRecordCount) {
+                navRecordCount.textContent = '0';
+            }
+            if (statTotalRecords) {
+                statTotalRecords.textContent = '0';
+            }
+            if (statTotalAmount) {
+                statTotalAmount.textContent = 'KES 0.00';
+            }
+            if (statAverageAmount) {
+                statAverageAmount.textContent = 'KES 0.00';
+            }
+            if (statCurrentMonth) {
+                statCurrentMonth.textContent = getCurrentMonth();
+            }
+
+            // Show empty table state
+            const modeLabelLower = currentMode === 'active' ? 'active' : 'archived';
+            if (tableBody) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="11">
+                            <div class="empty-state">
+                                <i class="bi bi-${currentMode === 'active' ? 'inbox' : 'archive'}"></i>
+                                <p class="mb-0">No ${modeLabelLower} records found</p>
+                                <small class="text-muted">
+                                    ${currentMode === 'active' ? 'Add your first payment record above.' : 'Switch to Active to see current records.'}
+                                </small>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            if (tableCount) {
+                tableCount.textContent = '0';
+            }
+            if (paginationInfo) {
+                paginationInfo.textContent = 'Showing 0-0 of 0';
+            }
+            if (paginationControls) {
+                paginationControls.innerHTML = '';
             }
         }
 
         function updateTotals() {
             const total = allRecords.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
-            totalAmount.innerHTML = `<i class="bi bi-wallet2"></i> ${formatCurrency(total)}`;
+            if (totalAmount) {
+                totalAmount.innerHTML = `<i class="bi bi-wallet2"></i> ${formatCurrency(total)}`;
+            }
 
             const filteredTotal = filteredRecords.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
             const filteredCount = filteredRecords.length;
             const avg = filteredCount > 0 ? filteredTotal / filteredCount : 0;
 
-            statTotalRecords.textContent = filteredCount;
-            statTotalAmount.textContent = formatCurrency(filteredTotal);
-            statAverageAmount.textContent = formatCurrency(avg);
-            statCurrentMonth.textContent = getCurrentMonth();
+            if (statTotalRecords) statTotalRecords.textContent = filteredCount;
+            if (statTotalAmount) statTotalAmount.textContent = formatCurrency(filteredTotal);
+            if (statAverageAmount) statAverageAmount.textContent = formatCurrency(avg);
+            if (statCurrentMonth) statCurrentMonth.textContent = getCurrentMonth();
         }
 
         function populateMonthFilter() {
@@ -2502,20 +2608,22 @@
             });
             const sortedMonths = Array.from(months).sort().reverse();
 
-            const currentValue = monthFilter.value;
-            monthFilter.innerHTML = '<option value="all">All Months</option>';
-            sortedMonths.forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m;
-                const [year, month] = m.split('-');
-                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                opt.textContent = `${monthNames[parseInt(month)-1]} ${year}`;
-                if (m === currentValue) opt.selected = true;
-                monthFilter.appendChild(opt);
-            });
+            const currentValue = monthFilter ? monthFilter.value : 'all';
+            if (monthFilter) {
+                monthFilter.innerHTML = '<option value="all">All Months</option>';
+                sortedMonths.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    const [year, month] = m.split('-');
+                    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    opt.textContent = `${monthNames[parseInt(month)-1]} ${year}`;
+                    if (m === currentValue) opt.selected = true;
+                    monthFilter.appendChild(opt);
+                });
+            }
 
             const cm = getCurrentMonth();
-            if (!months.has(cm)) {
+            if (monthFilter && !months.has(cm)) {
                 const opt = document.createElement('option');
                 opt.value = cm;
                 const [year, month] = cm.split('-');
@@ -2526,8 +2634,8 @@
         }
 
         function applyFilters() {
-            const month = monthFilter.value;
-            const search = searchInput.value.toLowerCase().trim();
+            const month = monthFilter ? monthFilter.value : 'all';
+            const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
             filteredRecords = allRecords.filter(r => {
                 let match = true;
@@ -2573,7 +2681,8 @@
 
             if (pageRecords.length === 0 && totalRecords === 0) {
                 const modeLabel = currentMode === 'active' ? 'Active' : 'Archived';
-                tableBody.innerHTML = `
+                if (tableBody) {
+                    tableBody.innerHTML = `
                         <tr>
                             <td colspan="11">
                                 <div class="empty-state">
@@ -2586,9 +2695,10 @@
                             </td>
                         </tr>
                     `;
-                tableCount.textContent = '0';
-                paginationInfo.textContent = 'Showing 0-0 of 0';
-                paginationControls.innerHTML = '';
+                }
+                if (tableCount) tableCount.textContent = '0';
+                if (paginationInfo) paginationInfo.textContent = 'Showing 0-0 of 0';
+                if (paginationControls) paginationControls.innerHTML = '';
                 return;
             }
 
@@ -2691,11 +2801,12 @@
                     `;
             }
 
-            tableBody.innerHTML = html;
-            tableCount.textContent = totalRecords;
-
-            paginationInfo.textContent =
-                `Showing ${totalRecords > 0 ? start+1 : 0}-${end} of ${totalRecords}`;
+            if (tableBody) tableBody.innerHTML = html;
+            if (tableCount) tableCount.textContent = totalRecords;
+            if (paginationInfo) {
+                paginationInfo.textContent =
+                    `Showing ${totalRecords > 0 ? start+1 : 0}-${end} of ${totalRecords}`;
+            }
 
             const totalPages = Math.ceil(totalRecords / PAGE_SIZE);
             let pgHtml = '';
@@ -2718,42 +2829,52 @@
                         </li>
                     `;
             }
-            paginationControls.innerHTML = pgHtml;
+            if (paginationControls) paginationControls.innerHTML = pgHtml;
 
-            paginationControls.querySelectorAll('.page-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = parseInt(this.dataset.page);
-                    if (page >= 1 && page <= totalPages) {
-                        currentPage = page;
-                        renderTable();
-                    }
+            // Add event listeners to pagination links
+            if (paginationControls) {
+                paginationControls.querySelectorAll('.page-link').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const page = parseInt(this.dataset.page);
+                        if (page >= 1 && page <= totalPages) {
+                            currentPage = page;
+                            renderTable();
+                        }
+                    });
                 });
-            });
+            }
 
-            tableBody.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', () => openEditModal(btn.dataset.id));
-            });
+            // Add event listeners to action buttons
+            if (tableBody) {
+                tableBody.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', () => openEditModal(btn.dataset.id));
+                });
 
-            tableBody.querySelectorAll('.history-btn').forEach(btn => {
-                btn.addEventListener('click', () => openHistoryModal(btn.dataset.id));
-            });
+                tableBody.querySelectorAll('.history-btn').forEach(btn => {
+                    btn.addEventListener('click', () => openHistoryModal(btn.dataset.id));
+                });
 
-            tableBody.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', () => deleteRecord(btn.dataset.id));
-            });
+                tableBody.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', () => deleteRecord(btn.dataset.id));
+                });
 
-            tableBody.querySelectorAll('.restore-btn').forEach(btn => {
-                btn.addEventListener('click', () => restoreRecord(btn.dataset.id));
-            });
+                tableBody.querySelectorAll('.restore-btn').forEach(btn => {
+                    btn.addEventListener('click', () => restoreRecord(btn.dataset.id));
+                });
+            }
 
             updateUIBasedOnRole();
         }
 
-        monthFilter.addEventListener('change', () => { currentPage = 1;
-            applyFilters(); });
-        searchInput.addEventListener('input', () => { currentPage = 1;
-            applyFilters(); });
+        if (monthFilter) {
+            monthFilter.addEventListener('change', () => { currentPage = 1;
+                applyFilters(); });
+        }
+        if (searchInput) {
+            searchInput.addEventListener('input', () => { currentPage = 1;
+                applyFilters(); });
+        }
 
         // ════════════════════════════════════════════════
         //  EDIT MODAL
