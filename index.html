@@ -36,6 +36,8 @@
             --daily-total-border: #0d6efd;
             --amended-bg: #fff3cd;
             --amended-border: #ffc107;
+            --bluebar-even: #f5f9ff;
+            --bluebar-odd: #ffffff;
         }
 
         body {
@@ -44,12 +46,21 @@
             padding-bottom: 3rem;
         }
 
+        /* ── Sticky Header ── */
         .app-header {
             background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
             color: white;
             padding: 1.5rem 0;
             margin-bottom: 2rem;
             box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .app-header.scrolled {
+            padding: 0.8rem 0;
+            box-shadow: 0 4px 20px rgba(13, 110, 253, 0.4);
         }
         .app-header h1 {
             font-weight: 600;
@@ -82,6 +93,104 @@
         .app-header .role-badge.admin {
             background: rgba(255, 215, 0, 0.3);
             color: #ffd700;
+        }
+
+        /* ── Clickable Navigation Icons ── */
+        .nav-icon-clickable {
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.4rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        .nav-icon-clickable:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .nav-icon-clickable:active {
+            transform: scale(0.95);
+        }
+        .nav-icon-clickable i {
+            font-size: 1.1rem;
+        }
+
+        /* ── Pulse animation for nav icons ── */
+        .nav-icon-clickable.pulse-mpesa {
+            animation: pulse-mpesa 2.5s ease-in-out infinite;
+        }
+        .nav-icon-clickable.pulse-records {
+            animation: pulse-records 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-mpesa {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 166, 81, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 12px rgba(0, 166, 81, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 166, 81, 0);
+            }
+        }
+        @keyframes pulse-records {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+            }
+            70% {
+                box-shadow: 0 0 0 12px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        /* ── Highlight flash for sections ── */
+        @keyframes highlight-flash {
+            0% {
+                box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4);
+                border-color: rgba(13, 110, 253, 0.6);
+            }
+            40% {
+                box-shadow: 0 0 30px 10px rgba(13, 110, 253, 0.15);
+                border-color: rgba(13, 110, 253, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+                border-color: transparent;
+            }
+        }
+        @keyframes highlight-flash-mpesa {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 166, 81, 0.4);
+                border-color: rgba(0, 166, 81, 0.6);
+            }
+            40% {
+                box-shadow: 0 0 30px 10px rgba(0, 166, 81, 0.15);
+                border-color: rgba(0, 166, 81, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 166, 81, 0);
+                border-color: transparent;
+            }
+        }
+
+        .section-highlight {
+            animation: highlight-flash 1.2s ease-out;
+            border: 2px solid rgba(13, 110, 253, 0.3) !important;
+            transition: border-color 0.3s;
+        }
+        .section-highlight-mpesa {
+            animation: highlight-flash-mpesa 1.2s ease-out;
+            border: 2px solid rgba(0, 166, 81, 0.3) !important;
+            transition: border-color 0.3s;
         }
 
         .card {
@@ -186,18 +295,8 @@
         .amount-input-wrapper {
             position: relative;
         }
-        .amount-input-wrapper .currency-symbol {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-weight: 600;
-            color: #495057;
-            font-size: 1rem;
-            z-index: 5;
-        }
         .amount-input-wrapper .form-control {
-            padding-left: 2.5rem;
+            padding-left: 1rem;
         }
 
         .depositor-wrapper {
@@ -302,10 +401,34 @@
             vertical-align: middle;
             font-size: 0.85rem;
         }
-        .table .current-month {
+
+        /* ── Bluebar (alternating row colors) ── */
+        .table tbody tr:nth-child(even) {
+            background-color: var(--bluebar-even);
+        }
+        .table tbody tr:nth-child(odd) {
+            background-color: var(--bluebar-odd);
+        }
+
+        /* ── Override for special rows ── */
+        .table tbody tr.current-month {
             background: var(--current-month-bg) !important;
             border-left: 4px solid var(--current-month-border);
         }
+        .table tbody tr.amended-record {
+            background: var(--amended-bg) !important;
+            border-left: 4px solid var(--amended-border);
+        }
+        .table tbody tr.daily-total-row td {
+            background: var(--daily-total-bg) !important;
+            border-top: 2px solid var(--daily-total-border);
+            border-bottom: 2px solid var(--daily-total-border);
+        }
+        .table tbody tr.grand-total-row td {
+            background: #e8f5e9 !important;
+            border-top: 3px solid var(--success-color);
+        }
+
         .table .current-month .month-badge {
             background: var(--current-month-border);
             color: white;
@@ -425,10 +548,6 @@
             max-width: 180px;
         }
 
-        .table .amended-record {
-            background: var(--amended-bg) !important;
-            border-left: 4px solid var(--amended-border);
-        }
         .table .amended-record .amended-badge {
             background: var(--amended-border);
             color: #000;
@@ -439,14 +558,6 @@
             font-weight: 600;
         }
 
-        .table .daily-total-row td {
-            background: var(--daily-total-bg) !important;
-            border-top: 2px solid var(--daily-total-border);
-            border-bottom: 2px solid var(--daily-total-border);
-            font-weight: 700;
-            color: var(--daily-total-border);
-            padding: 0.4rem 0.75rem;
-        }
         .table .daily-total-row .daily-total-label {
             font-weight: 600;
             color: #0d6efd;
@@ -458,13 +569,6 @@
             font-size: 0.95rem;
         }
 
-        .table .grand-total-row td {
-            background: #e8f5e9 !important;
-            border-top: 3px solid var(--success-color);
-            font-weight: 700;
-            color: var(--success-color);
-            padding: 0.5rem 0.75rem;
-        }
         .table .grand-total-row .grand-total-label {
             font-weight: 700;
             color: var(--success-color);
@@ -592,6 +696,7 @@
             padding: 1.25rem 1.5rem;
             border: 1px solid #e3eaf3;
             margin-bottom: 1.5rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         .mpesa-extract-section textarea {
             width: 100%;
@@ -678,19 +783,53 @@
         .mpesa-extract-section .extract-actions .btn-primary {
             background: #1f4b74;
             color: white;
+            box-shadow: 0 2px 4px rgba(31, 75, 116, 0.2);
         }
         .mpesa-extract-section .extract-actions .btn-primary:hover {
             background: #123a5e;
             transform: scale(0.97);
+            box-shadow: 0 1px 3px rgba(31, 75, 116, 0.3);
         }
         .mpesa-extract-section .extract-actions .btn-outline {
-            background: transparent;
+            background: #e3ebf5;
             border: 1px solid #bcc9db;
             color: #1a3852;
+            transition: all 0.2s;
         }
         .mpesa-extract-section .extract-actions .btn-outline:hover {
-            background: #e3ebf5;
+            background: #d0dceb;
+            border-color: #8fa3be;
+            transform: scale(0.97);
         }
+        .mpesa-extract-section .extract-actions .btn-outline:active {
+            transform: scale(0.95);
+        }
+        .mpesa-extract-section .extract-actions .extract-success {
+            display: none;
+            color: #198754;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: 0.25rem;
+            animation: fadeIn 0.3s ease;
+        }
+        .mpesa-extract-section .extract-actions .extract-success.show {
+            display: inline-block;
+        }
+        .mpesa-extract-section .extract-actions .extract-success i {
+            margin-right: 0.3rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         .mpesa-extract-section .sender-recipient {
             display: flex;
             gap: 1.5rem;
@@ -753,6 +892,20 @@
             .mpesa-extract-section .extract-actions .btn {
                 justify-content: center;
             }
+            .mpesa-extract-section .extract-actions .extract-success {
+                text-align: center;
+                margin-top: 0.25rem;
+            }
+            .app-header h1 {
+                font-size: 1.1rem;
+            }
+            .nav-icon-clickable {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.6rem;
+            }
+            .nav-icon-clickable i {
+                font-size: 0.9rem;
+            }
         }
 
         @media (max-width: 768px) {
@@ -762,6 +915,10 @@
             .app-header .badge-count,
             .app-header .total-amount,
             .app-header .role-badge {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.75rem;
+            }
+            .nav-icon-clickable {
                 font-size: 0.75rem;
                 padding: 0.25rem 0.75rem;
             }
@@ -914,7 +1071,7 @@
     </div>
 
     <!-- ─── HEADER ─── -->
-    <header class="app-header">
+    <header class="app-header" id="appHeader">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
                 <div class="d-flex align-items-center gap-3">
@@ -922,16 +1079,20 @@
                     <h1>Payment Ledger</h1>
                 </div>
                 <div class="d-flex flex-wrap align-items-center gap-2">
+                    <!-- MPESA Navigation Icon -->
+                    <span class="nav-icon-clickable pulse-mpesa" id="navMpesa" title="Back to MPESA extractor">
+                        <i class="bi bi-phone"></i> MPESA
+                    </span>
+                    <span class="nav-icon-clickable pulse-records" id="navRecords" title="Click to view records">
+                        <i class="bi bi-database"></i> <span id="navRecordCount">0</span> Records
+                    </span>
                     <span class="role-badge" id="roleBadge">
                         <i class="bi bi-person"></i> Viewer
                     </span>
                     <span class="total-amount" id="totalAmount">
                         <i class="bi bi-wallet2"></i> KES 0.00
                     </span>
-                    <span class="badge-count" id="recordCount">
-                        <i class="bi bi-database"></i> 0 Records
-                    </span>
-                    <button class="btn btn-light btn-sm" id="exportBtn" title="Export to Excel">
+                    <button class="btn btn-light btn-sm d-none" id="exportBtn" title="Export to Excel">
                         <i class="bi bi-file-earmark-excel"></i> Export
                     </button>
                     <button class="btn btn-outline-light btn-sm d-none" id="clearMonthBtn" title="Archive Month">
@@ -968,15 +1129,15 @@
 
         <!-- ─── MPESA EXTRACT SECTION ─── -->
         <div class="mpesa-extract-section" id="mpesaExtractSection">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                <h6 class="mb-0"><i class="bi bi-phone me-2"></i>MPESA Message Extractor</h6>
-                <small class="text-muted">Paste transaction SMS to auto-fill form fields</small>
-            </div>
+            <h6 class="mb-2"><i class="bi bi-phone me-2"></i>MPESA Message Extractor</h6>
             <textarea id="mpesaMessage" placeholder="Paste M-PESA message here …"></textarea>
             <div class="extract-actions">
                 <button class="btn btn-primary" id="extractBtn">🔍 Extract & Fill</button>
                 <button class="btn btn-outline" id="clearMpesaBtn">✕ Clear</button>
-                <span style="margin-left:auto; font-size:0.7rem; color:#4d6e8c;">auto‑extract to form</span>
+                <span class="extract-success" id="extractSuccess">
+                    <i class="bi bi-check-circle-fill"></i> Form filled successfully
+                </span>
+                <span style="margin-left:auto; font-size:0.7rem; color:#4d6e8c;">Paste transaction SMS to auto-fill form fields</span>
             </div>
             <div class="extract-grid" id="extractGrid">
                 <div class="field">
@@ -1068,7 +1229,6 @@
                                 Amount (KES) <span class="required-star">*</span>
                             </label>
                             <div class="amount-input-wrapper">
-                                <span class="currency-symbol">KES</span>
                                 <input type="number"
                                 class="form-control"
                                 id="amountPaid"
@@ -1201,7 +1361,7 @@
         </div>
 
         <!-- ─── DATA TABLE CARD ─── -->
-        <div class="card">
+        <div class="card" id="tableCard">
             <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
                 <span>
                     <i class="bi bi-table me-2"></i> Records
@@ -1470,7 +1630,7 @@
         //  FIREBASE CONFIGURATION
         // ════════════════════════════════════════════════
 
-        const firebaseConfig = {
+       const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
@@ -1502,6 +1662,7 @@
         let isAdmin = false;
         let currentUser = null;
         let currentMode = 'active';
+        let lastScrollY = 0;
 
         const $ = (id) => document.getElementById(id);
         const form = $('paymentForm');
@@ -1521,6 +1682,7 @@
         const tableBody = $('tableBody');
         const tableCount = $('tableCount');
         const recordCount = $('recordCount');
+        const navRecordCount = $('navRecordCount');
         const totalAmount = $('totalAmount');
         const monthFilter = $('monthFilter');
         const searchInput = $('searchInput');
@@ -1539,6 +1701,11 @@
         const amendmentReason = $('amendmentReason');
         const systemEntryDate = $('systemEntryDate');
         const systemModifiedDate = $('systemModifiedDate');
+        const tableCard = $('tableCard');
+        const mpesaExtractSection = $('mpesaExtractSection');
+        const appHeader = $('appHeader');
+        const navMpesa = $('navMpesa');
+        const navRecords = $('navRecords');
 
         const mpesaMessage = $('mpesaMessage');
         const extractDate = $('extractDate');
@@ -1546,6 +1713,7 @@
         const extractRef = $('extractRef');
         const extractSender = $('extractSender');
         const extractRecipient = $('extractRecipient');
+        const extractSuccess = $('extractSuccess');
 
         const statTotalRecords = $('statTotalRecords');
         const statTotalAmount = $('statTotalAmount');
@@ -1663,20 +1831,19 @@
             if (isAdmin) {
                 roleBadge.className = 'role-badge admin';
                 roleBadge.innerHTML = '<i class="bi bi-shield-lock-fill"></i> Admin';
-            } else if (currentUser) {
-                roleBadge.className = 'role-badge';
-                roleBadge.innerHTML = `<i class="bi bi-person"></i> ${currentUser.email}`;
-            } else {
-                roleBadge.className = 'role-badge';
-                roleBadge.innerHTML = '<i class="bi bi-person"></i> Viewer';
-            }
-
-            if (isAdmin) {
+                exportBtn.classList.remove('d-none');
                 clearMonthBtn.classList.remove('d-none');
                 adminLoginBtn.classList.add('d-none');
                 adminLogoutBtn.classList.remove('d-none');
                 amendmentReasonContainer.classList.remove('d-none');
             } else {
+                roleBadge.className = 'role-badge';
+                if (currentUser) {
+                    roleBadge.innerHTML = `<i class="bi bi-person"></i> ${currentUser.email}`;
+                } else {
+                    roleBadge.innerHTML = '<i class="bi bi-person"></i> Viewer';
+                }
+                exportBtn.classList.add('d-none');
                 clearMonthBtn.classList.add('d-none');
                 adminLoginBtn.classList.remove('d-none');
                 adminLogoutBtn.classList.add('d-none');
@@ -1729,6 +1896,65 @@
 
             return `${year}-${month}-${day}`;
         }
+
+        function showExtractSuccess() {
+            extractSuccess.classList.add('show');
+            clearTimeout(extractSuccess._timeout);
+            extractSuccess._timeout = setTimeout(() => {
+                extractSuccess.classList.remove('show');
+            }, 3000);
+        }
+
+        // ─── Navigation Functions ───
+
+        function scrollToMpesaExtractor() {
+            if (mpesaExtractSection) {
+                mpesaExtractSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+                mpesaExtractSection.classList.remove('section-highlight-mpesa');
+                void mpesaExtractSection.offsetWidth;
+                mpesaExtractSection.classList.add('section-highlight-mpesa');
+
+                setTimeout(() => {
+                    mpesaExtractSection.classList.remove('section-highlight-mpesa');
+                }, 1500);
+            }
+        }
+
+        function scrollToRecords() {
+            if (tableCard) {
+                tableCard.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+                tableCard.classList.remove('section-highlight');
+                void tableCard.offsetWidth;
+                tableCard.classList.add('section-highlight');
+
+                setTimeout(() => {
+                    tableCard.classList.remove('section-highlight');
+                }, 1500);
+            }
+        }
+
+        // ─── Click handlers for navigation icons ───
+        navMpesa.addEventListener('click', scrollToMpesaExtractor);
+        navRecords.addEventListener('click', scrollToRecords);
+
+        // ─── Sticky header shrink on scroll ───
+        window.addEventListener('scroll', function() {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > 50) {
+                appHeader.classList.add('scrolled');
+            } else {
+                appHeader.classList.remove('scrolled');
+            }
+            lastScrollY = currentScrollY;
+        });
 
         // ════════════════════════════════════════════════
         //  MPESA EXTRACT LOGIC
@@ -1816,7 +2042,8 @@
             extractDate.classList.remove('placeholder');
             if (date === '—') extractDate.classList.add('placeholder');
 
-            extractAmount.textContent = amount !== '—' ? `KES ${amount}` : '—';
+            // Show just the number without "KES" prefix (redundancy removed)
+            extractAmount.textContent = amount !== '—' ? amount : '—';
             extractAmount.classList.remove('placeholder');
             if (amount === '—') extractAmount.classList.add('placeholder');
 
@@ -1860,7 +2087,7 @@
             paymentMethod.value = 'M-Pesa';
             paymentMethod.dispatchEvent(new Event('change'));
 
-            showToast('Form filled from MPESA message.', 'Extract Complete', 'success');
+            showExtractSuccess();
         }
 
         // ─── MPESA Extract Event Listeners ───
@@ -1879,6 +2106,7 @@
             extractRef.classList.add('placeholder');
             extractSender.innerHTML = 'Sender: <strong>—</strong>';
             extractRecipient.innerHTML = 'Recipient: <strong>—</strong>';
+            extractSuccess.classList.remove('show');
         });
 
         // ════════════════════════════════════════════════
@@ -2239,7 +2467,11 @@
 
                 const count = allRecords.length;
                 const modeLabel = currentMode === 'active' ? 'Active' : 'Archived';
+
+                // Update both header and navigation record counts
                 recordCount.innerHTML = `<i class="bi bi-database"></i> ${count} ${modeLabel} Record${count !== 1 ? 's' : ''}`;
+                recordCount.setAttribute('title', `Click to view ${count} records`);
+                navRecordCount.textContent = count;
 
                 updateTotals();
 
