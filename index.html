@@ -642,6 +642,9 @@
             min-height: 2.4rem;
             display: flex;
             align-items: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .mpesa-extract-section .extract-grid .field .value.placeholder {
             color: #8da0b9;
@@ -654,6 +657,8 @@
             background: #ecf3fd;
             border-color: #b6cce5;
             font-family: 'SF Mono', 'Roboto Mono', monospace;
+            max-width: 300px;
+            font-size: 0.8rem;
         }
         .mpesa-extract-section .extract-actions {
             display: flex;
@@ -737,6 +742,9 @@
             }
             .mpesa-extract-section .extract-grid .field.ref-block {
                 grid-column: 1;
+            }
+            .mpesa-extract-section .extract-grid .field.ref-block .value {
+                max-width: 100%;
             }
             .mpesa-extract-section .extract-actions {
                 flex-direction: column;
@@ -1737,6 +1745,7 @@
                 return { date, amount, ref, sender, recipient };
             }
 
+            // Date: 01 Jun 2026 at 02:02:46 PM
             const datePattern = /(\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4})\s+at\s+(\d{1,2}:\d{2}:\d{2}\s*(?:AM|PM)?)/i;
             const dateMatch = text.match(datePattern);
             if (dateMatch) {
@@ -1746,6 +1755,7 @@
                 if (fallbackDate) date = fallbackDate[1];
             }
 
+            // Amount: KES 2,000.00
             const amountPattern = /KES\s*([\d,]+\.\d{2})/i;
             const amountMatch = text.match(amountPattern);
             if (amountMatch) {
@@ -1764,20 +1774,21 @@
                 }
             }
 
-            let refMatch = text.match(/MPESA\s*Ref\s*([A-Za-z0-9]+)/i);
+            // MPESA Reference - capture only the reference code (alphanumeric)
+            let refMatch = text.match(/MPESA\s+Ref\s+([A-Za-z0-9]+)/i);
             if (!refMatch) {
-                refMatch = text.match(/ReferenceNo\.?\s*([A-Za-z0-9]+)/i);
+                refMatch = text.match(/Ref(?:erence)?\.?\s*([A-Za-z0-9]+)/i);
             }
             if (!refMatch) {
-                refMatch = text.match(/Ref\s*[:\-]?\s*([A-Za-z0-9]+)/i);
-            }
-            if (refMatch && refMatch[1]) {
-                ref = refMatch[1].trim();
-            } else {
+                // Fallback: look for "for" followed by phone number (if no reference found)
                 const phoneRef = text.match(/for\s+([\d*]+)/i);
                 if (phoneRef && phoneRef[1]) ref = phoneRef[1];
             }
+            if (refMatch && refMatch[1]) {
+                ref = refMatch[1].trim();
+            }
 
+            // Sender
             const senderPattern = /from\s+([A-Z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$)/i;
             const senderMatch = text.match(senderPattern);
             if (senderMatch && senderMatch[1]) {
@@ -1787,6 +1798,7 @@
                 if (fallbackSender && fallbackSender[1]) sender = fallbackSender[1].trim();
             }
 
+            // Recipient
             const recipientPattern = /Dear\s+([A-Za-z0-9]+)/i;
             const recipientMatch = text.match(recipientPattern);
             if (recipientMatch && recipientMatch[1]) {
