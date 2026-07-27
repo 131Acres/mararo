@@ -130,6 +130,9 @@
         .nav-icon-clickable.pulse-records {
             animation: pulse-records 2.5s ease-in-out infinite;
         }
+        .nav-icon-clickable.pulse-role {
+            animation: pulse-role 3s ease-in-out infinite;
+        }
 
         @keyframes pulse-mpesa {
             0% {
@@ -148,6 +151,17 @@
             }
             70% {
                 box-shadow: 0 0 0 12px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+        @keyframes pulse-role {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.15);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
             }
             100% {
                 box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
@@ -959,6 +973,37 @@
             }
         }
 
+        /* ── Uniform Header Elements ── */
+        .header-element {
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .header-element-role {
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: default;
+        }
+        .header-element-role.pulse-role {
+            animation: pulse-role 3s ease-in-out infinite;
+        }
+        .header-element-role.admin {
+            background: rgba(255, 215, 0, 0.25);
+            border-color: rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+        }
+
         @media (max-width: 540px) {
             .mpesa-extract-section .extract-grid {
                 grid-template-columns: 1fr;
@@ -983,6 +1028,15 @@
             .app-header h1 {
                 font-size: 1.1rem;
             }
+            .header-element,
+            .header-element-role {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.6rem;
+            }
+            .header-element i,
+            .header-element-role i {
+                font-size: 0.9rem;
+            }
             .nav-icon-clickable {
                 font-size: 0.7rem;
                 padding: 0.25rem 0.6rem;
@@ -1003,9 +1057,8 @@
             .app-header h1 {
                 font-size: 1.3rem;
             }
-            .app-header .badge-count,
-            .app-header .total-amount,
-            .app-header .role-badge {
+            .header-element,
+            .header-element-role {
                 font-size: 0.75rem;
                 padding: 0.25rem 0.75rem;
             }
@@ -1177,22 +1230,25 @@
                     <span class="nav-icon-clickable pulse-records" id="navRecords" title="Click to view records">
                         <i class="bi bi-database"></i> <span id="navRecordCount">0</span> Records
                     </span>
-                    <span class="role-badge" id="roleBadge">
+                    <!-- Role Badge - uniform size with subtle pulse -->
+                    <span class="header-element-role pulse-role" id="roleBadge">
                         <i class="bi bi-person"></i> Viewer
                     </span>
-                    <span class="total-amount" id="totalAmount">
+                    <!-- Total Amount - uniform size -->
+                    <span class="header-element" id="totalAmount" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.1);">
                         <i class="bi bi-wallet2"></i> KES 0.00
                     </span>
-                    <button class="btn btn-light btn-sm d-none" id="exportBtn" title="Export to Excel">
+                    <!-- Export Button - uniform size -->
+                    <button class="header-element btn btn-light btn-sm d-none" id="exportBtn" title="Export to Excel" style="background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.1);">
                         <i class="bi bi-file-earmark-excel"></i> Export
                     </button>
-                    <button class="btn btn-outline-light btn-sm d-none" id="clearMonthBtn" title="Archive Month">
+                    <button class="header-element btn btn-outline-light btn-sm d-none" id="clearMonthBtn" title="Archive Month" style="padding:0.4rem 1rem; font-size:0.9rem; border-radius:50px;">
                         <i class="bi bi-archive"></i> Archive
                     </button>
-                    <button class="btn btn-outline-light btn-sm d-none" id="adminLoginBtn" title="Admin Login">
+                    <button class="header-element btn btn-outline-light btn-sm d-none" id="adminLoginBtn" title="Admin Login" style="padding:0.4rem 1rem; font-size:0.9rem; border-radius:50px;">
                         <i class="bi bi-person-lock"></i> Admin
                     </button>
-                    <button class="btn btn-light btn-sm d-none" id="adminLogoutBtn" title="Logout">
+                    <button class="header-element btn btn-light btn-sm d-none" id="adminLogoutBtn" title="Logout" style="background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.1); padding:0.4rem 1rem; font-size:0.9rem; border-radius:50px;">
                         <i class="bi bi-box-arrow-right"></i> Logout
                     </button>
                 </div>
@@ -1747,7 +1803,7 @@
         // ════════════════════════════════════════════════
 
         // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
-        const firebaseConfig = {
+         const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
@@ -1756,7 +1812,6 @@
   appId: "1:108531489986:web:9510d993a9cad71219ef5b",
   measurementId: "G-H80MK8SSQ1"
 };
-
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -1958,7 +2013,7 @@
             const isAdmin = isAdminUser();
 
             if (isAdmin) {
-                roleBadge.className = 'role-badge admin';
+                roleBadge.className = 'header-element-role pulse-role admin';
                 roleBadge.innerHTML = '<i class="bi bi-shield-lock-fill"></i> Admin';
                 exportBtn.classList.remove('d-none');
                 clearMonthBtn.classList.remove('d-none');
@@ -1966,7 +2021,7 @@
                 adminLogoutBtn.classList.remove('d-none');
                 amendmentReasonContainer.classList.remove('d-none');
             } else {
-                roleBadge.className = 'role-badge';
+                roleBadge.className = 'header-element-role pulse-role';
                 if (currentUser) {
                     roleBadge.innerHTML = `<i class="bi bi-person"></i> ${currentUser.email}`;
                 } else {
@@ -3971,6 +4026,9 @@
         // ════════════════════════════════════════════════
         //  INIT
         // ════════════════════════════════════════════════
+
+        // Ensure page starts at the top
+        window.scrollTo(0, 0);
 
         loadRecords();
         setInterval(loadRecords, 30000);
