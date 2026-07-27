@@ -311,8 +311,20 @@
         .amount-input-wrapper {
             position: relative;
         }
+        .amount-input-wrapper .currency-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.85rem;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0.7;
+        }
         .amount-input-wrapper .form-control {
-            padding-left: 1rem;
+            padding-left: 2.8rem;
         }
 
         .depositor-wrapper {
@@ -713,6 +725,7 @@
             border: 1px solid #e3eaf3;
             margin-bottom: 1.5rem;
             transition: border-color 0.3s, box-shadow 0.3s;
+            scroll-margin-top: 100px;
         }
         .mpesa-extract-section textarea {
             width: 100%;
@@ -734,33 +747,35 @@
             outline: none;
             background: #ffffff;
         }
+
+        /* ── Compact 3-Column Extract Grid ── */
         .mpesa-extract-section .extract-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem 1.5rem;
-            margin-top: 1rem;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.6rem 1rem;
+            margin-top: 0.75rem;
         }
         .mpesa-extract-section .extract-grid .field {
             display: flex;
             flex-direction: column;
-            gap: 0.15rem;
+            gap: 0.1rem;
         }
         .mpesa-extract-section .extract-grid .field label {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             font-weight: 600;
             color: #4a6785;
         }
         .mpesa-extract-section .extract-grid .field .value {
             background: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 30px;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
             border: 1px solid #d9e2ef;
             font-weight: 500;
             color: #0a263c;
-            font-size: 0.85rem;
-            min-height: 2.4rem;
+            font-size: 0.8rem;
+            min-height: 2rem;
             display: flex;
             align-items: center;
             overflow: hidden;
@@ -771,16 +786,14 @@
             color: #8da0b9;
             font-weight: 400;
         }
-        .mpesa-extract-section .extract-grid .field.ref-block {
-            grid-column: 1 / -1;
-        }
         .mpesa-extract-section .extract-grid .field.ref-block .value {
             background: #ecf3fd;
             border-color: #b6cce5;
             font-family: 'SF Mono', 'Roboto Mono', monospace;
-            max-width: 300px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            max-width: 100%;
         }
+
         .mpesa-extract-section .extract-actions {
             display: flex;
             flex-wrap: wrap;
@@ -850,12 +863,13 @@
             display: flex;
             gap: 1.5rem;
             flex-wrap: wrap;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             background: #eef4fc;
-            padding: 0.3rem 1rem;
+            padding: 0.2rem 0.8rem;
             border-radius: 40px;
             color: #1b3f5e;
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
+            grid-column: 1 / -1;
         }
         .mpesa-extract-section .sender-recipient strong {
             font-weight: 500;
@@ -1004,12 +1018,17 @@
             color: #ffd700;
         }
 
+        /* ── Table Card scroll margin ── */
+        #tableCard {
+            scroll-margin-top: 100px;
+        }
+
         @media (max-width: 540px) {
             .mpesa-extract-section .extract-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
             .mpesa-extract-section .extract-grid .field.ref-block {
-                grid-column: 1;
+                grid-column: 1 / -1;
             }
             .mpesa-extract-section .extract-grid .field.ref-block .value {
                 max-width: 100%;
@@ -1050,6 +1069,13 @@
             .duplicate-warning .duplicate-actions {
                 flex-direction: column;
                 align-items: stretch;
+            }
+            .amount-input-wrapper .currency-prefix {
+                font-size: 0.7rem;
+                left: 0.75rem;
+            }
+            .amount-input-wrapper .form-control {
+                padding-left: 2.2rem;
             }
         }
 
@@ -1197,6 +1223,19 @@
                 min-width: 55px;
                 max-width: 70px;
             }
+            .amount-input-wrapper .currency-prefix {
+                font-size: 0.65rem;
+                left: 0.6rem;
+            }
+            .amount-input-wrapper .form-control {
+                padding-left: 2rem;
+            }
+            .mpesa-extract-section .extract-grid {
+                grid-template-columns: 1fr;
+            }
+            .mpesa-extract-section .extract-grid .field.ref-block {
+                grid-column: 1;
+            }
         }
     </style>
 </head>
@@ -1288,15 +1327,15 @@
             </div>
             <div class="extract-grid" id="extractGrid">
                 <div class="field">
-                    <label>📅 MPESA Date → Banking Date</label>
+                    <label>📅 Date</label>
                     <div class="value placeholder" id="extractDate">—</div>
                 </div>
                 <div class="field">
-                    <label>💰 Amount (KES)</label>
+                    <label>💰 Amount</label>
                     <div class="value placeholder" id="extractAmount">—</div>
                 </div>
                 <div class="field ref-block">
-                    <label>🔖 MPESA Reference</label>
+                    <label>🔖 Reference</label>
                     <div class="value placeholder" id="extractRef">—</div>
                 </div>
                 <div class="sender-recipient">
@@ -1322,7 +1361,8 @@
 
                     <div class="row g-3">
 
-                        <div class="col-md-6">
+                        <!-- Row 1: Receipt # | Banking Date | Amount -->
+                        <div class="col-md-4">
                             <label for="receiptNumber" class="form-label">
                                 Receipt # <span class="required-star">*</span>
                                 <span class="manual-badge">Manual</span>
@@ -1342,7 +1382,7 @@
                             </span>
                         </div>
 
-                        <div class="col-md-6 date-field-primary">
+                        <div class="col-md-4 date-field-primary">
                             <label for="bankingDate" class="form-label">
                                 Banking Date <span class="required-star">*</span>
                                 <span class="field-badge primary-badge">PRIMARY</span>
@@ -1358,24 +1398,12 @@
                             </span>
                         </div>
 
-                        <div class="col-md-6 date-field-optional">
-                            <label for="receiptDate" class="form-label">
-                                Receipt Date
-                                <span class="field-badge optional-badge">OPTIONAL</span>
-                            </label>
-                            <input type="date"
-                            class="form-control"
-                            id="receiptDate" />
-                            <span class="field-helper">
-                                <i class="bi bi-receipt"></i> Date printed on the physical receipt
-                            </span>
-                        </div>
-
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="amountPaid" class="form-label">
                                 Amount (KES) <span class="required-star">*</span>
                             </label>
                             <div class="amount-input-wrapper">
+                                <span class="currency-prefix">KES</span>
                                 <input type="number"
                                 class="form-control"
                                 id="amountPaid"
@@ -1390,7 +1418,21 @@
                             </span>
                         </div>
 
-                        <div class="col-md-6">
+                        <!-- Row 2: Receipt Date | Account # | Account Holder -->
+                        <div class="col-md-4 date-field-optional">
+                            <label for="receiptDate" class="form-label">
+                                Receipt Date
+                                <span class="field-badge optional-badge">OPTIONAL</span>
+                            </label>
+                            <input type="date"
+                            class="form-control"
+                            id="receiptDate" />
+                            <span class="field-helper">
+                                <i class="bi bi-receipt"></i> Date printed on the physical receipt
+                            </span>
+                        </div>
+
+                        <div class="col-md-4">
                             <label for="accountNumber" class="form-label">
                                 Account # <span class="required-star">*</span>
                             </label>
@@ -1401,7 +1443,7 @@
                             </span>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="accountHolder" class="form-label">
                                 Account Holder <span class="required-star">*</span>
                             </label>
@@ -1412,7 +1454,8 @@
                             </span>
                         </div>
 
-                        <div class="col-md-6">
+                        <!-- Row 3: Depositor Name | Payment Method | Reference # -->
+                        <div class="col-md-4">
                             <label for="depositorName" class="form-label">
                                 Depositor Name <span class="required-star">*</span>
                             </label>
@@ -1433,7 +1476,7 @@
                             </span>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="paymentMethod" class="form-label">
                                 Payment Method <span class="required-star">*</span>
                             </label>
@@ -1449,7 +1492,7 @@
                             </span>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="referenceNumber" class="form-label">
                                 Reference #
                                 <span class="ref-required-badge" id="refRequiredBadge">(Required for Transfers)</span>
@@ -1464,6 +1507,7 @@
                             </span>
                         </div>
 
+                        <!-- System Dates -->
                         <div class="col-12">
                             <div class="system-dates">
                                 <span class="label"><i class="bi bi-clock-history"></i> System Dates:</span>
@@ -1804,14 +1848,14 @@
 
         // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
          const firebaseConfig = {
-  apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
-  authDomain: "payment-ledger-666f9.firebaseapp.com",
-  projectId: "payment-ledger-666f9",
-  storageBucket: "payment-ledger-666f9.firebasestorage.app",
-  messagingSenderId: "108531489986",
-  appId: "1:108531489986:web:9510d993a9cad71219ef5b",
-  measurementId: "G-H80MK8SSQ1"
-};
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -1837,7 +1881,7 @@
         let currentMode = 'active';
         let lastScrollY = 0;
         let isLoading = false;
-        let pendingSubmission = null; // Store pending submission data
+        let pendingSubmission = null;
         let isDuplicateOverride = false;
 
         const $ = (id) => document.getElementById(id);
@@ -1883,7 +1927,6 @@
         const navMpesa = $('navMpesa');
         const navRecords = $('navRecords');
 
-        // Duplicate warning elements
         const duplicateWarning = $('duplicateWarning');
         const duplicateTitle = $('duplicateTitle');
         const duplicateDetails = $('duplicateDetails');
@@ -2089,7 +2132,6 @@
             }, 3000);
         }
 
-        // ─── Safe DOM update helpers ───
         function safeSetInnerHTML(element, html) {
             if (element) {
                 element.innerHTML = html;
@@ -2115,12 +2157,10 @@
         function checkForDuplicates(newRecord) {
             const duplicates = [];
 
-            // Skip check if we're overriding
             if (isDuplicateOverride) {
                 return duplicates;
             }
 
-            // Skip check if editing
             if ($('editMode').value === 'true') {
                 return duplicates;
             }
@@ -2129,20 +2169,17 @@
                 let matchType = [];
                 let matchDetails = [];
 
-                // 1. Check receipt number (strict - highest priority)
                 if (r.id === newRecord.receiptNumber) {
                     matchType.push('Receipt #');
                     matchDetails.push(`Receipt # "${r.id}" already exists`);
                 }
 
-                // 2. Check reference + amount (M-Pesa unique)
                 if (r.referenceNumber && r.referenceNumber === newRecord.referenceNumber &&
                     parseFloat(r.amount) === parseFloat(newRecord.amount)) {
                     matchType.push('Reference + Amount');
                     matchDetails.push(`Same Reference "${r.referenceNumber}" and Amount ${formatCurrency(r.amount)}`);
                 }
 
-                // 3. Check date + amount + depositor (likely duplicate)
                 if (r.bankingDate === newRecord.bankingDate &&
                     parseFloat(r.amount) === parseFloat(newRecord.amount) &&
                     r.depositorName === newRecord.depositorName) {
@@ -2152,7 +2189,6 @@
                         );
                 }
 
-                // 4. Check date + amount + account (possible duplicate)
                 if (r.bankingDate === newRecord.bankingDate &&
                     parseFloat(r.amount) === parseFloat(newRecord.amount) &&
                     r.accountNumber === newRecord.accountNumber) {
@@ -2185,15 +2221,12 @@
                 return;
             }
 
-            // Build the warning message
             const primaryDuplicate = duplicates[0];
             const matchTypes = primaryDuplicate.matchType.join(' & ');
-            const matchDetails = primaryDuplicate.matchDetails.join('; ');
 
             duplicateTitle.textContent = `⚠️ Potential Duplicate Detected (${duplicates.length} match${duplicates.length > 1 ? 'es' : ''})`;
             duplicateDetails.textContent = `This record matches existing entries by: ${matchTypes}`;
 
-            // Show matching records
             let matchesHtml = '<div class="mt-2"><small><strong>Matching records:</strong></small></div>';
             duplicates.forEach((d, index) => {
                 const matchTypeDisplay = d.matchType.join(' • ');
@@ -2214,7 +2247,6 @@
             duplicateMatches.innerHTML = matchesHtml;
             duplicateWarning.classList.add('show');
 
-            // Store pending submission
             pendingSubmission = duplicates;
         }
 
@@ -2224,19 +2256,15 @@
             isDuplicateOverride = false;
         }
 
-        // ─── Duplicate button handlers ───
         duplicateOverrideBtn.addEventListener('click', function() {
             isDuplicateOverride = true;
             hideDuplicateWarning();
-            // Re-submit the form
             form.dispatchEvent(new Event('submit'));
         });
 
         duplicateCancelBtn.addEventListener('click', function() {
             hideDuplicateWarning();
-            // Scroll to the top of the form to highlight issues
             form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            // Focus on the receipt number field for editing
             receiptInput.focus();
             receiptInput.select();
             showToast('Duplicate entry cancelled. Please review your data.', 'Info', 'info');
@@ -2245,42 +2273,60 @@
         // ─── Navigation Functions ───
 
         function scrollToMpesaExtractor() {
-            if (mpesaExtractSection) {
-                mpesaExtractSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+            const target = mpesaExtractSection;
+            if (target) {
+                // Get the header height for offset
+                const headerHeight = appHeader ? appHeader.offsetHeight : 0;
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
                 });
 
-                mpesaExtractSection.classList.remove('section-highlight-mpesa');
-                void mpesaExtractSection.offsetWidth;
-                mpesaExtractSection.classList.add('section-highlight-mpesa');
+                // Add highlight effect
+                target.classList.remove('section-highlight-mpesa');
+                // Force reflow
+                void target.offsetWidth;
+                target.classList.add('section-highlight-mpesa');
 
                 setTimeout(() => {
-                    mpesaExtractSection.classList.remove('section-highlight-mpesa');
+                    target.classList.remove('section-highlight-mpesa');
                 }, 1500);
             }
         }
 
         function scrollToRecords() {
-            if (tableCard) {
-                tableCard.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+            const target = tableCard;
+            if (target) {
+                const headerHeight = appHeader ? appHeader.offsetHeight : 0;
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
                 });
 
-                tableCard.classList.remove('section-highlight');
-                void tableCard.offsetWidth;
-                tableCard.classList.add('section-highlight');
+                target.classList.remove('section-highlight');
+                void target.offsetWidth;
+                target.classList.add('section-highlight');
 
                 setTimeout(() => {
-                    tableCard.classList.remove('section-highlight');
+                    target.classList.remove('section-highlight');
                 }, 1500);
             }
         }
 
         // ─── Click handlers for navigation icons ───
-        navMpesa.addEventListener('click', scrollToMpesaExtractor);
-        navRecords.addEventListener('click', scrollToRecords);
+        navMpesa.addEventListener('click', function(e) {
+            e.preventDefault();
+            scrollToMpesaExtractor();
+        });
+
+        navRecords.addEventListener('click', function(e) {
+            e.preventDefault();
+            scrollToRecords();
+        });
 
         // ─── Sticky header shrink on scroll ───
         window.addEventListener('scroll', function() {
@@ -2308,7 +2354,6 @@
                 return { date, amount, ref, sender, recipient };
             }
 
-            // Date: 01 Jun 2026 at 02:02:46 PM
             const datePattern = /(\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4})\s+at\s+(\d{1,2}:\d{2}:\d{2}\s*(?:AM|PM)?)/i;
             const dateMatch = text.match(datePattern);
             if (dateMatch) {
@@ -2318,7 +2363,6 @@
                 if (fallbackDate) date = fallbackDate[1];
             }
 
-            // Amount: KES 2,000.00
             const amountPattern = /KES\s*([\d,]+\.\d{2})/i;
             const amountMatch = text.match(amountPattern);
             if (amountMatch) {
@@ -2337,13 +2381,11 @@
                 }
             }
 
-            // MPESA Reference - capture only the reference code (alphanumeric)
             let refMatch = text.match(/MPESA\s+Ref\s+([A-Za-z0-9]+)/i);
             if (!refMatch) {
                 refMatch = text.match(/Ref(?:erence)?\.?\s*([A-Za-z0-9]+)/i);
             }
             if (!refMatch) {
-                // Fallback: look for "for" followed by phone number (if no reference found)
                 const phoneRef = text.match(/for\s+([\d*]+)/i);
                 if (phoneRef && phoneRef[1]) ref = phoneRef[1];
             }
@@ -2351,7 +2393,6 @@
                 ref = refMatch[1].trim();
             }
 
-            // Sender
             const senderPattern = /from\s+([A-Z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$)/i;
             const senderMatch = text.match(senderPattern);
             if (senderMatch && senderMatch[1]) {
@@ -2361,7 +2402,6 @@
                 if (fallbackSender && fallbackSender[1]) sender = fallbackSender[1].trim();
             }
 
-            // Recipient
             const recipientPattern = /Dear\s+([A-Za-z0-9]+)/i;
             const recipientMatch = text.match(recipientPattern);
             if (recipientMatch && recipientMatch[1]) {
@@ -2379,7 +2419,6 @@
             extractDate.classList.remove('placeholder');
             if (date === '—') extractDate.classList.add('placeholder');
 
-            // Show just the number without "KES" prefix (redundancy removed)
             extractAmount.textContent = amount !== '—' ? amount : '—';
             extractAmount.classList.remove('placeholder');
             if (amount === '—') extractAmount.classList.add('placeholder');
@@ -2425,11 +2464,9 @@
             paymentMethod.dispatchEvent(new Event('change'));
 
             showExtractSuccess();
-            // Hide any previous duplicate warning when form is filled
             hideDuplicateWarning();
         }
 
-        // ─── MPESA Extract Event Listeners ───
         $('extractBtn').addEventListener('click', function() {
             updateMpesaExtractUI();
             fillFormFromMpesa();
@@ -2681,16 +2718,14 @@
 
             const editDocId = $('editDocId').value;
 
-            // ─── Duplicate Check (only for new records, not edits) ───
             if (!editMode && !isDuplicateOverride) {
                 const duplicates = checkForDuplicates(data);
                 if (duplicates.length > 0) {
                     showDuplicateWarning(duplicates);
-                    return; // Stop submission, show warning
+                    return;
                 }
             }
 
-            // Reset override flag after checking
             isDuplicateOverride = false;
 
             try {
@@ -2803,7 +2838,7 @@
             }
         });
 
-        // ─── Load Records with safe DOM updates ───
+        // ─── Load Records ───
         async function loadRecords() {
             if (isLoading) return;
             isLoading = true;
@@ -2840,7 +2875,6 @@
                 const count = allRecords.length;
                 const modeLabel = currentMode === 'active' ? 'Active' : 'Archived';
 
-                // Safe updates with null checks
                 if (recordCount) {
                     recordCount.innerHTML = `<i class="bi bi-database"></i> ${count} ${modeLabel} Record${count !== 1 ? 's' : ''}`;
                     recordCount.setAttribute('title', `Click to view ${count} records`);
@@ -2859,7 +2893,6 @@
                     filteredRecords = [];
                     updateUIWithEmptyState();
                 } else {
-                    // Only show toast for real errors
                     showToast(`Failed to load records: ${error.message}`, 'Error', 'error');
                     allRecords = [];
                     filteredRecords = [];
@@ -2874,7 +2907,6 @@
             const count = 0;
             const modeLabel = currentMode === 'active' ? 'Active' : 'Archived';
 
-            // Safe updates with null checks
             if (recordCount) {
                 recordCount.innerHTML = `<i class="bi bi-database"></i> 0 ${modeLabel} Records`;
                 recordCount.setAttribute('title', 'Click to view records');
@@ -2895,7 +2927,6 @@
                 statCurrentMonth.textContent = getCurrentMonth();
             }
 
-            // Show empty table state
             const modeLabelLower = currentMode === 'active' ? 'active' : 'archived';
             if (tableBody) {
                 tableBody.innerHTML = `
@@ -3169,7 +3200,6 @@
             }
             if (paginationControls) paginationControls.innerHTML = pgHtml;
 
-            // Add event listeners to pagination links
             if (paginationControls) {
                 paginationControls.querySelectorAll('.page-link').forEach(link => {
                     link.addEventListener('click', function(e) {
@@ -3183,7 +3213,6 @@
                 });
             }
 
-            // Add event listeners to action buttons
             if (tableBody) {
                 tableBody.querySelectorAll('.edit-btn').forEach(btn => {
                     btn.addEventListener('click', () => openEditModal(btn.dataset.id));
@@ -4027,7 +4056,6 @@
         //  INIT
         // ════════════════════════════════════════════════
 
-        // Ensure page starts at the top
         window.scrollTo(0, 0);
 
         loadRecords();
