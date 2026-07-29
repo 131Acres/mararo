@@ -10,7 +10,7 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <!-- SheetJS for Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
     </script>
@@ -551,6 +551,7 @@
             border: 1px solid var(--gray-200);
             margin-top: 0.5rem;
             transition: var(--transition);
+            scroll-margin-top: 80px;
         }
         .extract-grid .field {
             display: flex;
@@ -1146,6 +1147,10 @@
         .table-subtle .col-ref {
             width: 110px;
         }
+        .table-subtle .col-actions {
+            width: 100px;
+            text-align: center;
+        }
 
         .table-subtle thead th {
             background: var(--gray-50);
@@ -1308,6 +1313,42 @@
             margin-bottom: 0.6rem;
         }
 
+        /* ─── Action Buttons in Table ─── */
+        .btn-action-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            border: none;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-action-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+        .btn-action-icon.receipt-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+        .btn-action-icon.edit-btn:hover {
+            background: var(--warning);
+            color: white;
+        }
+        .btn-action-icon.delete-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-action-icon i {
+            line-height: 1;
+        }
+
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -1343,6 +1384,168 @@
         }
         #extractedDataIndicator.show {
             display: inline-flex;
+        }
+
+        /* ─── Receipt Modal Styles ─── */
+        .receipt-modal .modal-content {
+            border: none;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+        .receipt-modal .modal-header {
+            border-bottom: 2px solid var(--gray-200);
+            padding: 1.2rem 1.8rem;
+            background: var(--gray-50);
+        }
+        .receipt-modal .modal-header .modal-title {
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+        .receipt-modal .modal-body {
+            padding: 2rem;
+            background: white;
+        }
+
+        /* ─── Receipt Design ─── */
+        .receipt-wrapper {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--gray-200);
+            position: relative;
+        }
+        .receipt-wrapper .receipt-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 6rem;
+            font-weight: 800;
+            color: rgba(79, 70, 229, 0.03);
+            pointer-events: none;
+            letter-spacing: 12px;
+            white-space: nowrap;
+        }
+        .receipt-wrapper .receipt-header {
+            text-align: center;
+            border-bottom: 3px double var(--gray-200);
+            padding-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .receipt-wrapper .receipt-header .company-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            letter-spacing: -0.5px;
+        }
+        .receipt-wrapper .receipt-header .company-name span {
+            color: var(--primary);
+        }
+        .receipt-wrapper .receipt-header .receipt-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 0.2rem;
+        }
+        .receipt-wrapper .receipt-header .receipt-number {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            margin-top: 0.3rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .receipt-wrapper .receipt-body {
+            position: relative;
+            z-index: 1;
+        }
+        .receipt-wrapper .receipt-body .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .receipt-wrapper .receipt-body .receipt-row:last-child {
+            border-bottom: none;
+        }
+        .receipt-wrapper .receipt-body .receipt-row .label {
+            color: var(--gray-500);
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+        .receipt-wrapper .receipt-body .receipt-row .value {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.9rem;
+            text-align: right;
+        }
+        .receipt-wrapper .receipt-body .receipt-row .value.amount {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .receipt-wrapper .receipt-footer {
+            margin-top: 1.5rem;
+            padding-top: 1.2rem;
+            border-top: 2px solid var(--gray-200);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .receipt-wrapper .receipt-footer .footer-text {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+        .receipt-wrapper .receipt-footer .footer-text i {
+            margin: 0 0.2rem;
+        }
+        .receipt-wrapper .receipt-footer .signature-line {
+            margin-top: 0.8rem;
+            display: flex;
+            justify-content: space-around;
+        }
+        .receipt-wrapper .receipt-footer .signature-line .sig-item {
+            text-align: center;
+        }
+        .receipt-wrapper .receipt-footer .signature-line .sig-item .sig-line {
+            width: 120px;
+            border-bottom: 2px solid var(--gray-300);
+            margin-bottom: 0.2rem;
+        }
+        .receipt-wrapper .receipt-footer .signature-line .sig-item .sig-label {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+        }
+
+        .receipt-wrapper .receipt-status {
+            display: inline-block;
+            padding: 0.15rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .receipt-wrapper .receipt-status.paid {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .receipt-wrapper .receipt-status.pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .receipt-modal .modal-footer {
+            border-top: 1px solid var(--gray-200);
+            padding: 1rem 1.8rem;
+            background: var(--gray-50);
         }
 
         /* ─── Responsive ─── */
@@ -1493,6 +1696,9 @@
             .table-subtle .col-ref {
                 width: 80px;
             }
+            .table-subtle .col-actions {
+                width: 70px;
+            }
 
             .mpesa-card .action-hint {
                 display: none;
@@ -1504,6 +1710,21 @@
             .mpesa-card .btn-extract,
             .mpesa-card .btn-soft-clear {
                 justify-content: center;
+            }
+
+            .receipt-wrapper {
+                padding: 1.5rem;
+            }
+            .receipt-wrapper .receipt-header .company-name {
+                font-size: 1.3rem;
+            }
+            .receipt-wrapper .receipt-body .receipt-row .value.amount {
+                font-size: 1.1rem;
+            }
+            .receipt-wrapper .receipt-footer .signature-line {
+                flex-direction: column;
+                gap: 0.8rem;
+                align-items: center;
             }
         }
 
@@ -1540,6 +1761,15 @@
                 right: 0.75rem;
                 left: 0.75rem;
                 top: 0.75rem;
+            }
+            .receipt-modal .modal-body {
+                padding: 1rem;
+            }
+            .receipt-wrapper {
+                padding: 1rem;
+            }
+            .receipt-wrapper .receipt-watermark {
+                font-size: 3rem;
             }
         }
 
@@ -1600,6 +1830,51 @@
             .btn-soft-clear {
                 display: none !important;
             }
+
+            /* Receipt print styles */
+            .modal-backdrop {
+                display: none !important;
+            }
+            .receipt-modal .modal-dialog {
+                max-width: 100% !important;
+                margin: 0 !important;
+                transform: none !important;
+            }
+            .receipt-modal .modal-content {
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            .receipt-modal .modal-header,
+            .receipt-modal .modal-footer {
+                display: none !important;
+            }
+            .receipt-modal .modal-body {
+                padding: 0 !important;
+            }
+            .receipt-wrapper {
+                border: none !important;
+                padding: 0.3in !important;
+            }
+            .receipt-wrapper .receipt-watermark {
+                display: none !important;
+            }
+            .btn-action-icon {
+                display: none !important;
+            }
+        }
+
+        /* Print-specific receipt styles */
+        .receipt-print-only {
+            display: none;
+        }
+        @media print {
+            .receipt-print-only {
+                display: block !important;
+            }
+            .receipt-no-print {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -1614,6 +1889,32 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body" id="toastMessage">Message</div>
+        </div>
+    </div>
+
+    <!-- ─── Receipt Modal ─── -->
+    <div class="modal fade receipt-modal" id="receiptModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Payment Receipt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="receiptBody">
+                    <!-- Receipt content rendered by JS -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-soft-clear" data-bs-dismiss="modal">
+                        <i class="bi bi-x"></i> Close
+                    </button>
+                    <button type="button" class="btn btn-primary" id="printReceiptBtn">
+                        <i class="bi bi-printer"></i> Print Receipt
+                    </button>
+                    <button type="button" class="btn btn-soft-clear" id="downloadReceiptBtn">
+                        <i class="bi bi-download"></i> Download PDF
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2017,6 +2318,7 @@
                                     <th class="col-amount text-end">Amount</th>
                                     <th class="col-method">Method</th>
                                     <th class="col-ref">Reference</th>
+                                    <th class="col-actions text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
@@ -2041,6 +2343,8 @@
 
     <!-- ─── SCRIPTS ─── -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer">
     </script>
 
     <script>
@@ -2349,6 +2653,7 @@
             document.getElementById('extractedDataIndicator').classList.remove('show');
         }
 
+        // ─── Enhanced Extract Button with Auto-Scroll ───
         extractBtn.addEventListener('click', function() {
             const text = mpesaTextarea.value;
             if (!text.trim()) {
@@ -2362,6 +2667,43 @@
                 return;
             }
             updateMpesaUI(text);
+
+            // ✨ Auto-scroll to the extracted data grid
+            setTimeout(() => {
+                const extractGrid = document.getElementById('extractGrid');
+
+                extractGrid.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'nearest'
+                });
+
+                extractGrid.style.transition = 'box-shadow 0.4s ease, border-color 0.4s ease, transform 0.3s ease';
+                extractGrid.style.boxShadow = '0 0 0 4px rgba(79, 70, 229, 0.15), 0 8px 30px rgba(79, 70, 229, 0.08)';
+                extractGrid.style.borderColor = '#4F46E5';
+                extractGrid.style.transform = 'scale(1.005)';
+
+                setTimeout(() => {
+                    extractGrid.style.boxShadow = '';
+                    extractGrid.style.borderColor = '';
+                    extractGrid.style.transform = '';
+                }, 1500);
+
+                if (!transferBtn.disabled) {
+                    transferBtn.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
+                    transferBtn.style.transform = 'scale(1.06)';
+                    transferBtn.style.boxShadow = '0 8px 32px rgba(79, 70, 229, 0.45)';
+
+                    setTimeout(() => {
+                        transferBtn.style.transform = '';
+                        transferBtn.style.boxShadow = '';
+                    }, 1200);
+                }
+
+                showToast('✅ Data extracted successfully! Review it below, then transfer to submit.', 'Extraction Complete',
+                    'success');
+
+            }, 400);
         });
 
         clearMpesaBtn.addEventListener('click', clearMpesa);
@@ -2374,7 +2716,7 @@
             if (!extractedData) return;
 
             fillFormFromExtracted(extractedData);
-            showToast('Data transferred to Review & Submit!', 'Success', 'success');
+            showToast('📝 Data transferred to Review & Submit!', 'Success', 'success');
             switchTab('enter-tab');
         });
 
@@ -2416,8 +2758,6 @@
 
             document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
             document.getElementById('paymentForm').classList.remove('was-validated');
-
-            showToast('Form populated with extracted data. Please review before submitting.', 'Info', 'info');
         }
 
         // ════════════════════════════════════════════════
@@ -2588,15 +2928,15 @@
             duplicates.forEach((d, index) => {
                 const matchTypeDisplay = d.matchType.join(' • ');
                 matchesHtml += `
-                        <div class="duplicate-match">
-                            <strong>#${index + 1}:</strong> 
-                            Receipt: <strong>${escapeHtml(d.id)}</strong> • 
-                            Date: ${formatDate(d.bankingDate)} • 
-                            Amount: ${formatCurrency(d.amount)} • 
-                            Depositor: ${escapeHtml(d.depositorName)} • 
-                            <span class="text-muted">Match: ${matchTypeDisplay}</span>
-                        </div>
-                    `;
+                            <div class="duplicate-match">
+                                <strong>#${index + 1}:</strong> 
+                                Receipt: <strong>${escapeHtml(d.id)}</strong> • 
+                                Date: ${formatDate(d.bankingDate)} • 
+                                Amount: ${formatCurrency(d.amount)} • 
+                                Depositor: ${escapeHtml(d.depositorName)} • 
+                                <span class="text-muted">Match: ${matchTypeDisplay}</span>
+                            </div>
+                        `;
             });
             matchesHtml +=
                 `<div class="mt-1"><small class="text-muted">If this is a legitimate duplicate, click "Submit Anyway". Otherwise, cancel and review your entry.</small></div>`;
@@ -2968,6 +3308,186 @@
         let currentPage = 1;
         const PAGE_SIZE = 8;
 
+        // ─── Receipt Modal ───
+        const receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
+        let currentReceiptRecord = null;
+
+        function generateReceiptHTML(record) {
+            const date = formatDate(record.bankingDate);
+            const receiptDate = record.receiptDate ? formatDate(record.receiptDate) : 'N/A';
+            const amount = formatCurrency(record.amount);
+            const status = record.isAmended ? 'Amended' : 'Paid';
+            const statusClass = record.isAmended ? 'pending' : 'paid';
+            const version = record.version || 1;
+
+            return `
+                        <div class="receipt-wrapper" id="receiptContent">
+                            <div class="receipt-watermark">PAYFLOW</div>
+                            <div class="receipt-header">
+                                <div class="company-name">Pay<span>Flow</span></div>
+                                <div class="receipt-title">Payment Receipt</div>
+                                <div class="receipt-number">
+                                    <span class="receipt-status ${statusClass}">${status}</span>
+                                    &nbsp;·&nbsp; Receipt #${escapeHtml(record.id)} &nbsp;·&nbsp; v${version}
+                                </div>
+                            </div>
+
+                            <div class="receipt-body">
+                                <div class="receipt-row">
+                                    <span class="label"><i class="bi bi-calendar3"></i> Banking Date</span>
+                                    <span class="value">${date}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="label"><i class="bi bi-receipt"></i> Receipt Date</span>
+                                    <span class="value">${receiptDate}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="label"><i class="bi bi-person-badge"></i> Account Number</span>
+                                    <span class="value"><code>${escapeHtml(record.accountNumber)}</code></span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="label"><i class="bi bi-person"></i> Account Holder</span>
+                                    <span class="value">${escapeHtml(record.accountHolder)}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="label"><i class="bi bi-person-check"></i> Depositor</span>
+                                    <span class="value">${escapeHtml(record.depositorName)}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="label"><i class="bi bi-credit-card"></i> Payment Method</span>
+                                    <span class="value">${escapeHtml(record.paymentMethod)}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="label"><i class="bi bi-tag"></i> Reference</span>
+                                    <span class="value">${escapeHtml(record.referenceNumber) || '—'}</span>
+                                </div>
+                                <div class="receipt-row" style="border-top: 2px solid var(--gray-200); padding-top: 0.8rem; margin-top: 0.5rem;">
+                                    <span class="label" style="font-size: 0.9rem; font-weight: 600;">Amount Paid</span>
+                                    <span class="value amount">${amount}</span>
+                                </div>
+                            </div>
+
+                            <div class="receipt-footer">
+                                <div class="footer-text">
+                                    <i class="bi bi-check-circle"></i> This is a computer-generated receipt.
+                                    ${record.isAmended ? ' <i class="bi bi-pencil-square"></i> Amended record' : ''}
+                                </div>
+                                <div class="signature-line">
+                                    <div class="sig-item">
+                                        <div class="sig-line"></div>
+                                        <div class="sig-label">Authorized Signature</div>
+                                    </div>
+                                    <div class="sig-item">
+                                        <div class="sig-line"></div>
+                                        <div class="sig-label">Customer Signature</div>
+                                    </div>
+                                </div>
+                                <div class="footer-text" style="margin-top: 0.8rem; font-size: 0.65rem;">
+                                    <i class="bi bi-clock"></i> Generated: ${new Date().toLocaleString()}
+                                    &nbsp;·&nbsp; <i class="bi bi-database"></i> Ref: ${escapeHtml(record.id)}_${Date.now()}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+        }
+
+        function showReceipt(record) {
+            currentReceiptRecord = record;
+            const receiptBody = document.getElementById('receiptBody');
+            receiptBody.innerHTML = generateReceiptHTML(record);
+            receiptModal.show();
+        }
+
+        // ─── Print Receipt ───
+        document.getElementById('printReceiptBtn').addEventListener('click', function() {
+            const receiptContent = document.getElementById('receiptContent');
+            if (!receiptContent) return;
+
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.write(`
+                        <html>
+                            <head>
+                                <title>Payment Receipt</title>
+                                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+                                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+                                <style>
+                                    body { padding: 0.5in; font-family: 'Inter', sans-serif; background: white; }
+                                    .receipt-wrapper { max-width: 700px; margin: 0 auto; padding: 1.5rem; border: 2px solid #E2E8F0; border-radius: 12px; }
+                                    .receipt-wrapper .receipt-header { text-align: center; border-bottom: 3px double #E2E8F0; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+                                    .receipt-wrapper .receipt-header .company-name { font-size: 1.8rem; font-weight: 800; color: #0F172A; }
+                                    .receipt-wrapper .receipt-header .company-name span { color: #4F46E5; }
+                                    .receipt-wrapper .receipt-header .receipt-title { font-size: 1.1rem; font-weight: 600; color: #64748B; letter-spacing: 3px; text-transform: uppercase; }
+                                    .receipt-wrapper .receipt-body .receipt-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #F1F5F9; }
+                                    .receipt-wrapper .receipt-body .receipt-row .label { color: #64748B; font-weight: 500; font-size: 0.8rem; }
+                                    .receipt-wrapper .receipt-body .receipt-row .value { font-weight: 600; color: #1E293B; font-size: 0.9rem; text-align: right; }
+                                    .receipt-wrapper .receipt-body .receipt-row .value.amount { font-size: 1.3rem; color: #4F46E5; font-weight: 700; }
+                                    .receipt-wrapper .receipt-footer { margin-top: 1.5rem; padding-top: 1.2rem; border-top: 2px solid #E2E8F0; text-align: center; }
+                                    .receipt-wrapper .receipt-footer .footer-text { font-size: 0.75rem; color: #94A3B8; }
+                                    .receipt-wrapper .receipt-footer .signature-line { margin-top: 0.8rem; display: flex; justify-content: space-around; }
+                                    .receipt-wrapper .receipt-footer .signature-line .sig-item { text-align: center; }
+                                    .receipt-wrapper .receipt-footer .signature-line .sig-item .sig-line { width: 120px; border-bottom: 2px solid #CBD5E1; margin-bottom: 0.2rem; }
+                                    .receipt-wrapper .receipt-footer .signature-line .sig-item .sig-label { font-size: 0.65rem; color: #94A3B8; }
+                                    .receipt-wrapper .receipt-status { display: inline-block; padding: 0.15rem 1rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+                                    .receipt-wrapper .receipt-status.paid { background: #D1FAE5; color: #065F46; }
+                                    .receipt-wrapper .receipt-status.pending { background: #FEF3C7; color: #92400E; }
+                                    .receipt-wrapper .receipt-watermark { display: none; }
+                                    .receipt-no-print { display: none; }
+                                </style>
+                            </head>
+                            <body>
+                                ${receiptContent.outerHTML}
+                                <script>
+                                    window.onload = function() { window.print(); window.close(); };
+                                <\/script>
+                            </body>
+                        </html>
+                    `);
+            printWindow.document.close();
+        });
+
+        // ─── Download Receipt as PDF ───
+        document.getElementById('downloadReceiptBtn').addEventListener('click', function() {
+            const receiptContent = document.getElementById('receiptContent');
+            if (!receiptContent) return;
+
+            const element = receiptContent.cloneNode(true);
+            element.style.border = '2px solid #E2E8F0';
+            element.style.borderRadius = '12px';
+            element.style.padding = '1.5rem';
+            element.style.maxWidth = '700px';
+            element.style.margin = '0 auto';
+            element.style.background = 'white';
+
+            // Remove watermark for PDF
+            const watermark = element.querySelector('.receipt-watermark');
+            if (watermark) watermark.style.display = 'none';
+
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `Receipt_${currentReceiptRecord.id}_${new Date().toISOString().slice(0,10)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true,
+                },
+                jsPDF: {
+                    unit: 'in',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            };
+
+            const loadingToast = showToast('Generating PDF...', 'Please wait', 'info');
+
+            html2pdf().set(opt).from(element).save().then(function() {
+                showToast('PDF downloaded successfully!', 'Success', 'success');
+            }).catch(function(err) {
+                console.error('PDF generation error:', err);
+                showToast('Failed to generate PDF. Please try printing instead.', 'Error', 'error');
+            });
+        });
+
         function updateLedger() {
             const month = document.getElementById('monthFilter').value;
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -3021,7 +3541,7 @@
 
             if (pageRecords.length === 0 && totalRecords === 0) {
                 tableBody.innerHTML =
-                    `<tr><td colspan="10" class="empty-subtle"><i class="bi bi-inbox"></i>No records found</td></tr>`;
+                    `<tr><td colspan="11" class="empty-subtle"><i class="bi bi-inbox"></i>No records found</td></tr>`;
                 document.getElementById('paginationInfo').textContent = 'Showing 0–0 of 0';
                 document.getElementById('paginationControls').innerHTML = '';
                 return;
@@ -3043,12 +3563,12 @@
                 if (lastDate !== r.bankingDate) {
                     if (lastDate !== null && dailyTotals[lastDate] !== undefined) {
                         html += `
-                            <tr class="daily-total-row">
-                                <td colspan="7" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
-                                <td class="amount-cell" style="padding-right:0.5rem;">${formatCurrency(dailyTotals[lastDate])}</td>
-                                <td colspan="2"></td>
-                            </tr>
-                        `;
+                                <tr class="daily-total-row">
+                                    <td colspan="7" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
+                                    <td class="amount-cell" style="padding-right:0.5rem;">${formatCurrency(dailyTotals[lastDate])}</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                            `;
                     }
                     lastDate = r.bankingDate;
                 }
@@ -3057,44 +3577,52 @@
                 const depositorShort = r.depositorName.length > 14 ? r.depositorName.slice(0, 13) + '…' : r.depositorName;
 
                 html += `
-                    <tr class="${rowClass}">
-                        <td class="col-index text-center">${actualIdx}</td>
-                        <td class="col-receipt">
-                            <strong>${escapeHtml(r.id)}</strong>
-                            ${isCurrent ? '<span class="badge-soft current">current</span>' : ''}
-                            ${getStatusBadge(isAmended, version)}
-                        </td>
-                        <td class="col-banking">${formatDate(r.bankingDate)}</td>
-                        <td class="col-receiptdate">${r.receiptDate ? formatDate(r.receiptDate) : '-'}</td>
-                        <td class="col-account"><code>${escapeHtml(r.accountNumber)}</code></td>
-                        <td class="col-holder" title="${escapeHtml(r.accountHolder)}">${escapeHtml(holderShort)}</td>
-                        <td class="col-depositor" title="${escapeHtml(r.depositorName)}">${escapeHtml(depositorShort)}</td>
-                        <td class="col-amount amount-cell">${formatCurrency(r.amount)}</td>
-                        <td class="col-method">${getMethodBadge(r.paymentMethod)}</td>
-                        <td class="col-ref ref-cell" title="${escapeHtml(r.referenceNumber)||''}">${escapeHtml(r.referenceNumber)||'-'}</td>
-                    </tr>
-                `;
+                        <tr class="${rowClass}">
+                            <td class="col-index text-center">${actualIdx}</td>
+                            <td class="col-receipt">
+                                <strong>${escapeHtml(r.id)}</strong>
+                                ${isCurrent ? '<span class="badge-soft current">current</span>' : ''}
+                                ${getStatusBadge(isAmended, version)}
+                            </td>
+                            <td class="col-banking">${formatDate(r.bankingDate)}</td>
+                            <td class="col-receiptdate">${r.receiptDate ? formatDate(r.receiptDate) : '-'}</td>
+                            <td class="col-account"><code>${escapeHtml(r.accountNumber)}</code></td>
+                            <td class="col-holder" title="${escapeHtml(r.accountHolder)}">${escapeHtml(holderShort)}</td>
+                            <td class="col-depositor" title="${escapeHtml(r.depositorName)}">${escapeHtml(depositorShort)}</td>
+                            <td class="col-amount amount-cell">${formatCurrency(r.amount)}</td>
+                            <td class="col-method">${getMethodBadge(r.paymentMethod)}</td>
+                            <td class="col-ref ref-cell" title="${escapeHtml(r.referenceNumber)||''}">${escapeHtml(r.referenceNumber)||'-'}</td>
+                            <td class="col-actions text-center">
+                                <button class="btn-action-icon receipt-btn" onclick="handleReceipt('${r.id}')" title="Generate Receipt">
+                                    <i class="bi bi-receipt"></i>
+                                </button>
+                                <button class="btn-action-icon edit-btn" onclick="handleEdit('${r.id}')" title="Edit Record">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
             });
 
             if (lastDate !== null && dailyTotals[lastDate] !== undefined) {
                 html += `
-                    <tr class="daily-total-row">
-                        <td colspan="7" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
-                        <td class="amount-cell" style="padding-right:0.5rem;">${formatCurrency(dailyTotals[lastDate])}</td>
-                        <td colspan="2"></td>
-                    </tr>
-                `;
+                        <tr class="daily-total-row">
+                            <td colspan="7" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
+                            <td class="amount-cell" style="padding-right:0.5rem;">${formatCurrency(dailyTotals[lastDate])}</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    `;
             }
 
             const isLastPage = end >= totalRecords;
             if (isLastPage && totalRecords > 0) {
                 html += `
-                    <tr class="grand-total-row">
-                        <td colspan="7" style="text-align:right; padding-right:0.5rem; font-weight:600;">GRAND TOTAL · ${totalRecords} records</td>
-                        <td class="amount-cell" style="padding-right:0.5rem; font-size:0.95rem;">${formatCurrency(grandTotal)}</td>
-                        <td colspan="2"></td>
-                    </tr>
-                `;
+                        <tr class="grand-total-row">
+                            <td colspan="7" style="text-align:right; padding-right:0.5rem; font-weight:600;">GRAND TOTAL · ${totalRecords} records</td>
+                            <td class="amount-cell" style="padding-right:0.5rem; font-size:0.95rem;">${formatCurrency(grandTotal)}</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    `;
             }
 
             tableBody.innerHTML = html;
@@ -3124,6 +3652,54 @@
                 });
             });
         }
+
+        // ─── Global handlers for action buttons ───
+        window.handleReceipt = function(recordId) {
+            const record = allRecords.find(r => r.id === recordId);
+            if (record) {
+                showReceipt(record);
+            } else {
+                showToast('Record not found.', 'Error', 'error');
+            }
+        };
+
+        window.handleEdit = function(recordId) {
+            // Navigate to edit mode with the record
+            const record = allRecords.find(r => r.id === recordId);
+            if (record) {
+                // Switch to enter tab and populate form for editing
+                switchTab('enter-tab');
+
+                // Populate form with record data
+                document.getElementById('editMode').value = 'true';
+                document.getElementById('editDocId').value = recordId;
+                document.getElementById('editVersion').value = record.version || 1;
+
+                document.getElementById('receiptNumber').value = record.id;
+                document.getElementById('bankingDate').value = record.bankingDate;
+                document.getElementById('receiptDate').value = record.receiptDate || '';
+                document.getElementById('amountPaid').value = record.amount;
+                document.getElementById('accountNumber').value = record.accountNumber;
+                document.getElementById('accountHolder').value = record.accountHolder;
+                document.getElementById('depositorName').value = record.depositorName;
+                document.getElementById('paymentMethod').value = record.paymentMethod;
+                document.getElementById('referenceNumber').value = record.referenceNumber || '';
+
+                document.getElementById('editIndicator').style.display = 'block';
+                document.getElementById('editReceiptDisplay').textContent = record.id;
+                document.getElementById('editVersionDisplay').textContent = `v${record.version || 1}`;
+                document.getElementById('submitBtn').innerHTML = '<i class="bi bi-check2-circle"></i> Update Entry';
+                document.getElementById('amendmentReasonContainer').classList.remove('d-none');
+
+                showToast(`Editing record ${record.id}. Please provide a reason for the amendment.`, 'Edit Mode',
+                    'info');
+
+                // Scroll to form
+                document.getElementById('enter-pane').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                showToast('Record not found.', 'Error', 'error');
+            }
+        };
 
         function groupByDate(records) {
             const groups = {};
@@ -3297,7 +3873,7 @@
         console.log('💳 PayFlow · Payment Management System initialized');
         console.log('📋 Workflow: M-PESA → Review → Ledger');
         console.log('⌨️  Keyboard shortcuts: ⌘1, ⌘2, ⌘3');
-        console.log('🎨 Premium design system loaded');
+        console.log('🧾 Receipt generation enabled');
 
         // Override populate month filter after load
         const origLoadRecords = loadRecords;
