@@ -714,6 +714,10 @@
             flex: 0 0 200px;
             max-width: 200px;
         }
+        .field-description {
+            flex: 1 1 300px;
+            min-width: 200px;
+        }
         .field-full {
             flex: 0 0 100%;
             max-width: 100%;
@@ -770,6 +774,10 @@
         .form-select.is-invalid {
             border-color: var(--danger);
             box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 60px;
         }
 
         .amount-input-wrapper {
@@ -1147,6 +1155,9 @@
         .table-subtle .col-ref {
             width: 110px;
         }
+        .table-subtle .col-description {
+            width: 150px;
+        }
         .table-subtle .col-actions {
             width: 100px;
             text-align: center;
@@ -1230,6 +1241,11 @@
         .table-subtle .ref-cell {
             color: var(--gray-400);
             font-size: 0.75rem;
+        }
+        .table-subtle .desc-cell {
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            font-style: italic;
         }
         .table-subtle code {
             background: var(--gray-100);
@@ -1484,11 +1500,16 @@
             color: var(--gray-800);
             font-size: 0.9rem;
             text-align: right;
+            max-width: 60%;
         }
         .receipt-wrapper .receipt-body .receipt-row .value.amount {
             font-size: 1.3rem;
             color: var(--primary);
             font-weight: 700;
+        }
+        .receipt-wrapper .receipt-body .receipt-row .value.description {
+            font-style: italic;
+            color: var(--gray-600);
         }
 
         .receipt-wrapper .receipt-footer {
@@ -1695,6 +1716,9 @@
             }
             .table-subtle .col-ref {
                 width: 80px;
+            }
+            .table-subtle .col-description {
+                width: 100px;
             }
             .table-subtle .col-actions {
                 width: 70px;
@@ -2177,6 +2201,19 @@
                                 </div>
                             </div>
 
+                            <!-- Row 4: Payment For / Description -->
+                            <div class="form-row">
+                                <div class="field-group field-description">
+                                    <label for="paymentDescription" class="form-label">
+                                        Payment For <span class="required-star">*</span>
+                                        <span class="field-badge primary-badge">Purpose</span>
+                                    </label>
+                                    <textarea class="form-control" id="paymentDescription" placeholder="e.g., School fees, Rent, Invoice #123, Goods purchase…" required></textarea>
+                                    <div class="invalid-feedback">Please describe what this payment is for.</div>
+                                    <span class="field-helper"><i class="bi bi-info-circle"></i> Specify the purpose or reason for this payment</span>
+                                </div>
+                            </div>
+
                             <!-- System Dates -->
                             <div class="form-row">
                                 <div class="field-group field-full">
@@ -2318,6 +2355,7 @@
                                     <th class="col-amount text-end">Amount</th>
                                     <th class="col-method">Method</th>
                                     <th class="col-ref">Reference</th>
+                                    <th class="col-description">Purpose</th>
                                     <th class="col-actions text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -2797,6 +2835,7 @@
         const depositorInput = $('depositorName');
         const paymentMethod = $('paymentMethod');
         const referenceInput = $('referenceNumber');
+        const descriptionInput = $('paymentDescription');
         const clearBtn = $('clearDepositorBtn');
         const autoBadge = $('autoBadge');
         const submitBtn = $('submitBtn');
@@ -2832,6 +2871,11 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function truncateText(text, maxLength = 20) {
+            if (!text) return '-';
+            return text.length > maxLength ? text.slice(0, maxLength) + '…' : text;
         }
 
         function updateSystemDates() {
@@ -3098,6 +3142,13 @@
                 return;
             }
 
+            if (!descriptionInput.value.trim()) {
+                showToast('Please describe what this payment is for.', 'Validation Error', 'error');
+                descriptionInput.focus();
+                descriptionInput.classList.add('is-invalid');
+                return;
+            }
+
             const isRefRequired = paymentMethod.value === 'M-Pesa' || paymentMethod.value === 'Bank Transfer';
             if (isRefRequired && !referenceInput.value.trim()) {
                 const methodName = paymentMethod.value === 'M-Pesa' ? 'M‑Pesa' : 'Bank Transfers';
@@ -3128,6 +3179,7 @@
             const depositor = depositorInput.value.trim();
             const method = paymentMethod.value;
             const reference = referenceInput.value.trim() || '';
+            const description = descriptionInput.value.trim();
             const reason = amendmentReason.value.trim();
             const now = new Date();
             const entryDate = now.toISOString().slice(0, 10);
@@ -3142,6 +3194,7 @@
                 depositorName: depositor,
                 paymentMethod: method,
                 referenceNumber: reference,
+                paymentDescription: description,
                 month: bankingDate.slice(0, 7),
                 entryDate: entryDate,
                 modifiedDate: entryDate,
@@ -3191,6 +3244,7 @@
                             depositorName: existingData.depositorName,
                             paymentMethod: existingData.paymentMethod,
                             referenceNumber: existingData.referenceNumber || '',
+                            paymentDescription: existingData.paymentDescription || '',
                         },
                         modifiedAt: new Date().toISOString(),
                         modifiedBy: existingData.updatedBy || existingData.createdBy || 'unknown',
@@ -3218,6 +3272,8 @@
                             paymentMethod: { old: existingData.paymentMethod, new: data.paymentMethod },
                             referenceNumber: { old: existingData.referenceNumber || '', new: data.referenceNumber ||
                                     '' },
+                            paymentDescription: { old: existingData.paymentDescription || '', new: data
+                                    .paymentDescription || '' },
                         },
                         reason: reason,
                         amendedBy: 'anonymous',
@@ -3319,6 +3375,7 @@
             const status = record.isAmended ? 'Amended' : 'Paid';
             const statusClass = record.isAmended ? 'pending' : 'paid';
             const version = record.version || 1;
+            const description = record.paymentDescription || '—';
 
             return `
                         <div class="receipt-wrapper" id="receiptContent">
@@ -3360,6 +3417,10 @@
                                 <div class="receipt-row">
                                     <span class="label"><i class="bi bi-tag"></i> Reference</span>
                                     <span class="value">${escapeHtml(record.referenceNumber) || '—'}</span>
+                                </div>
+                                <div class="receipt-row" style="border-bottom: 2px solid var(--gray-200); padding-bottom: 0.6rem;">
+                                    <span class="label"><i class="bi bi-info-circle"></i> Payment For</span>
+                                    <span class="value description">${escapeHtml(description)}</span>
                                 </div>
                                 <div class="receipt-row" style="border-top: 2px solid var(--gray-200); padding-top: 0.8rem; margin-top: 0.5rem;">
                                     <span class="label" style="font-size: 0.9rem; font-weight: 600;">Amount Paid</span>
@@ -3419,8 +3480,9 @@
                                     .receipt-wrapper .receipt-header .receipt-title { font-size: 1.1rem; font-weight: 600; color: #64748B; letter-spacing: 3px; text-transform: uppercase; }
                                     .receipt-wrapper .receipt-body .receipt-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #F1F5F9; }
                                     .receipt-wrapper .receipt-body .receipt-row .label { color: #64748B; font-weight: 500; font-size: 0.8rem; }
-                                    .receipt-wrapper .receipt-body .receipt-row .value { font-weight: 600; color: #1E293B; font-size: 0.9rem; text-align: right; }
+                                    .receipt-wrapper .receipt-body .receipt-row .value { font-weight: 600; color: #1E293B; font-size: 0.9rem; text-align: right; max-width: 60%; }
                                     .receipt-wrapper .receipt-body .receipt-row .value.amount { font-size: 1.3rem; color: #4F46E5; font-weight: 700; }
+                                    .receipt-wrapper .receipt-body .receipt-row .value.description { font-style: italic; color: #475569; }
                                     .receipt-wrapper .receipt-footer { margin-top: 1.5rem; padding-top: 1.2rem; border-top: 2px solid #E2E8F0; text-align: center; }
                                     .receipt-wrapper .receipt-footer .footer-text { font-size: 0.75rem; color: #94A3B8; }
                                     .receipt-wrapper .receipt-footer .signature-line { margin-top: 0.8rem; display: flex; justify-content: space-around; }
@@ -3478,7 +3540,7 @@
                 }
             };
 
-            const loadingToast = showToast('Generating PDF...', 'Please wait', 'info');
+            showToast('Generating PDF...', 'Please wait', 'info');
 
             html2pdf().set(opt).from(element).save().then(function() {
                 showToast('PDF downloaded successfully!', 'Success', 'success');
@@ -3499,7 +3561,7 @@
                     const str = [
                         r.id, r.accountNumber, r.accountHolder, r.depositorName,
                         r.referenceNumber, r.paymentMethod, r.amount ? r.amount.toString() : '',
-                        r.bankingDate || '', r.receiptDate || ''
+                        r.bankingDate || '', r.receiptDate || '', r.paymentDescription || ''
                     ].join(' ').toLowerCase();
                     if (!str.includes(search)) match = false;
                 }
@@ -3541,7 +3603,7 @@
 
             if (pageRecords.length === 0 && totalRecords === 0) {
                 tableBody.innerHTML =
-                    `<tr><td colspan="11" class="empty-subtle"><i class="bi bi-inbox"></i>No records found</td></tr>`;
+                    `<tr><td colspan="12" class="empty-subtle"><i class="bi bi-inbox"></i>No records found</td></tr>`;
                 document.getElementById('paginationInfo').textContent = 'Showing 0–0 of 0';
                 document.getElementById('paginationControls').innerHTML = '';
                 return;
@@ -3566,7 +3628,7 @@
                                 <tr class="daily-total-row">
                                     <td colspan="7" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
                                     <td class="amount-cell" style="padding-right:0.5rem;">${formatCurrency(dailyTotals[lastDate])}</td>
-                                    <td colspan="3"></td>
+                                    <td colspan="4"></td>
                                 </tr>
                             `;
                     }
@@ -3575,6 +3637,7 @@
 
                 const holderShort = r.accountHolder.length > 14 ? r.accountHolder.slice(0, 13) + '…' : r.accountHolder;
                 const depositorShort = r.depositorName.length > 14 ? r.depositorName.slice(0, 13) + '…' : r.depositorName;
+                const descShort = r.paymentDescription ? truncateText(r.paymentDescription, 18) : '—';
 
                 html += `
                         <tr class="${rowClass}">
@@ -3592,6 +3655,7 @@
                             <td class="col-amount amount-cell">${formatCurrency(r.amount)}</td>
                             <td class="col-method">${getMethodBadge(r.paymentMethod)}</td>
                             <td class="col-ref ref-cell" title="${escapeHtml(r.referenceNumber)||''}">${escapeHtml(r.referenceNumber)||'-'}</td>
+                            <td class="col-description desc-cell" title="${escapeHtml(r.paymentDescription)||''}">${escapeHtml(descShort)}</td>
                             <td class="col-actions text-center">
                                 <button class="btn-action-icon receipt-btn" onclick="handleReceipt('${r.id}')" title="Generate Receipt">
                                     <i class="bi bi-receipt"></i>
@@ -3609,7 +3673,7 @@
                         <tr class="daily-total-row">
                             <td colspan="7" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
                             <td class="amount-cell" style="padding-right:0.5rem;">${formatCurrency(dailyTotals[lastDate])}</td>
-                            <td colspan="3"></td>
+                            <td colspan="4"></td>
                         </tr>
                     `;
             }
@@ -3620,7 +3684,7 @@
                         <tr class="grand-total-row">
                             <td colspan="7" style="text-align:right; padding-right:0.5rem; font-weight:600;">GRAND TOTAL · ${totalRecords} records</td>
                             <td class="amount-cell" style="padding-right:0.5rem; font-size:0.95rem;">${formatCurrency(grandTotal)}</td>
-                            <td colspan="3"></td>
+                            <td colspan="4"></td>
                         </tr>
                     `;
             }
@@ -3664,13 +3728,10 @@
         };
 
         window.handleEdit = function(recordId) {
-            // Navigate to edit mode with the record
             const record = allRecords.find(r => r.id === recordId);
             if (record) {
-                // Switch to enter tab and populate form for editing
                 switchTab('enter-tab');
 
-                // Populate form with record data
                 document.getElementById('editMode').value = 'true';
                 document.getElementById('editDocId').value = recordId;
                 document.getElementById('editVersion').value = record.version || 1;
@@ -3684,6 +3745,7 @@
                 document.getElementById('depositorName').value = record.depositorName;
                 document.getElementById('paymentMethod').value = record.paymentMethod;
                 document.getElementById('referenceNumber').value = record.referenceNumber || '';
+                document.getElementById('paymentDescription').value = record.paymentDescription || '';
 
                 document.getElementById('editIndicator').style.display = 'block';
                 document.getElementById('editReceiptDisplay').textContent = record.id;
@@ -3694,7 +3756,6 @@
                 showToast(`Editing record ${record.id}. Please provide a reason for the amendment.`, 'Edit Mode',
                     'info');
 
-                // Scroll to form
                 document.getElementById('enter-pane').scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 showToast('Record not found.', 'Error', 'error');
@@ -3783,6 +3844,7 @@
                         'Depositor': r.depositorName,
                         'Method': r.paymentMethod,
                         'Reference': r.referenceNumber || '',
+                        'Payment For': r.paymentDescription || '',
                         'Status': r.isAmended ? `Amended v${r.version}` : 'Original'
                     });
                 });
@@ -3799,6 +3861,7 @@
                     'Depositor': '',
                     'Method': '',
                     'Reference': '',
+                    'Payment For': '',
                     'Status': ''
                 });
             });
@@ -3814,13 +3877,14 @@
                 'Depositor': '',
                 'Method': '',
                 'Reference': '',
+                'Payment For': '',
                 'Status': ''
             });
 
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(rows);
             ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 16 }, { wch: 16 }, { wch: 14 }, { wch: 14 }, { wch: 20 },
-                { wch: 20 }, { wch: 14 }, { wch: 16 }, { wch: 16 }
+                { wch: 20 }, { wch: 14 }, { wch: 16 }, { wch: 25 }, { wch: 16 }
             ];
             XLSX.utils.book_append_sheet(wb, ws, 'Ledger');
             const label = document.getElementById('monthFilter').value !== 'all' ? document.getElementById('monthFilter')
@@ -3874,6 +3938,7 @@
         console.log('📋 Workflow: M-PESA → Review → Ledger');
         console.log('⌨️  Keyboard shortcuts: ⌘1, ⌘2, ⌘3');
         console.log('🧾 Receipt generation enabled');
+        console.log('📝 "Payment For" field added');
 
         // Override populate month filter after load
         const origLoadRecords = loadRecords;
