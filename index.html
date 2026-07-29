@@ -702,7 +702,11 @@
             flex: 0 0 160px;
             max-width: 160px;
         }
-        .field-name {
+        .field-holder {
+            flex: 1 1 200px;
+            min-width: 160px;
+        }
+        .field-depositor {
             flex: 1 1 200px;
             min-width: 160px;
         }
@@ -797,55 +801,6 @@
         }
         .amount-input-wrapper .form-control {
             padding-left: 2.8rem;
-        }
-
-        .depositor-wrapper {
-            position: relative;
-        }
-        .depositor-wrapper .form-control {
-            padding-right: 3.5rem;
-        }
-        .depositor-wrapper .clear-btn {
-            position: absolute;
-            right: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--gray-400);
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 0.2rem 0.4rem;
-            border-radius: 50%;
-            transition: var(--transition);
-            display: none;
-        }
-        .depositor-wrapper .clear-btn:hover {
-            background: var(--gray-100);
-            color: var(--danger);
-        }
-        .depositor-wrapper .clear-btn.visible {
-            display: block;
-        }
-        .depositor-wrapper .auto-badge {
-            position: absolute;
-            right: 3.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.5rem;
-            background: var(--warning);
-            color: white;
-            padding: 0.05rem 0.6rem;
-            border-radius: var(--radius-full);
-            font-weight: 700;
-            pointer-events: none;
-            opacity: 0;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        .depositor-wrapper .auto-badge.visible {
-            opacity: 1;
         }
 
         .manual-badge {
@@ -1247,6 +1202,13 @@
             font-size: 0.75rem;
             font-style: italic;
         }
+        .table-subtle .depositor-cell {
+            color: var(--gray-600);
+        }
+        .table-subtle .holder-cell {
+            color: var(--gray-700);
+            font-weight: 500;
+        }
         .table-subtle code {
             background: var(--gray-100);
             padding: 0 0.3rem;
@@ -1267,6 +1229,16 @@
             border-top: 3px double var(--gray-300);
             font-weight: 700;
             color: var(--gray-800);
+        }
+
+        /* ─── Highlight Animation for New Record ─── */
+        @keyframes highlightPulse {
+            0% { background-color: #D1FAE5; transform: scale(1); }
+            50% { background-color: #A7F3D0; transform: scale(1.01); }
+            100% { background-color: transparent; transform: scale(1); }
+        }
+        .highlight-new-record td {
+            animation: highlightPulse 2s ease forwards;
         }
 
         .pagination-subtle {
@@ -1355,10 +1327,6 @@
         }
         .btn-action-icon.edit-btn:hover {
             background: var(--warning);
-            color: white;
-        }
-        .btn-action-icon.delete-btn:hover {
-            background: var(--danger);
             color: white;
         }
         .btn-action-icon i {
@@ -2032,7 +2000,7 @@
                             <i class="bi bi-check-circle-fill"></i> Extracted
                         </span>
                         <span class="action-hint">
-                            <i class="bi bi-info-circle"></i> date · amount · ref · sender
+                            <i class="bi bi-info-circle"></i> date · amount · ref · payer
                         </span>
                     </div>
 
@@ -2050,8 +2018,8 @@
                             <div class="value placeholder" id="extractRef">—</div>
                         </div>
                         <div class="sender-recipient">
-                            <span id="extractSender">Sender: <strong>—</strong></span>
-                            <span id="extractRecipient">Recipient: <strong>—</strong></span>
+                            <span id="extractSender">Payer: <strong>—</strong></span>
+                            <span id="extractRecipient">Received By: <strong>Mararo</strong></span>
                         </div>
                     </div>
 
@@ -2094,7 +2062,6 @@
                                 <div class="field-group field-date">
                                     <label for="bankingDate" class="form-label">
                                         Banking Date <span class="required-star">*</span>
-                                        <span class="field-badge primary-badge">Primary</span>
                                     </label>
                                     <input type="date" class="form-control" id="bankingDate" required />
                                     <div class="invalid-feedback">Banking date is required.</div>
@@ -2131,18 +2098,18 @@
                                     <label for="accountNumber" class="form-label">
                                         Account # <span class="required-star">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="accountNumber" placeholder="ACC-12345" required />
+                                    <input type="text" class="form-control" id="accountNumber" placeholder="Customer Account Number" required />
                                     <div class="invalid-feedback">Account number is required.</div>
-                                    <span class="field-helper"><i class="bi bi-person-badge"></i> Customer account</span>
+                                    <span class="field-helper"><i class="bi bi-person-badge"></i> Customer account number</span>
                                 </div>
 
-                                <div class="field-group field-name">
+                                <div class="field-group field-holder">
                                     <label for="accountHolder" class="form-label">
                                         Account Holder <span class="required-star">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="accountHolder" placeholder="Full name" required />
+                                    <input type="text" class="form-control" id="accountHolder" placeholder="Full name of account holder" required />
                                     <div class="invalid-feedback">Account holder name is required.</div>
-                                    <span class="field-helper"><i class="bi bi-person"></i> Full name of holder</span>
+                                    <span class="field-helper"><i class="bi bi-person"></i> Person who owns the account</span>
                                 </div>
 
                                 <div class="field-group field-date">
@@ -2157,21 +2124,13 @@
 
                             <!-- Row 3: Depositor | Payment Method | Reference -->
                             <div class="form-row">
-                                <div class="field-group field-name">
+                                <div class="field-group field-depositor">
                                     <label for="depositorName" class="form-label">
-                                        Depositor Name <span class="required-star">*</span>
+                                        Depositor <span class="required-star">*</span>
                                     </label>
-                                    <div class="depositor-wrapper">
-                                        <input type="text" class="form-control" id="depositorName" placeholder="Auto-fills from account holder" required />
-                                        <span class="auto-badge" id="autoBadge">⚡ Auto</span>
-                                        <button type="button" class="clear-btn" id="clearDepositorBtn" title="Clear and enter different name">
-                                            <i class="bi bi-x-circle"></i>
-                                        </button>
-                                    </div>
+                                    <input type="text" class="form-control" id="depositorName" placeholder="Person who deposited the money" required />
                                     <div class="invalid-feedback">Depositor name is required.</div>
-                                    <span class="field-helper" id="depositorHint">
-                                        <i class="bi bi-info-circle"></i> Auto-filled from account holder. Click <strong>✕</strong> to override.
-                                    </span>
+                                    <span class="field-helper"><i class="bi bi-person-check"></i> Person who physically deposited the money</span>
                                 </div>
 
                                 <div class="field-group field-method">
@@ -2206,11 +2165,23 @@
                                 <div class="field-group field-description">
                                     <label for="paymentDescription" class="form-label">
                                         Payment For <span class="required-star">*</span>
-                                        <span class="field-badge primary-badge">Purpose</span>
                                     </label>
                                     <textarea class="form-control" id="paymentDescription" placeholder="e.g., School fees, Rent, Invoice #123, Goods purchase…" required></textarea>
                                     <div class="invalid-feedback">Please describe what this payment is for.</div>
                                     <span class="field-helper"><i class="bi bi-info-circle"></i> Specify the purpose or reason for this payment</span>
+                                </div>
+                            </div>
+
+                            <!-- Recipient Info (Mararo) - Clean and minimal -->
+                            <div class="form-row">
+                                <div class="field-group field-full">
+                                    <div class="system-dates" style="background:var(--gray-50);border-color:var(--gray-200);">
+                                        <span class="label"><i class="bi bi-building"></i> Recipient:</span>
+                                        <span class="value" style="font-weight:600;color:var(--gray-700);">
+                                            <i class="bi bi-check-circle-fill" style="color:var(--secondary);font-size:0.7rem;"></i> Mararo
+                                        </span>
+                                        <small class="text-muted" style="font-size:0.65rem;">— Payment received by</small>
+                                    </div>
                                 </div>
                             </div>
 
@@ -2350,7 +2321,7 @@
                                     <th class="col-banking">Banking Date</th>
                                     <th class="col-receiptdate">Receipt Date</th>
                                     <th class="col-account">Account</th>
-                                    <th class="col-holder">Holder</th>
+                                    <th class="col-holder">Account Holder</th>
                                     <th class="col-depositor">Depositor</th>
                                     <th class="col-amount text-end">Amount</th>
                                     <th class="col-method">Method</th>
@@ -2391,7 +2362,7 @@
         // ════════════════════════════════════════════════
 
         // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
-        const firebaseConfig = {
+       const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
@@ -2535,7 +2506,7 @@
                 amount = '—',
                 ref = '—',
                 sender = '—',
-                recipient = '—';
+                recipient = 'Mararo';
 
             if (!text || text.trim() === '') {
                 return { date, amount, ref, sender, recipient };
@@ -2583,7 +2554,7 @@
                 ref = refMatch[1].trim();
             }
 
-            // Sender
+            // Sender (will map to depositor/payer)
             const senderPattern = /from\s+([A-Z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$)/i;
             let senderMatch = text.match(senderPattern);
             if (senderMatch && senderMatch[1]) {
@@ -2591,15 +2562,6 @@
             } else {
                 const fallbackSender = text.match(/from\s+([A-Za-z\s]+?)(?=\s+on\s+|\s+for\s+|\s*$)/i);
                 if (fallbackSender && fallbackSender[1]) sender = fallbackSender[1].trim();
-            }
-
-            // Recipient
-            let recipientMatch = text.match(/Dear\s+([A-Za-z0-9]+)/i);
-            if (!recipientMatch) {
-                recipientMatch = text.match(/to\s+([A-Za-z0-9]+)/i);
-            }
-            if (recipientMatch && recipientMatch[1]) {
-                recipient = recipientMatch[1].trim();
             }
 
             return { date, amount, ref, sender, recipient };
@@ -2617,8 +2579,8 @@
             refEl.textContent = ref;
             refEl.classList.toggle('placeholder', ref === '—');
 
-            senderEl.innerHTML = `Sender: <strong>${sender}</strong>`;
-            recipientEl.innerHTML = `Recipient: <strong>${recipient}</strong>`;
+            senderEl.innerHTML = `Payer: <strong>${sender}</strong>`;
+            recipientEl.innerHTML = `Received By: <strong>${recipient}</strong>`;
 
             // Store extracted data
             const isComplete = date !== '—' || amount !== '—' || ref !== '—' || sender !== '—';
@@ -2627,8 +2589,9 @@
                     date: formatDateForInput(date),
                     amount: amount !== '—' ? parseFloat(amount) : null,
                     reference: ref !== '—' ? ref : '',
-                    sender: sender !== '—' ? sender : '',
-                    recipient: recipient !== '—' ? recipient : '',
+                    depositor: sender !== '—' ? sender : '',
+                    accountHolder: sender !== '—' ? sender : '',
+                    recipient: recipient,
                     raw: text
                 };
                 isMpesaExtracted = true;
@@ -2682,8 +2645,8 @@
             amountEl.classList.add('placeholder');
             refEl.textContent = '—';
             refEl.classList.add('placeholder');
-            senderEl.innerHTML = 'Sender: <strong>—</strong>';
-            recipientEl.innerHTML = 'Recipient: <strong>—</strong>';
+            senderEl.innerHTML = 'Payer: <strong>—</strong>';
+            recipientEl.innerHTML = 'Received By: <strong>Mararo</strong>';
             successEl.classList.remove('show');
             extractedData = null;
             isMpesaExtracted = false;
@@ -2769,19 +2732,9 @@
             if (data.reference) {
                 document.getElementById('referenceNumber').value = data.reference;
             }
-            if (data.sender) {
-                const depositorInput = document.getElementById('depositorName');
-                depositorInput.value = data.sender;
-                depositorInput.dataset.autoFilled = 'true';
-                document.getElementById('autoBadge').classList.add('visible');
-                document.getElementById('clearDepositorBtn').classList.add('visible');
-                depositorInput.style.background = '#FFFBEB';
-            }
-            if (data.recipient) {
-                document.getElementById('accountHolder').value = data.recipient;
-                if (!data.sender) {
-                    document.getElementById('depositorName').value = data.recipient;
-                }
+            if (data.depositor) {
+                document.getElementById('depositorName').value = data.depositor;
+                document.getElementById('accountHolder').value = data.depositor;
             }
 
             if (data.reference || data.amount) {
@@ -2836,8 +2789,6 @@
         const paymentMethod = $('paymentMethod');
         const referenceInput = $('referenceNumber');
         const descriptionInput = $('paymentDescription');
-        const clearBtn = $('clearDepositorBtn');
-        const autoBadge = $('autoBadge');
         const submitBtn = $('submitBtn');
         const resetBtn = $('resetBtn');
         const editIndicator = $('editIndicator');
@@ -3013,50 +2964,6 @@
 
         // ─── Form Logic ───
 
-        holderInput.addEventListener('input', function() {
-            if (!depositorInput.value || depositorInput.dataset.autoFilled === 'true') {
-                depositorInput.value = this.value;
-                depositorInput.dataset.autoFilled = 'true';
-                autoBadge.classList.add('visible');
-                clearBtn.classList.add('visible');
-                depositorInput.style.background = '#FFFBEB';
-                document.getElementById('depositorHint').innerHTML =
-                    '<i class="bi bi-info-circle"></i> Auto-filled from account holder. Click <strong>✕</strong> to enter a different name.';
-                hideDuplicateWarning();
-            }
-        });
-
-        clearBtn.addEventListener('click', function() {
-            depositorInput.value = '';
-            depositorInput.dataset.autoFilled = 'false';
-            autoBadge.classList.remove('visible');
-            clearBtn.classList.remove('visible');
-            depositorInput.style.background = '';
-            depositorInput.focus();
-            document.getElementById('depositorHint').innerHTML =
-                '<i class="bi bi-pencil"></i> Enter the depositor\'s name (required).';
-            hideDuplicateWarning();
-        });
-
-        depositorInput.addEventListener('input', function() {
-            if (this.dataset.autoFilled === 'true' && this.value !== holderInput.value) {
-                this.dataset.autoFilled = 'false';
-                autoBadge.classList.remove('visible');
-                clearBtn.classList.remove('visible');
-                this.style.background = '';
-                document.getElementById('depositorHint').innerHTML =
-                    '<i class="bi bi-pencil"></i> Enter the depositor\'s name (required).';
-                hideDuplicateWarning();
-            }
-            if (!this.value) {
-                this.dataset.autoFilled = 'false';
-                autoBadge.classList.remove('visible');
-                clearBtn.classList.remove('visible');
-                this.style.background = '';
-                hideDuplicateWarning();
-            }
-        });
-
         paymentMethod.addEventListener('change', function() {
             const refLabel = document.getElementById('refRequiredBadge');
             const refHint = document.getElementById('refHint');
@@ -3113,6 +3020,7 @@
         }
 
         // ─── Submit Handler ───
+        // ✨ ENHANCED: Auto-navigate to ledger after successful submission
 
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -3139,6 +3047,13 @@
                 showToast('Banking date is required.', 'Validation Error', 'error');
                 bankingDateInput.focus();
                 bankingDateInput.classList.add('is-invalid');
+                return;
+            }
+
+            if (!holderInput.value.trim()) {
+                showToast('Account holder name is required.', 'Validation Error', 'error');
+                holderInput.focus();
+                holderInput.classList.add('is-invalid');
                 return;
             }
 
@@ -3195,6 +3110,7 @@
                 paymentMethod: method,
                 referenceNumber: reference,
                 paymentDescription: description,
+                recipient: 'Mararo',
                 month: bankingDate.slice(0, 7),
                 entryDate: entryDate,
                 modifiedDate: entryDate,
@@ -3296,6 +3212,13 @@
                     updateSystemDates();
                     hideDuplicateWarning();
 
+                    // ✨ Auto-navigate to ledger after amendment
+                    await loadRecords();
+                    setTimeout(() => {
+                        switchTab('ledger-tab');
+                        highlightNewRecord(receipt);
+                    }, 500);
+
                 } else {
                     await db.collection(PAYMENTS_COLLECTION).doc(receipt).set(data);
                     showToast(`Record ${receipt} added successfully!`, 'Success', 'success');
@@ -3305,20 +3228,18 @@
                     receiptDateInput.value = '';
                     updateSystemDates();
                     hideDuplicateWarning();
+
+                    // ✨ Auto-navigate to ledger after successful submission
+                    await loadRecords();
+                    setTimeout(() => {
+                        switchTab('ledger-tab');
+                        highlightNewRecord(receipt);
+                    }, 500);
                 }
 
-                depositorInput.dataset.autoFilled = 'false';
-                autoBadge.classList.remove('visible');
-                clearBtn.classList.remove('visible');
-                depositorInput.style.background = '';
-                document.getElementById('depositorHint').innerHTML =
-                    '<i class="bi bi-info-circle"></i> Auto-filled from account holder. Click <strong>✕</strong> to enter a different name.';
                 form.classList.remove('was-validated');
                 receiptInput.focus();
                 paymentMethod.dispatchEvent(new Event('change'));
-
-                await loadRecords();
-                showToast(`Payment record ${receipt} saved successfully! View it in the ledger.`, 'Success', 'success');
 
             } catch (error) {
                 console.error('Submit error:', error);
@@ -3332,17 +3253,35 @@
             }
         });
 
+        // ─── Highlight New Record in Ledger ───
+        function highlightNewRecord(receiptNumber) {
+            setTimeout(() => {
+                const tableBody = document.getElementById('tableBody');
+                const rows = tableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length > 1 && cells[1].textContent.includes(receiptNumber)) {
+                        // Add highlight class
+                        row.classList.add('highlight-new-record');
+
+                        // Scroll to the row
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                        // Remove highlight after animation
+                        setTimeout(() => {
+                            row.classList.remove('highlight-new-record');
+                        }, 2500);
+                    }
+                });
+            }, 400);
+        }
+
         resetBtn.addEventListener('click', function(e) {
             e.preventDefault();
             form.reset();
             bankingDateInput.value = today;
             receiptDateInput.value = '';
-            depositorInput.dataset.autoFilled = 'false';
-            autoBadge.classList.remove('visible');
-            clearBtn.classList.remove('visible');
-            depositorInput.style.background = '';
-            document.getElementById('depositorHint').innerHTML =
-                '<i class="bi bi-info-circle"></i> Auto-filled from account holder. Click <strong>✕</strong> to enter a different name.';
             document.getElementById('editIndicator').style.display = 'none';
             document.getElementById('editMode').value = 'false';
             document.getElementById('editDocId').value = '';
@@ -3409,6 +3348,10 @@
                                 <div class="receipt-row">
                                     <span class="label"><i class="bi bi-person-check"></i> Depositor</span>
                                     <span class="value">${escapeHtml(record.depositorName)}</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="label"><i class="bi bi-building"></i> Received By</span>
+                                    <span class="value"><strong>Mararo</strong></span>
                                 </div>
                                 <div class="receipt-row">
                                     <span class="label"><i class="bi bi-credit-card"></i> Payment Method</span>
@@ -3561,7 +3504,7 @@
                     const str = [
                         r.id, r.accountNumber, r.accountHolder, r.depositorName,
                         r.referenceNumber, r.paymentMethod, r.amount ? r.amount.toString() : '',
-                        r.bankingDate || '', r.receiptDate || '', r.paymentDescription || ''
+                        r.bankingDate || '', r.receiptDate || '', r.paymentDescription || '', r.recipient || ''
                     ].join(' ').toLowerCase();
                     if (!str.includes(search)) match = false;
                 }
@@ -3650,8 +3593,8 @@
                             <td class="col-banking">${formatDate(r.bankingDate)}</td>
                             <td class="col-receiptdate">${r.receiptDate ? formatDate(r.receiptDate) : '-'}</td>
                             <td class="col-account"><code>${escapeHtml(r.accountNumber)}</code></td>
-                            <td class="col-holder" title="${escapeHtml(r.accountHolder)}">${escapeHtml(holderShort)}</td>
-                            <td class="col-depositor" title="${escapeHtml(r.depositorName)}">${escapeHtml(depositorShort)}</td>
+                            <td class="col-holder holder-cell" title="${escapeHtml(r.accountHolder)}">${escapeHtml(holderShort)}</td>
+                            <td class="col-depositor depositor-cell" title="${escapeHtml(r.depositorName)}">${escapeHtml(depositorShort)}</td>
                             <td class="col-amount amount-cell">${formatCurrency(r.amount)}</td>
                             <td class="col-method">${getMethodBadge(r.paymentMethod)}</td>
                             <td class="col-ref ref-cell" title="${escapeHtml(r.referenceNumber)||''}">${escapeHtml(r.referenceNumber)||'-'}</td>
@@ -3840,11 +3783,12 @@
                         'Receipt Date': r.receiptDate ? formatDate(r.receiptDate) : '',
                         'Amount': parseFloat(r.amount).toFixed(2),
                         'Account': r.accountNumber,
-                        'Holder': r.accountHolder,
+                        'Account Holder': r.accountHolder,
                         'Depositor': r.depositorName,
                         'Method': r.paymentMethod,
                         'Reference': r.referenceNumber || '',
                         'Payment For': r.paymentDescription || '',
+                        'Received By': r.recipient || 'Mararo',
                         'Status': r.isAmended ? `Amended v${r.version}` : 'Original'
                     });
                 });
@@ -3857,11 +3801,12 @@
                     'Receipt Date': '',
                     'Amount': daily.toFixed(2),
                     'Account': '',
-                    'Holder': '──────────────',
+                    'Account Holder': '──────────────',
                     'Depositor': '',
                     'Method': '',
                     'Reference': '',
                     'Payment For': '',
+                    'Received By': '',
                     'Status': ''
                 });
             });
@@ -3873,18 +3818,19 @@
                 'Receipt Date': '',
                 'Amount': grand.toFixed(2),
                 'Account': '',
-                'Holder': '──────────────',
+                'Account Holder': '──────────────',
                 'Depositor': '',
                 'Method': '',
                 'Reference': '',
                 'Payment For': '',
+                'Received By': '',
                 'Status': ''
             });
 
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(rows);
             ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 16 }, { wch: 16 }, { wch: 14 }, { wch: 14 }, { wch: 20 },
-                { wch: 20 }, { wch: 14 }, { wch: 16 }, { wch: 25 }, { wch: 16 }
+                { wch: 20 }, { wch: 14 }, { wch: 16 }, { wch: 25 }, { wch: 16 }, { wch: 14 }
             ];
             XLSX.utils.book_append_sheet(wb, ws, 'Ledger');
             const label = document.getElementById('monthFilter').value !== 'all' ? document.getElementById('monthFilter')
@@ -3939,6 +3885,9 @@
         console.log('⌨️  Keyboard shortcuts: ⌘1, ⌘2, ⌘3');
         console.log('🧾 Receipt generation enabled');
         console.log('📝 "Payment For" field added');
+        console.log('🏢 Recipient: Mararo (fixed)');
+        console.log('👤 Account Holder and Depositor are separate fields');
+        console.log('🔄 Auto-navigate to Ledger after submission with highlight!');
 
         // Override populate month filter after load
         const origLoadRecords = loadRecords;
