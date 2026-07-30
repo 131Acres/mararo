@@ -1391,58 +1391,88 @@
             background: white;
         }
 
-        /* ─── Receipt Design ─── */
+        /* ─── Customization Panel ─── */
+        .receipt-customizer {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--gray-200);
+        }
+        .receipt-customizer .customizer-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.5rem;
+            align-items: center;
+        }
+        .receipt-customizer .customizer-row .form-label {
+            font-size: 0.7rem;
+            margin-bottom: 0;
+            min-width: 70px;
+        }
+        .receipt-customizer .customizer-row .form-control,
+        .receipt-customizer .customizer-row .form-select {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.7rem;
+            min-height: 32px;
+            width: auto;
+            min-width: 120px;
+        }
+        .receipt-customizer .customizer-row .form-check {
+            font-size: 0.8rem;
+        }
+        .receipt-customizer .customizer-row .form-check-input {
+            width: 16px;
+            height: 16px;
+            margin-top: 0.1rem;
+        }
+
+        /* ─── POS-Optimized Receipt Design ─── */
         .receipt-wrapper {
-            max-width: 700px;
+            max-width: 320px;
             margin: 0 auto;
             background: white;
-            padding: 2.5rem;
-            border-radius: var(--radius-md);
-            border: 2px solid var(--gray-200);
+            padding: 0.5rem 0.6rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0;
             position: relative;
+            font-family: 'Courier New', 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            line-height: 1.4;
         }
         .receipt-wrapper .receipt-watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 6rem;
-            font-weight: 800;
-            color: rgba(79, 70, 229, 0.03);
-            pointer-events: none;
-            letter-spacing: 12px;
-            white-space: nowrap;
+            display: none;
         }
         .receipt-wrapper .receipt-header {
             text-align: center;
-            border-bottom: 3px double var(--gray-200);
-            padding-bottom: 1.2rem;
-            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed var(--gray-300);
+            padding-bottom: 0.4rem;
+            margin-bottom: 0.5rem;
             position: relative;
             z-index: 1;
         }
         .receipt-wrapper .receipt-header .company-name {
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 0.9rem;
+            font-weight: 700;
             color: var(--gray-900);
-            letter-spacing: -0.5px;
+            letter-spacing: 0px;
         }
         .receipt-wrapper .receipt-header .company-name span {
             color: var(--primary);
         }
         .receipt-wrapper .receipt-header .receipt-title {
-            font-size: 1.1rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--gray-500);
-            letter-spacing: 3px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            margin-top: 0.2rem;
+            margin-top: 0.1rem;
         }
         .receipt-wrapper .receipt-header .receipt-number {
-            font-size: 0.8rem;
+            font-size: 0.55rem;
             color: var(--gray-400);
-            margin-top: 0.3rem;
-            font-family: 'JetBrains Mono', monospace;
+            margin-top: 0.1rem;
+            font-family: 'Courier New', monospace;
         }
 
         .receipt-wrapper .receipt-body {
@@ -1452,75 +1482,64 @@
         .receipt-wrapper .receipt-body .receipt-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.4rem 0;
-            border-bottom: 1px solid var(--gray-100);
+            padding: 0.15rem 0;
+            border-bottom: 1px dotted var(--gray-100);
         }
         .receipt-wrapper .receipt-body .receipt-row:last-child {
             border-bottom: none;
         }
         .receipt-wrapper .receipt-body .receipt-row .label {
             color: var(--gray-500);
-            font-weight: 500;
-            font-size: 0.8rem;
+            font-weight: 400;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
         .receipt-wrapper .receipt-body .receipt-row .value {
             font-weight: 600;
             color: var(--gray-800);
-            font-size: 0.9rem;
+            font-size: 0.6rem;
             text-align: right;
-            max-width: 60%;
+            max-width: 55%;
+            word-break: break-word;
+            font-family: 'Courier New', monospace;
         }
         .receipt-wrapper .receipt-body .receipt-row .value.amount {
-            font-size: 1.3rem;
+            font-size: 0.9rem;
             color: var(--primary);
             font-weight: 700;
         }
         .receipt-wrapper .receipt-body .receipt-row .value.description {
             font-style: italic;
             color: var(--gray-600);
+            font-size: 0.55rem;
         }
 
         .receipt-wrapper .receipt-footer {
-            margin-top: 1.5rem;
-            padding-top: 1.2rem;
-            border-top: 2px solid var(--gray-200);
+            margin-top: 0.5rem;
+            padding-top: 0.4rem;
+            border-top: 1px dashed var(--gray-300);
             text-align: center;
             position: relative;
             z-index: 1;
         }
         .receipt-wrapper .receipt-footer .footer-text {
-            font-size: 0.75rem;
+            font-size: 0.45rem;
             color: var(--gray-400);
+            line-height: 1.2;
         }
         .receipt-wrapper .receipt-footer .footer-text i {
-            margin: 0 0.2rem;
-        }
-        .receipt-wrapper .receipt-footer .signature-line {
-            margin-top: 0.8rem;
-            display: flex;
-            justify-content: space-around;
-        }
-        .receipt-wrapper .receipt-footer .signature-line .sig-item {
-            text-align: center;
-        }
-        .receipt-wrapper .receipt-footer .signature-line .sig-item .sig-line {
-            width: 120px;
-            border-bottom: 2px solid var(--gray-300);
-            margin-bottom: 0.2rem;
-        }
-        .receipt-wrapper .receipt-footer .signature-line .sig-item .sig-label {
-            font-size: 0.65rem;
-            color: var(--gray-400);
+            margin: 0 0.1rem;
         }
 
         .receipt-wrapper .receipt-status {
             display: inline-block;
-            padding: 0.15rem 1rem;
+            padding: 0.05rem 0.4rem;
             border-radius: var(--radius-full);
-            font-size: 0.65rem;
+            font-size: 0.45rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         .receipt-wrapper .receipt-status.paid {
             background: #D1FAE5;
@@ -1535,6 +1554,130 @@
             border-top: 1px solid var(--gray-200);
             padding: 1rem 1.8rem;
             background: var(--gray-50);
+        }
+
+        /* ─── Print Styles - POS Optimized ─── */
+        @media print {
+            /* Hide everything except the receipt */
+            body * {
+                visibility: hidden;
+            }
+            
+            #receiptToPrint,
+            #receiptToPrint * {
+                visibility: visible;
+            }
+            
+            #receiptToPrint {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 280px;
+                padding: 0.15in;
+                background: white;
+                font-family: 'Courier New', monospace;
+                font-size: 0.6rem;
+                line-height: 1.3;
+            }
+            
+            #receiptToPrint .receipt-wrapper {
+                border: none !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            
+            #receiptToPrint .receipt-watermark {
+                display: none !important;
+            }
+            
+            #receiptToPrint .receipt-header {
+                text-align: center;
+                border-bottom: 1px dashed #CBD5E1;
+                padding-bottom: 0.3rem;
+                margin-bottom: 0.4rem;
+            }
+            #receiptToPrint .receipt-header .company-name {
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: #0F172A;
+            }
+            #receiptToPrint .receipt-header .company-name span {
+                color: #4F46E5;
+            }
+            #receiptToPrint .receipt-header .receipt-title {
+                font-size: 0.65rem;
+                font-weight: 600;
+                color: #64748B;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }
+            #receiptToPrint .receipt-header .receipt-number {
+                font-size: 0.5rem;
+                color: #94A3B8;
+            }
+            #receiptToPrint .receipt-body .receipt-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.1rem 0;
+                border-bottom: 1px dotted #F1F5F9;
+            }
+            #receiptToPrint .receipt-body .receipt-row .label {
+                color: #64748B;
+                font-weight: 400;
+                font-size: 0.5rem;
+                text-transform: uppercase;
+            }
+            #receiptToPrint .receipt-body .receipt-row .value {
+                font-weight: 600;
+                color: #1E293B;
+                font-size: 0.55rem;
+                text-align: right;
+                max-width: 55%;
+                word-break: break-word;
+            }
+            #receiptToPrint .receipt-body .receipt-row .value.amount {
+                font-size: 0.85rem;
+                color: #4F46E5;
+                font-weight: 700;
+            }
+            #receiptToPrint .receipt-body .receipt-row .value.description {
+                font-style: italic;
+                color: #475569;
+                font-size: 0.5rem;
+            }
+            #receiptToPrint .receipt-footer {
+                margin-top: 0.4rem;
+                padding-top: 0.3rem;
+                border-top: 1px dashed #CBD5E1;
+                text-align: center;
+            }
+            #receiptToPrint .receipt-footer .footer-text {
+                font-size: 0.45rem;
+                color: #94A3B8;
+            }
+            #receiptToPrint .receipt-status {
+                display: inline-block;
+                padding: 0.05rem 0.4rem;
+                border-radius: 9999px;
+                font-size: 0.45rem;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            #receiptToPrint .receipt-status.paid {
+                background: #D1FAE5;
+                color: #065F46;
+            }
+            #receiptToPrint .receipt-status.pending {
+                background: #FEF3C7;
+                color: #92400E;
+            }
+            
+            .modal-backdrop {
+                display: none !important;
+            }
+            .receipt-modal .modal-dialog {
+                display: none !important;
+            }
         }
 
         /* ─── Responsive ─── */
@@ -1705,18 +1848,23 @@
             }
 
             .receipt-wrapper {
-                padding: 1.5rem;
+                max-width: 280px;
+                padding: 0.4rem 0.5rem;
             }
             .receipt-wrapper .receipt-header .company-name {
-                font-size: 1.3rem;
+                font-size: 0.8rem;
             }
             .receipt-wrapper .receipt-body .receipt-row .value.amount {
-                font-size: 1.1rem;
+                font-size: 0.8rem;
             }
-            .receipt-wrapper .receipt-footer .signature-line {
+            .receipt-customizer .customizer-row {
                 flex-direction: column;
-                gap: 0.8rem;
-                align-items: center;
+                align-items: stretch;
+            }
+            .receipt-customizer .customizer-row .form-control,
+            .receipt-customizer .customizer-row .form-select {
+                width: 100%;
+                min-width: auto;
             }
         }
 
@@ -1755,117 +1903,21 @@
                 top: 0.75rem;
             }
             .receipt-modal .modal-body {
-                padding: 1rem;
+                padding: 0.5rem;
             }
             .receipt-wrapper {
-                padding: 1rem;
+                max-width: 240px;
+                padding: 0.3rem 0.4rem;
+                font-size: 0.55rem;
             }
-            .receipt-wrapper .receipt-watermark {
-                font-size: 3rem;
+            .receipt-wrapper .receipt-header .company-name {
+                font-size: 0.7rem;
             }
-        }
-
-        @media print {
-            body {
-                background: white;
-                padding: 0.2in;
+            .receipt-wrapper .receipt-body .receipt-row .value.amount {
+                font-size: 0.7rem;
             }
-            .app-container {
-                box-shadow: none;
-                border: 1px solid #ccc;
-                border-radius: 0;
-            }
-            .app-header {
-                background: #1E293B !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .workflow-tabs,
-            .workflow-progress,
-            .app-header .workflow-indicator {
-                display: none !important;
-            }
-            .tab-btn {
-                display: none !important;
-            }
-            .tab-pane {
-                display: block !important;
-            }
-            .tab-pane:not(#ledger-pane) {
-                display: none !important;
-            }
-            .toolbar-subtle .btn-soft {
-                display: none;
-            }
-            .toolbar-subtle select,
-            .toolbar-subtle input {
-                border: 1px solid #aaa;
-            }
-            .stats-subtle {
-                background: #f3f3ef;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .toolbar-subtle .hint {
-                display: none;
-            }
-            .table-subtle tbody td,
-            .table-subtle thead th {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .table-subtle tbody tr:nth-child(even) td {
-                background: #f8f8f8 !important;
-            }
-            .btn-smart-transfer,
-            .btn-extract,
-            .btn-soft-clear {
-                display: none !important;
-            }
-
-            /* Receipt print styles */
-            .modal-backdrop {
-                display: none !important;
-            }
-            .receipt-modal .modal-dialog {
-                max-width: 100% !important;
-                margin: 0 !important;
-                transform: none !important;
-            }
-            .receipt-modal .modal-content {
-                border: none !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-            }
-            .receipt-modal .modal-header,
-            .receipt-modal .modal-footer {
-                display: none !important;
-            }
-            .receipt-modal .modal-body {
-                padding: 0 !important;
-            }
-            .receipt-wrapper {
-                border: none !important;
-                padding: 0.3in !important;
-            }
-            .receipt-wrapper .receipt-watermark {
-                display: none !important;
-            }
-            .btn-action-icon {
-                display: none !important;
-            }
-        }
-
-        /* Print-specific receipt styles */
-        .receipt-print-only {
-            display: none;
-        }
-        @media print {
-            .receipt-print-only {
-                display: block !important;
-            }
-            .receipt-no-print {
-                display: none !important;
+            .receipt-customizer {
+                padding: 0.75rem;
             }
         }
     </style>
@@ -1889,26 +1941,74 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Payment Receipt</h5>
+                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Receipt</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="receiptBody">
-                    <!-- Receipt content rendered by JS -->
+
+                    <!-- Receipt customization panel -->
+                    <div class="receipt-customizer" id="receiptCustomizer">
+                        <div class="customizer-row">
+                            <label class="form-label">Company</label>
+                            <input type="text" class="form-control" id="receiptCompany" value="PayFlow" style="flex:1;min-width:150px;" />
+                        </div>
+                        <div class="customizer-row mt-2">
+                            <label class="form-label">Receipt Title</label>
+                            <input type="text" class="form-control" id="receiptTitle" value="Payment Receipt" style="flex:1;min-width:150px;" />
+                        </div>
+                        <div class="customizer-row mt-2">
+                            <label class="form-label">Footer Message</label>
+                            <input type="text" class="form-control" id="receiptFooter" value="Thank you for your payment" style="flex:1;min-width:150px;" />
+                        </div>
+                        <div class="customizer-row mt-2">
+                            <label class="form-label">Fields</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showAccount" checked />
+                                    <label class="form-check-label" for="showAccount">Account</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showHolder" checked />
+                                    <label class="form-check-label" for="showHolder">Holder</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showDepositor" checked />
+                                    <label class="form-check-label" for="showDepositor">Depositor</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showMethod" checked />
+                                    <label class="form-check-label" for="showMethod">Method</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showReference" checked />
+                                    <label class="form-check-label" for="showReference">Reference</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showDescription" checked />
+                                    <label class="form-check-label" for="showDescription">Purpose</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- SINGLE receipt container - this is the ONLY place the receipt renders -->
+                    <div id="receiptContainer"></div>
+                    
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-soft-clear" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-sm btn-soft-clear" data-bs-dismiss="modal">
                         <i class="bi bi-x"></i> Close
                     </button>
-                    <button type="button" class="btn btn-primary" id="printReceiptBtn">
+                    <button type="button" class="btn btn-sm btn-primary" id="printReceiptBtn">
                         <i class="bi bi-printer"></i> Print Receipt
-                    </button>
-                    <button type="button" class="btn btn-soft-clear" id="downloadReceiptBtn">
-                        <i class="bi bi-download"></i> Download PDF
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- ─── Hidden print container (clone will be moved here) ─── -->
+    <div id="receiptToPrint" style="display:none;"></div>
 
     <!-- ─── Main App Container ─── -->
     <div class="app-container">
@@ -2353,8 +2453,6 @@
     <!-- ─── SCRIPTS ─── -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    </script>
 
     <script>
         // ════════════════════════════════════════════════
@@ -2362,7 +2460,7 @@
         // ════════════════════════════════════════════════
 
         // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
-       const firebaseConfig = {
+        const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
@@ -3303,11 +3401,22 @@
         let currentPage = 1;
         const PAGE_SIZE = 8;
 
-        // ─── Receipt Modal ───
+        // ─── Receipt Modal with Customization ───
         const receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
         let currentReceiptRecord = null;
 
         function generateReceiptHTML(record) {
+            // Read customizations directly from DOM
+            const company = document.getElementById('receiptCompany').value || 'PayFlow';
+            const title = document.getElementById('receiptTitle').value || 'Payment Receipt';
+            const footer = document.getElementById('receiptFooter').value || 'Thank you for your payment';
+            const showAccount = document.getElementById('showAccount').checked;
+            const showHolder = document.getElementById('showHolder').checked;
+            const showDepositor = document.getElementById('showDepositor').checked;
+            const showMethod = document.getElementById('showMethod').checked;
+            const showReference = document.getElementById('showReference').checked;
+            const showDescription = document.getElementById('showDescription').checked;
+
             const date = formatDate(record.bankingDate);
             const receiptDate = record.receiptDate ? formatDate(record.receiptDate) : 'N/A';
             const amount = formatCurrency(record.amount);
@@ -3316,181 +3425,185 @@
             const version = record.version || 1;
             const description = record.paymentDescription || '—';
 
+            let bodyRows = '';
+
+            // Date row - always shown
+            bodyRows += `
+                        <div class="receipt-row">
+                            <span class="label">Date</span>
+                            <span class="value">${date}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">Receipt Date</span>
+                            <span class="value">${receiptDate}</span>
+                        </div>
+                    `;
+
+            // Optional fields
+            if (showAccount) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Account</span>
+                                <span class="value">${escapeHtml(record.accountNumber)}</span>
+                            </div>
+                        `;
+            }
+            if (showHolder) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Holder</span>
+                                <span class="value">${escapeHtml(record.accountHolder)}</span>
+                            </div>
+                        `;
+            }
+            if (showDepositor) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Depositor</span>
+                                <span class="value">${escapeHtml(record.depositorName)}</span>
+                            </div>
+                        `;
+            }
+            if (showMethod) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Method</span>
+                                <span class="value">${escapeHtml(record.paymentMethod)}</span>
+                            </div>
+                        `;
+            }
+            if (showReference) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Reference</span>
+                                <span class="value">${escapeHtml(record.referenceNumber) || '—'}</span>
+                            </div>
+                        `;
+            }
+            if (showDescription) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">For</span>
+                                <span class="value description">${escapeHtml(description)}</span>
+                            </div>
+                        `;
+            }
+
+            // Amount - always shown
+            bodyRows += `
+                        <div class="receipt-row" style="border-top: 1px dashed var(--gray-300); margin-top: 0.2rem; padding-top: 0.3rem;">
+                            <span class="label" style="font-weight:700;">Amount</span>
+                            <span class="value amount">${amount}</span>
+                        </div>
+                    `;
+
             return `
                         <div class="receipt-wrapper" id="receiptContent">
                             <div class="receipt-watermark">PAYFLOW</div>
                             <div class="receipt-header">
-                                <div class="company-name">Pay<span>Flow</span></div>
-                                <div class="receipt-title">Payment Receipt</div>
+                                <div class="company-name">${escapeHtml(company)}</div>
+                                <div class="receipt-title">${escapeHtml(title)}</div>
                                 <div class="receipt-number">
                                     <span class="receipt-status ${statusClass}">${status}</span>
-                                    &nbsp;·&nbsp; Receipt #${escapeHtml(record.id)} &nbsp;·&nbsp; v${version}
+                                    #${escapeHtml(record.id)}
+                                    ${record.isAmended ? ` · v${version}` : ''}
                                 </div>
                             </div>
 
                             <div class="receipt-body">
-                                <div class="receipt-row">
-                                    <span class="label"><i class="bi bi-calendar3"></i> Banking Date</span>
-                                    <span class="value">${date}</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="label"><i class="bi bi-receipt"></i> Receipt Date</span>
-                                    <span class="value">${receiptDate}</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="label"><i class="bi bi-person-badge"></i> Account Number</span>
-                                    <span class="value"><code>${escapeHtml(record.accountNumber)}</code></span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="label"><i class="bi bi-person"></i> Account Holder</span>
-                                    <span class="value">${escapeHtml(record.accountHolder)}</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="label"><i class="bi bi-person-check"></i> Depositor</span>
-                                    <span class="value">${escapeHtml(record.depositorName)}</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="label"><i class="bi bi-building"></i> Received By</span>
-                                    <span class="value"><strong>Mararo</strong></span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="label"><i class="bi bi-credit-card"></i> Payment Method</span>
-                                    <span class="value">${escapeHtml(record.paymentMethod)}</span>
-                                </div>
-                                <div class="receipt-row">
-                                    <span class="label"><i class="bi bi-tag"></i> Reference</span>
-                                    <span class="value">${escapeHtml(record.referenceNumber) || '—'}</span>
-                                </div>
-                                <div class="receipt-row" style="border-bottom: 2px solid var(--gray-200); padding-bottom: 0.6rem;">
-                                    <span class="label"><i class="bi bi-info-circle"></i> Payment For</span>
-                                    <span class="value description">${escapeHtml(description)}</span>
-                                </div>
-                                <div class="receipt-row" style="border-top: 2px solid var(--gray-200); padding-top: 0.8rem; margin-top: 0.5rem;">
-                                    <span class="label" style="font-size: 0.9rem; font-weight: 600;">Amount Paid</span>
-                                    <span class="value amount">${amount}</span>
-                                </div>
+                                ${bodyRows}
                             </div>
 
                             <div class="receipt-footer">
                                 <div class="footer-text">
-                                    <i class="bi bi-check-circle"></i> This is a computer-generated receipt.
-                                    ${record.isAmended ? ' <i class="bi bi-pencil-square"></i> Amended record' : ''}
+                                    <i class="bi bi-check-circle"></i> ${escapeHtml(footer)}
                                 </div>
-                                <div class="signature-line">
-                                    <div class="sig-item">
-                                        <div class="sig-line"></div>
-                                        <div class="sig-label">Authorized Signature</div>
-                                    </div>
-                                    <div class="sig-item">
-                                        <div class="sig-line"></div>
-                                        <div class="sig-label">Customer Signature</div>
-                                    </div>
-                                </div>
-                                <div class="footer-text" style="margin-top: 0.8rem; font-size: 0.65rem;">
-                                    <i class="bi bi-clock"></i> Generated: ${new Date().toLocaleString()}
-                                    &nbsp;·&nbsp; <i class="bi bi-database"></i> Ref: ${escapeHtml(record.id)}_${Date.now()}
+                                <div class="footer-text" style="font-size:0.4rem; margin-top:0.1rem;">
+                                    ${new Date().toLocaleString()}
                                 </div>
                             </div>
                         </div>
                     `;
         }
 
+        function renderReceipt(record) {
+            if (!record) return;
+            const container = document.getElementById('receiptContainer');
+            container.innerHTML = generateReceiptHTML(record);
+        }
+
         function showReceipt(record) {
             currentReceiptRecord = record;
-            const receiptBody = document.getElementById('receiptBody');
-            receiptBody.innerHTML = generateReceiptHTML(record);
+            
+            // Reset customizer to defaults
+            document.getElementById('receiptCompany').value = 'PayFlow';
+            document.getElementById('receiptTitle').value = 'Payment Receipt';
+            document.getElementById('receiptFooter').value = 'Thank you for your payment';
+            document.getElementById('showAccount').checked = true;
+            document.getElementById('showHolder').checked = true;
+            document.getElementById('showDepositor').checked = true;
+            document.getElementById('showMethod').checked = true;
+            document.getElementById('showReference').checked = true;
+            document.getElementById('showDescription').checked = true;
+
+            // Render the receipt
+            renderReceipt(record);
             receiptModal.show();
         }
 
-        // ─── Print Receipt ───
-        document.getElementById('printReceiptBtn').addEventListener('click', function() {
-            const receiptContent = document.getElementById('receiptContent');
-            if (!receiptContent) return;
-
-            const printWindow = window.open('', '_blank', 'width=800,height=600');
-            printWindow.document.write(`
-                        <html>
-                            <head>
-                                <title>Payment Receipt</title>
-                                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-                                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
-                                <style>
-                                    body { padding: 0.5in; font-family: 'Inter', sans-serif; background: white; }
-                                    .receipt-wrapper { max-width: 700px; margin: 0 auto; padding: 1.5rem; border: 2px solid #E2E8F0; border-radius: 12px; }
-                                    .receipt-wrapper .receipt-header { text-align: center; border-bottom: 3px double #E2E8F0; padding-bottom: 1rem; margin-bottom: 1.5rem; }
-                                    .receipt-wrapper .receipt-header .company-name { font-size: 1.8rem; font-weight: 800; color: #0F172A; }
-                                    .receipt-wrapper .receipt-header .company-name span { color: #4F46E5; }
-                                    .receipt-wrapper .receipt-header .receipt-title { font-size: 1.1rem; font-weight: 600; color: #64748B; letter-spacing: 3px; text-transform: uppercase; }
-                                    .receipt-wrapper .receipt-body .receipt-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #F1F5F9; }
-                                    .receipt-wrapper .receipt-body .receipt-row .label { color: #64748B; font-weight: 500; font-size: 0.8rem; }
-                                    .receipt-wrapper .receipt-body .receipt-row .value { font-weight: 600; color: #1E293B; font-size: 0.9rem; text-align: right; max-width: 60%; }
-                                    .receipt-wrapper .receipt-body .receipt-row .value.amount { font-size: 1.3rem; color: #4F46E5; font-weight: 700; }
-                                    .receipt-wrapper .receipt-body .receipt-row .value.description { font-style: italic; color: #475569; }
-                                    .receipt-wrapper .receipt-footer { margin-top: 1.5rem; padding-top: 1.2rem; border-top: 2px solid #E2E8F0; text-align: center; }
-                                    .receipt-wrapper .receipt-footer .footer-text { font-size: 0.75rem; color: #94A3B8; }
-                                    .receipt-wrapper .receipt-footer .signature-line { margin-top: 0.8rem; display: flex; justify-content: space-around; }
-                                    .receipt-wrapper .receipt-footer .signature-line .sig-item { text-align: center; }
-                                    .receipt-wrapper .receipt-footer .signature-line .sig-item .sig-line { width: 120px; border-bottom: 2px solid #CBD5E1; margin-bottom: 0.2rem; }
-                                    .receipt-wrapper .receipt-footer .signature-line .sig-item .sig-label { font-size: 0.65rem; color: #94A3B8; }
-                                    .receipt-wrapper .receipt-status { display: inline-block; padding: 0.15rem 1rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-                                    .receipt-wrapper .receipt-status.paid { background: #D1FAE5; color: #065F46; }
-                                    .receipt-wrapper .receipt-status.pending { background: #FEF3C7; color: #92400E; }
-                                    .receipt-wrapper .receipt-watermark { display: none; }
-                                    .receipt-no-print { display: none; }
-                                </style>
-                            </head>
-                            <body>
-                                ${receiptContent.outerHTML}
-                                <script>
-                                    window.onload = function() { window.print(); window.close(); };
-                                <\/script>
-                            </body>
-                        </html>
-                    `);
-            printWindow.document.close();
+        // ─── Real-time preview on customization change ───
+        document.querySelectorAll('#receiptCustomizer input, #receiptCustomizer select').forEach(el => {
+            el.addEventListener('change', function() {
+                if (currentReceiptRecord) {
+                    renderReceipt(currentReceiptRecord);
+                }
+            });
+            el.addEventListener('input', function() {
+                if (currentReceiptRecord) {
+                    renderReceipt(currentReceiptRecord);
+                }
+            });
         });
 
-        // ─── Download Receipt as PDF ───
-        document.getElementById('downloadReceiptBtn').addEventListener('click', function() {
+        // ─── Print Receipt ───
+        document.getElementById('printReceiptBtn').addEventListener('click', function() {
+            if (!currentReceiptRecord) {
+                showToast('No receipt to print.', 'Error', 'error');
+                return;
+            }
+            
+            // Update the receipt with latest customizations
+            renderReceipt(currentReceiptRecord);
+            
+            // Get the rendered receipt content
             const receiptContent = document.getElementById('receiptContent');
-            if (!receiptContent) return;
-
-            const element = receiptContent.cloneNode(true);
-            element.style.border = '2px solid #E2E8F0';
-            element.style.borderRadius = '12px';
-            element.style.padding = '1.5rem';
-            element.style.maxWidth = '700px';
-            element.style.margin = '0 auto';
-            element.style.background = 'white';
-
-            // Remove watermark for PDF
-            const watermark = element.querySelector('.receipt-watermark');
-            if (watermark) watermark.style.display = 'none';
-
-            const opt = {
-                margin: [0.5, 0.5, 0.5, 0.5],
-                filename: `Receipt_${currentReceiptRecord.id}_${new Date().toISOString().slice(0,10)}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    letterRendering: true,
-                },
-                jsPDF: {
-                    unit: 'in',
-                    format: 'a4',
-                    orientation: 'portrait'
-                }
-            };
-
-            showToast('Generating PDF...', 'Please wait', 'info');
-
-            html2pdf().set(opt).from(element).save().then(function() {
-                showToast('PDF downloaded successfully!', 'Success', 'success');
-            }).catch(function(err) {
-                console.error('PDF generation error:', err);
-                showToast('Failed to generate PDF. Please try printing instead.', 'Error', 'error');
-            });
+            if (!receiptContent) {
+                showToast('No receipt content to print.', 'Error', 'error');
+                return;
+            }
+            
+            // Clone the receipt to the print container
+            const printContainer = document.getElementById('receiptToPrint');
+            printContainer.innerHTML = '';
+            const clone = receiptContent.cloneNode(true);
+            printContainer.appendChild(clone);
+            printContainer.style.display = 'block';
+            printContainer.style.position = 'fixed';
+            printContainer.style.left = '0';
+            printContainer.style.top = '0';
+            printContainer.style.width = '280px';
+            printContainer.style.padding = '0.15in';
+            printContainer.style.background = 'white';
+            printContainer.style.zIndex = '99999';
+            
+            // Trigger print
+            window.print();
+            
+            // Reset after printing
+            setTimeout(() => {
+                printContainer.style.display = 'none';
+                printContainer.innerHTML = '';
+            }, 1000);
         });
 
         function updateLedger() {
@@ -3883,11 +3996,9 @@
         console.log('💳 PayFlow · Payment Management System initialized');
         console.log('📋 Workflow: M-PESA → Review → Ledger');
         console.log('⌨️  Keyboard shortcuts: ⌘1, ⌘2, ⌘3');
-        console.log('🧾 Receipt generation enabled');
-        console.log('📝 "Payment For" field added');
-        console.log('🏢 Recipient: Mararo (fixed)');
-        console.log('👤 Account Holder and Depositor are separate fields');
-        console.log('🔄 Auto-navigate to Ledger after submission with highlight!');
+        console.log('🧾 POS-optimized receipt with real-time customization');
+        console.log('✏️  Customize: Company name, Title, Footer, Show/Hide fields');
+        console.log('🖨️  Single receipt source - no duplicates');
 
         // Override populate month filter after load
         const origLoadRecords = loadRecords;
