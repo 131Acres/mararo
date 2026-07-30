@@ -1991,7 +1991,7 @@
                         </div>
                     </div>
                     
-                    <!-- SINGLE receipt container - this is the ONLY place the receipt renders -->
+                    <!-- SINGLE receipt container -->
                     <div id="receiptContainer"></div>
                     
                 </div>
@@ -2007,7 +2007,7 @@
         </div>
     </div>
 
-    <!-- ─── Hidden print container (clone will be moved here) ─── -->
+    <!-- ─── Hidden print container ─── -->
     <div id="receiptToPrint" style="display:none;"></div>
 
     <!-- ─── Main App Container ─── -->
@@ -2272,19 +2272,6 @@
                                 </div>
                             </div>
 
-                            <!-- Recipient Info (Mararo) - Clean and minimal -->
-                            <div class="form-row">
-                                <div class="field-group field-full">
-                                    <div class="system-dates" style="background:var(--gray-50);border-color:var(--gray-200);">
-                                        <span class="label"><i class="bi bi-building"></i> Recipient:</span>
-                                        <span class="value" style="font-weight:600;color:var(--gray-700);">
-                                            <i class="bi bi-check-circle-fill" style="color:var(--secondary);font-size:0.7rem;"></i> Mararo
-                                        </span>
-                                        <small class="text-muted" style="font-size:0.65rem;">— Payment received by</small>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- System Dates -->
                             <div class="form-row">
                                 <div class="field-group field-full">
@@ -2460,7 +2447,7 @@
         // ════════════════════════════════════════════════
 
         // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
-        const firebaseConfig = {
+      const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
