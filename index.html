@@ -19,6 +19,9 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/firebase-firestore-compat.js">
     </script>
+    <!-- html2canvas for image generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
 
     <style>
         /* ─── Premium Design System ─── */
@@ -1429,16 +1432,16 @@
 
         /* ─── POS-Optimized Receipt Design ─── */
         .receipt-wrapper {
-            max-width: 320px;
+            max-width: 80mm;
             margin: 0 auto;
             background: white;
-            padding: 0.5rem 0.6rem;
+            padding: 2mm 3mm;
             border: 1px solid var(--gray-200);
             border-radius: 0;
             position: relative;
-            font-family: 'Courier New', 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            line-height: 1.4;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 8pt;
+            line-height: 1.2;
         }
         .receipt-wrapper .receipt-watermark {
             display: none;
@@ -1446,13 +1449,13 @@
         .receipt-wrapper .receipt-header {
             text-align: center;
             border-bottom: 1px dashed var(--gray-300);
-            padding-bottom: 0.4rem;
-            margin-bottom: 0.5rem;
+            padding-bottom: 2mm;
+            margin-bottom: 2mm;
             position: relative;
             z-index: 1;
         }
         .receipt-wrapper .receipt-header .company-name {
-            font-size: 0.9rem;
+            font-size: 14pt;
             font-weight: 700;
             color: var(--gray-900);
             letter-spacing: 0px;
@@ -1461,17 +1464,17 @@
             color: var(--primary);
         }
         .receipt-wrapper .receipt-header .receipt-title {
-            font-size: 0.7rem;
+            font-size: 10pt;
             font-weight: 600;
             color: var(--gray-500);
             letter-spacing: 1px;
             text-transform: uppercase;
-            margin-top: 0.1rem;
+            margin-top: 0.5mm;
         }
         .receipt-wrapper .receipt-header .receipt-number {
-            font-size: 0.55rem;
+            font-size: 7pt;
             color: var(--gray-400);
-            margin-top: 0.1rem;
+            margin-top: 0.5mm;
             font-family: 'Courier New', monospace;
         }
 
@@ -1482,7 +1485,7 @@
         .receipt-wrapper .receipt-body .receipt-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.15rem 0;
+            padding: 1mm 0;
             border-bottom: 1px dotted var(--gray-100);
         }
         .receipt-wrapper .receipt-body .receipt-row:last-child {
@@ -1491,40 +1494,40 @@
         .receipt-wrapper .receipt-body .receipt-row .label {
             color: var(--gray-500);
             font-weight: 400;
-            font-size: 0.55rem;
+            font-size: 7pt;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
         .receipt-wrapper .receipt-body .receipt-row .value {
             font-weight: 600;
             color: var(--gray-800);
-            font-size: 0.6rem;
+            font-size: 8pt;
             text-align: right;
             max-width: 55%;
             word-break: break-word;
             font-family: 'Courier New', monospace;
         }
         .receipt-wrapper .receipt-body .receipt-row .value.amount {
-            font-size: 0.9rem;
+            font-size: 14pt;
             color: var(--primary);
             font-weight: 700;
         }
         .receipt-wrapper .receipt-body .receipt-row .value.description {
             font-style: italic;
             color: var(--gray-600);
-            font-size: 0.55rem;
+            font-size: 7pt;
         }
 
         .receipt-wrapper .receipt-footer {
-            margin-top: 0.5rem;
-            padding-top: 0.4rem;
+            margin-top: 2mm;
+            padding-top: 2mm;
             border-top: 1px dashed var(--gray-300);
             text-align: center;
             position: relative;
             z-index: 1;
         }
         .receipt-wrapper .receipt-footer .footer-text {
-            font-size: 0.45rem;
+            font-size: 6pt;
             color: var(--gray-400);
             line-height: 1.2;
         }
@@ -1534,9 +1537,9 @@
 
         .receipt-wrapper .receipt-status {
             display: inline-block;
-            padding: 0.05rem 0.4rem;
+            padding: 0.5mm 3mm;
             border-radius: var(--radius-full);
-            font-size: 0.45rem;
+            font-size: 6pt;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.3px;
@@ -1554,6 +1557,12 @@
             border-top: 1px solid var(--gray-200);
             padding: 1rem 1.8rem;
             background: var(--gray-50);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .receipt-modal .modal-footer .btn {
+            min-width: 60px;
         }
 
         /* ─── Print Styles - POS Optimized ─── */
@@ -1563,113 +1572,125 @@
                 visibility: hidden;
             }
             
-            #receiptToPrint,
-            #receiptToPrint * {
+            #receiptPrintContent,
+            #receiptPrintContent * {
                 visibility: visible;
             }
             
-            #receiptToPrint {
+            #receiptPrintContent {
                 position: fixed;
                 left: 0;
                 top: 0;
-                width: 280px;
-                padding: 0.15in;
+                width: 80mm !important;
+                max-width: 80mm !important;
+                padding: 2mm 3mm !important;
                 background: white;
-                font-family: 'Courier New', monospace;
-                font-size: 0.6rem;
-                line-height: 1.3;
+                font-family: 'Courier New', 'Courier', monospace !important;
+                font-size: 8pt !important;
+                line-height: 1.2 !important;
+                margin: 0 auto !important;
+                box-sizing: border-box !important;
             }
             
-            #receiptToPrint .receipt-wrapper {
+            #receiptPrintContent .receipt-wrapper {
                 border: none !important;
                 padding: 0 !important;
-                max-width: 100% !important;
+                max-width: 80mm !important;
+                width: 100% !important;
+                margin: 0 !important;
             }
             
-            #receiptToPrint .receipt-watermark {
+            #receiptPrintContent .receipt-watermark {
                 display: none !important;
             }
             
-            #receiptToPrint .receipt-header {
-                text-align: center;
-                border-bottom: 1px dashed #CBD5E1;
-                padding-bottom: 0.3rem;
-                margin-bottom: 0.4rem;
+            #receiptPrintContent .receipt-header {
+                text-align: center !important;
+                border-bottom: 1px dashed #CBD5E1 !important;
+                padding-bottom: 2mm !important;
+                margin-bottom: 2mm !important;
             }
-            #receiptToPrint .receipt-header .company-name {
-                font-size: 0.9rem;
-                font-weight: 700;
-                color: #0F172A;
+            #receiptPrintContent .receipt-header .company-name {
+                font-size: 14pt !important;
+                font-weight: 700 !important;
+                color: #0F172A !important;
+                letter-spacing: 0px !important;
             }
-            #receiptToPrint .receipt-header .company-name span {
-                color: #4F46E5;
+            #receiptPrintContent .receipt-header .company-name span {
+                color: #4F46E5 !important;
             }
-            #receiptToPrint .receipt-header .receipt-title {
-                font-size: 0.65rem;
-                font-weight: 600;
-                color: #64748B;
-                letter-spacing: 1px;
-                text-transform: uppercase;
+            #receiptPrintContent .receipt-header .receipt-title {
+                font-size: 10pt !important;
+                font-weight: 600 !important;
+                color: #64748B !important;
+                letter-spacing: 1px !important;
+                text-transform: uppercase !important;
             }
-            #receiptToPrint .receipt-header .receipt-number {
-                font-size: 0.5rem;
-                color: #94A3B8;
+            #receiptPrintContent .receipt-header .receipt-number {
+                font-size: 7pt !important;
+                color: #94A3B8 !important;
             }
-            #receiptToPrint .receipt-body .receipt-row {
-                display: flex;
-                justify-content: space-between;
-                padding: 0.1rem 0;
-                border-bottom: 1px dotted #F1F5F9;
+            #receiptPrintContent .receipt-body .receipt-row {
+                display: flex !important;
+                justify-content: space-between !important;
+                padding: 1mm 0 !important;
+                border-bottom: 1px dotted #F1F5F9 !important;
+                font-size: 8pt !important;
             }
-            #receiptToPrint .receipt-body .receipt-row .label {
-                color: #64748B;
-                font-weight: 400;
-                font-size: 0.5rem;
-                text-transform: uppercase;
+            #receiptPrintContent .receipt-body .receipt-row .label {
+                color: #64748B !important;
+                font-weight: 400 !important;
+                font-size: 7pt !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.3px !important;
             }
-            #receiptToPrint .receipt-body .receipt-row .value {
-                font-weight: 600;
-                color: #1E293B;
-                font-size: 0.55rem;
-                text-align: right;
-                max-width: 55%;
-                word-break: break-word;
+            #receiptPrintContent .receipt-body .receipt-row .value {
+                font-weight: 600 !important;
+                color: #1E293B !important;
+                font-size: 8pt !important;
+                text-align: right !important;
+                max-width: 55% !important;
+                word-break: break-word !important;
             }
-            #receiptToPrint .receipt-body .receipt-row .value.amount {
-                font-size: 0.85rem;
-                color: #4F46E5;
-                font-weight: 700;
+            #receiptPrintContent .receipt-body .receipt-row .value.amount {
+                font-size: 14pt !important;
+                color: #4F46E5 !important;
+                font-weight: 700 !important;
             }
-            #receiptToPrint .receipt-body .receipt-row .value.description {
-                font-style: italic;
-                color: #475569;
-                font-size: 0.5rem;
+            #receiptPrintContent .receipt-body .receipt-row .value.description {
+                font-style: italic !important;
+                color: #475569 !important;
+                font-size: 7pt !important;
             }
-            #receiptToPrint .receipt-footer {
-                margin-top: 0.4rem;
-                padding-top: 0.3rem;
-                border-top: 1px dashed #CBD5E1;
-                text-align: center;
+            #receiptPrintContent .receipt-footer {
+                margin-top: 2mm !important;
+                padding-top: 2mm !important;
+                border-top: 1px dashed #CBD5E1 !important;
+                text-align: center !important;
             }
-            #receiptToPrint .receipt-footer .footer-text {
-                font-size: 0.45rem;
-                color: #94A3B8;
+            #receiptPrintContent .receipt-footer .footer-text {
+                font-size: 6pt !important;
+                color: #94A3B8 !important;
             }
-            #receiptToPrint .receipt-status {
-                display: inline-block;
-                padding: 0.05rem 0.4rem;
-                border-radius: 9999px;
-                font-size: 0.45rem;
-                font-weight: 600;
-                text-transform: uppercase;
+            #receiptPrintContent .receipt-status {
+                display: inline-block !important;
+                padding: 0.5mm 3mm !important;
+                border-radius: 9999px !important;
+                font-size: 6pt !important;
+                font-weight: 600 !important;
+                text-transform: uppercase !important;
             }
-            #receiptToPrint .receipt-status.paid {
-                background: #D1FAE5;
-                color: #065F46;
+            #receiptPrintContent .receipt-status.paid {
+                background: #D1FAE5 !important;
+                color: #065F46 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
-            #receiptToPrint .receipt-status.pending {
-                background: #FEF3C7;
-                color: #92400E;
+            #receiptPrintContent .receipt-status.pending {
+                background: #FEF3C7 !important;
+                color: #92400E !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             
             .modal-backdrop {
@@ -1848,14 +1869,15 @@
             }
 
             .receipt-wrapper {
-                max-width: 280px;
-                padding: 0.4rem 0.5rem;
+                max-width: 70mm;
+                padding: 1.5mm 2mm;
+                font-size: 7pt;
             }
             .receipt-wrapper .receipt-header .company-name {
-                font-size: 0.8rem;
+                font-size: 12pt;
             }
             .receipt-wrapper .receipt-body .receipt-row .value.amount {
-                font-size: 0.8rem;
+                font-size: 12pt;
             }
             .receipt-customizer .customizer-row {
                 flex-direction: column;
@@ -1865,6 +1887,13 @@
             .receipt-customizer .customizer-row .form-select {
                 width: 100%;
                 min-width: auto;
+            }
+            .receipt-modal .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .receipt-modal .modal-footer .btn {
+                width: 100%;
             }
         }
 
@@ -1906,15 +1935,15 @@
                 padding: 0.5rem;
             }
             .receipt-wrapper {
-                max-width: 240px;
-                padding: 0.3rem 0.4rem;
-                font-size: 0.55rem;
+                max-width: 58mm;
+                padding: 1mm 1.5mm;
+                font-size: 6.5pt;
             }
             .receipt-wrapper .receipt-header .company-name {
-                font-size: 0.7rem;
+                font-size: 10pt;
             }
             .receipt-wrapper .receipt-body .receipt-row .value.amount {
-                font-size: 0.7rem;
+                font-size: 10pt;
             }
             .receipt-customizer {
                 padding: 0.75rem;
@@ -1999,8 +2028,11 @@
                     <button type="button" class="btn btn-sm btn-soft-clear" data-bs-dismiss="modal">
                         <i class="bi bi-x"></i> Close
                     </button>
+                    <button type="button" class="btn btn-sm btn-soft-clear" id="shareReceiptBtn">
+                        <i class="bi bi-share"></i> Share
+                    </button>
                     <button type="button" class="btn btn-sm btn-primary" id="printReceiptBtn">
-                        <i class="bi bi-printer"></i> Print Receipt
+                        <i class="bi bi-printer"></i> Print
                     </button>
                 </div>
             </div>
@@ -2008,7 +2040,7 @@
     </div>
 
     <!-- ─── Hidden print container ─── -->
-    <div id="receiptToPrint" style="display:none;"></div>
+    <div id="receiptPrintContent" style="display:none;"></div>
 
     <!-- ─── Main App Container ─── -->
     <div class="app-container">
@@ -2447,7 +2479,7 @@
         // ════════════════════════════════════════════════
 
         // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
-      const firebaseConfig = {
+        const firebaseConfig = {
   apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
   authDomain: "payment-ledger-666f9.firebaseapp.com",
   projectId: "payment-ledger-666f9",
@@ -3569,28 +3601,92 @@
                 return;
             }
             
-            // Clone the receipt to the print container
-            const printContainer = document.getElementById('receiptToPrint');
-            printContainer.innerHTML = '';
-            const clone = receiptContent.cloneNode(true);
-            printContainer.appendChild(clone);
+            // Get the receipt HTML
+            const receiptHTML = receiptContent.outerHTML;
+            
+            // Update the print container
+            const printContainer = document.getElementById('receiptPrintContent');
+            printContainer.innerHTML = receiptHTML;
+            
+            // Show the print container
             printContainer.style.display = 'block';
-            printContainer.style.position = 'fixed';
-            printContainer.style.left = '0';
-            printContainer.style.top = '0';
-            printContainer.style.width = '280px';
-            printContainer.style.padding = '0.15in';
-            printContainer.style.background = 'white';
-            printContainer.style.zIndex = '99999';
             
             // Trigger print
             window.print();
             
             // Reset after printing
-            setTimeout(() => {
+            setTimeout(function() {
                 printContainer.style.display = 'none';
-                printContainer.innerHTML = '';
             }, 1000);
+        });
+
+        // ─── Share Receipt as Image ───
+        document.getElementById('shareReceiptBtn').addEventListener('click', function() {
+            if (!currentReceiptRecord) {
+                showToast('No receipt to share.', 'Error', 'error');
+                return;
+            }
+            
+            // Update the receipt with latest customizations
+            renderReceipt(currentReceiptRecord);
+            
+            // Get the rendered receipt content
+            const receiptContent = document.getElementById('receiptContent');
+            if (!receiptContent) {
+                showToast('No receipt content to share.', 'Error', 'error');
+                return;
+            }
+            
+            showToast('Generating image...', 'Please wait', 'info');
+            
+            // Use html2canvas to convert receipt to image
+            html2canvas(receiptContent, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                width: 320,
+                height: receiptContent.scrollHeight + 40,
+                logging: false,
+                allowTaint: true,
+            }).then(function(canvas) {
+                // Convert canvas to blob (JPEG)
+                return new Promise(function(resolve) {
+                    canvas.toBlob(function(blob) {
+                        resolve(blob);
+                    }, 'image/jpeg', 0.92);
+                });
+            }).then(function(blob) {
+                // Create a file from the blob
+                const file = new File([blob], `Receipt_${currentReceiptRecord.id}.jpg`, { type: 'image/jpeg' });
+                
+                // Check if Web Share API with files is available
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    return navigator.share({
+                        title: 'Payment Receipt',
+                        files: [file]
+                    });
+                } else {
+                    // Fallback: download the image
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `Receipt_${currentReceiptRecord.id}.jpg`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setTimeout(function() {
+                        URL.revokeObjectURL(link.href);
+                    }, 1000);
+                    showToast('Image downloaded!', 'Success', 'success');
+                    return Promise.resolve();
+                }
+            }).then(function() {
+                showToast('Receipt shared successfully!', 'Success', 'success');
+            }).catch(function(error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Share error:', error);
+                    showToast('Failed to share. Please try Print instead.', 'Error', 'error');
+                }
+            });
         });
 
         function updateLedger() {
@@ -3983,9 +4079,9 @@
         console.log('💳 PayFlow · Payment Management System initialized');
         console.log('📋 Workflow: M-PESA → Review → Ledger');
         console.log('⌨️  Keyboard shortcuts: ⌘1, ⌘2, ⌘3');
-        console.log('🧾 POS-optimized receipt with real-time customization');
-        console.log('✏️  Customize: Company name, Title, Footer, Show/Hide fields');
-        console.log('🖨️  Single receipt source - no duplicates');
+        console.log('🧾 POS-optimized receipt (80mm) with real-time customization');
+        console.log('📱 Share → Converts receipt to JPEG and shares');
+        console.log('🖨️  Print optimized for thermal POS printers (80mm)');
 
         // Override populate month filter after load
         const origLoadRecords = loadRecords;
