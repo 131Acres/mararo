@@ -1565,7 +1565,7 @@
             min-width: 60px;
         }
 
-        /* ─── Print Styles - POS Optimized ─── */
+        /* ─── Print Styles - POS Optimized with Balanced Margins ─── */
         @media print {
             /* Hide everything except the receipt */
             body * {
@@ -1579,25 +1579,29 @@
             
             #receiptPrintContent {
                 position: fixed;
-                left: 0;
-                top: 0;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
                 width: 80mm !important;
                 max-width: 80mm !important;
-                padding: 2mm 3mm !important;
+                padding: 3mm 4mm !important;
                 background: white;
                 font-family: 'Courier New', 'Courier', monospace !important;
                 font-size: 8pt !important;
                 line-height: 1.2 !important;
-                margin: 0 auto !important;
+                margin: 0 !important;
                 box-sizing: border-box !important;
+                box-shadow: none !important;
+                border: none !important;
             }
             
             #receiptPrintContent .receipt-wrapper {
                 border: none !important;
                 padding: 0 !important;
-                max-width: 80mm !important;
+                max-width: 100% !important;
                 width: 100% !important;
                 margin: 0 !important;
+                box-shadow: none !important;
             }
             
             #receiptPrintContent .receipt-watermark {
@@ -3446,7 +3450,7 @@
 
             let bodyRows = '';
 
-            // Banking Date - always shown (renamed from "Date")
+            // Banking Date - always shown
             bodyRows += `
                         <div class="receipt-row">
                             <span class="label">Banking Date</span>
@@ -4079,10 +4083,10 @@
         console.log('💳 PayFlow · Payment Management System initialized');
         console.log('📋 Workflow: M-PESA → Review → Ledger');
         console.log('⌨️  Keyboard shortcuts: ⌘1, ⌘2, ⌘3');
-        console.log('🧾 POS-optimized receipt (80mm) with professional labels');
+        console.log('🧾 POS-optimized receipt (80mm) with balanced margins');
         console.log('📝 "Banking Date" and "Account Name" labels used');
         console.log('📱 Share → Converts receipt to JPEG and shares');
-        console.log('🖨️  Print optimized for thermal POS printers (80mm)');
+        console.log('🖨️  Print centered with balanced margins on thermal POS paper');
 
         // Override populate month filter after load
         const origLoadRecords = loadRecords;
