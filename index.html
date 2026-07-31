@@ -55,6 +55,8 @@
             --radius-xl: 28px;
             --radius-full: 9999px;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.4);
+            --focus-ring-offset: 2px;
         }
 
         * {
@@ -70,6 +72,45 @@
             min-height: 100vh;
             background-image: radial-gradient(ellipse at 10% 20%, rgba(79, 70, 229, 0.03) 0%, transparent 50%),
                 radial-gradient(ellipse at 90% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+        }
+
+        /* ─── Improved Focus States ─── */
+        *:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            box-shadow: var(--focus-ring);
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        /* ─── Skip Link ─── */
+        .skip-link {
+            position: fixed;
+            top: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-full);
+            z-index: 99999;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: top 0.3s ease;
+        }
+        .skip-link:focus {
+            top: 1rem;
+            color: white;
+            box-shadow: var(--shadow-lg);
         }
 
         /* ─── Scrollbar ─── */
@@ -204,6 +245,7 @@
             flex-wrap: wrap;
             gap: 0.25rem;
             position: relative;
+            role: tablist;
         }
         .workflow-tabs .tab-btn {
             padding: 0.9rem 1.8rem;
@@ -221,10 +263,15 @@
             position: relative;
             border-radius: var(--radius-sm) var(--radius-sm) 0 0;
             font-family: 'Inter', sans-serif;
+            role: tab;
         }
         .workflow-tabs .tab-btn:hover {
             color: var(--gray-700);
             background: rgba(79, 70, 229, 0.04);
+        }
+        .workflow-tabs .tab-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
         }
         .workflow-tabs .tab-btn.active {
             color: var(--primary);
@@ -297,6 +344,7 @@
         .tab-pane {
             display: none;
             animation: fadeSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            role: tabpanel;
         }
         .tab-pane.active {
             display: block;
@@ -427,6 +475,92 @@
         }
         .toast .toast-body {
             padding: 0.5rem 1.2rem 1rem;
+        }
+
+        /* ─── Loading Spinner ─── */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+        .loading-overlay.show {
+            display: flex;
+        }
+        .loading-overlay .spinner-container {
+            background: white;
+            padding: 2rem 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            text-align: center;
+            max-width: 360px;
+            animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .loading-overlay .spinner-container .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        .loading-overlay .spinner-container .loading-title {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        .loading-overlay .spinner-container .loading-subtitle {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin: 0;
+        }
+        .loading-overlay .spinner-container .loading-progress {
+            margin-top: 1rem;
+            height: 4px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        .loading-overlay .spinner-container .loading-progress .progress-bar {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-full);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        .loading-overlay .spinner-container .loading-percentage {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         /* ─── M-PESA Extractor ─── */
@@ -726,6 +860,10 @@
             flex: 1 1 300px;
             min-width: 200px;
         }
+        .field-recipient {
+            flex: 1 1 200px;
+            min-width: 160px;
+        }
         .field-full {
             flex: 0 0 100%;
             max-width: 100%;
@@ -1011,6 +1149,21 @@
             align-self: center;
         }
 
+        .filter-count-badge {
+            display: none;
+            background: var(--primary);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.15rem 0.6rem;
+            border-radius: var(--radius-full);
+            margin-left: 0.4rem;
+            white-space: nowrap;
+        }
+        .filter-count-badge.show {
+            display: inline-block;
+        }
+
         .toolbar-subtle {
             display: flex;
             flex-wrap: wrap;
@@ -1046,6 +1199,7 @@
             gap: 0.2rem;
             flex: 1;
             min-width: 140px;
+            position: relative;
         }
         .toolbar-subtle .search-wrap i {
             color: var(--gray-400);
@@ -1120,6 +1274,9 @@
         .table-subtle .col-actions {
             width: 100px;
             text-align: center;
+        }
+        .table-subtle .col-recipient {
+            width: 120px;
         }
 
         .table-subtle thead th {
@@ -1196,6 +1353,10 @@
             background: #FEF3C7;
             color: #92400E;
         }
+        .table-subtle .badge-soft.method.bankslip {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
 
         .table-subtle .ref-cell {
             color: var(--gray-400);
@@ -1211,6 +1372,10 @@
         }
         .table-subtle .holder-cell {
             color: var(--gray-700);
+            font-weight: 500;
+        }
+        .table-subtle .recipient-cell {
+            color: var(--gray-600);
             font-weight: 500;
         }
         .table-subtle code {
@@ -1258,6 +1423,9 @@
         }
         .pagination-subtle .page-info {
             color: var(--gray-400);
+        }
+        .pagination-subtle .page-info strong {
+            color: var(--gray-700);
         }
         .pagination-subtle .page-links {
             display: flex;
@@ -1331,6 +1499,10 @@
         }
         .btn-action-icon.edit-btn:hover {
             background: var(--warning);
+            color: white;
+        }
+        .btn-action-icon.delete-btn:hover {
+            background: var(--danger);
             color: white;
         }
         .btn-action-icon i {
@@ -1577,7 +1749,251 @@
             min-width: 60px;
         }
 
-        /* ─── Print Styles removed - using new window approach ─── */
+        /* ─── Confirmation Modal ─── */
+        .confirmation-modal .modal-content {
+            border: none;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+        .confirmation-modal .modal-header {
+            border-bottom: 2px solid var(--gray-200);
+            padding: 1.2rem 1.8rem;
+            background: var(--gray-50);
+        }
+        .confirmation-modal .modal-header .modal-title {
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+        .confirmation-modal .modal-body {
+            padding: 2rem;
+            background: white;
+        }
+        .confirmation-modal .modal-footer {
+            border-top: 1px solid var(--gray-200);
+            padding: 1rem 1.8rem;
+            background: var(--gray-50);
+        }
+        .confirmation-modal .modal-footer .btn-danger {
+            background: var(--danger);
+            border: none;
+            padding: 0.45rem 1.5rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .confirmation-modal .modal-footer .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        }
+        .confirmation-modal .modal-footer .btn-secondary {
+            border-radius: var(--radius-full);
+            padding: 0.45rem 1.5rem;
+        }
+        .confirmation-modal .confirmation-icon {
+            font-size: 3rem;
+            color: var(--danger);
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .confirmation-modal .confirmation-title {
+            font-weight: 700;
+            color: var(--gray-800);
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        .confirmation-modal .confirmation-details {
+            color: var(--gray-500);
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+        .confirmation-modal .confirmation-record-details {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            border: 1px solid var(--gray-200);
+        }
+        .confirmation-modal .confirmation-record-details .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.2rem 0;
+            border-bottom: 1px dotted var(--gray-200);
+        }
+        .confirmation-modal .confirmation-record-details .detail-row:last-child {
+            border-bottom: none;
+        }
+        .confirmation-modal .confirmation-record-details .detail-label {
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+        .confirmation-modal .confirmation-record-details .detail-value {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        /* ─── RECEIPT PRINT STYLES ─── */
+        @media print {
+            /* Hide everything except what we want to print */
+            body * {
+                visibility: hidden;
+            }
+            
+            /* Show receipt content */
+            #receiptContent,
+            #receiptContent * {
+                visibility: visible;
+            }
+            
+            #receiptContent {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 80mm;
+                max-width: 80mm;
+                margin: 0;
+                padding: 0;
+                background: white;
+                box-shadow: none;
+                border: none;
+                visibility: visible !important;
+            }
+            
+            /* Page settings */
+            @page {
+                size: A6 portrait;
+                margin: 3mm;
+            }
+            
+            @page {
+                size: auto;
+                margin: 5mm;
+            }
+            
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: white;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            /* Receipt inner styles for print */
+            .receipt-wrapper {
+                max-width: 80mm;
+                width: 80mm;
+                margin: 0;
+                padding: 2mm 3mm;
+                font-family: 'Courier New', 'Courier', monospace;
+                font-size: 7.5pt;
+                line-height: 1.15;
+                border: none;
+                background: white;
+            }
+            .receipt-wrapper .receipt-header .company-name {
+                font-size: 13pt;
+                font-weight: 800;
+                color: #0F172A;
+            }
+            .receipt-wrapper .receipt-header .receipt-title {
+                font-size: 9pt;
+                font-weight: 700;
+                color: #475569;
+                text-transform: uppercase;
+            }
+            .receipt-wrapper .receipt-header .receipt-number {
+                font-size: 6.5pt;
+                color: #94A3B8;
+            }
+            .receipt-wrapper .receipt-body .receipt-row {
+                padding: 0.8mm 0;
+                border-bottom: 1px dotted #F1F5F9;
+                font-size: 7.5pt;
+            }
+            .receipt-wrapper .receipt-body .receipt-row .label {
+                color: #64748B;
+                font-weight: 600;
+                font-size: 6.5pt;
+                text-transform: uppercase;
+            }
+            .receipt-wrapper .receipt-body .receipt-row .value {
+                font-weight: 700;
+                color: #0F172A;
+                font-size: 7.5pt;
+            }
+            .receipt-wrapper .receipt-body .receipt-row .value.amount {
+                font-size: 13pt;
+                color: #4F46E5;
+                font-weight: 800;
+            }
+            .receipt-wrapper .receipt-body .receipt-row .value.description {
+                font-style: italic;
+                color: #475569;
+                font-size: 6.5pt;
+            }
+            .receipt-wrapper .receipt-footer {
+                margin-top: 1.5mm;
+                padding-top: 1.5mm;
+                border-top: 1px dashed #CBD5E1;
+            }
+            .receipt-wrapper .receipt-footer .footer-text {
+                font-size: 6pt;
+                font-weight: 600;
+                color: #64748B;
+            }
+            .receipt-wrapper .receipt-status {
+                padding: 0.3mm 2.5mm;
+                font-size: 5.5pt;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .receipt-wrapper .receipt-status.paid {
+                background: #D1FAE5;
+                color: #065F46;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .receipt-wrapper .receipt-status.pending {
+                background: #FEF3C7;
+                color: #92400E;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            /* Hide receipt customizer and modal controls */
+            .receipt-customizer,
+            .modal-footer,
+            .modal-header {
+                display: none !important;
+            }
+            
+            .modal-body {
+                padding: 0 !important;
+                background: white !important;
+            }
+            
+            .receipt-modal .modal-content {
+                background: white !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
+
+        /* ─── LEDGER PRINT STYLES ─── */
+        @media print {
+            /* For ledger print - show the table */
+            .ledger-print-content {
+                display: block !important;
+            }
+            .ledger-print-content * {
+                visibility: visible !important;
+            }
+        }
 
         /* ─── Responsive ─── */
         @media (max-width: 992px) {
@@ -1733,6 +2149,9 @@
             .table-subtle .col-actions {
                 width: 70px;
             }
+            .table-subtle .col-recipient {
+                width: 80px;
+            }
 
             .mpesa-card .action-hint {
                 display: none;
@@ -1832,14 +2251,30 @@
 
 <body>
 
+    <!-- ─── Skip Link for Keyboard Users ─── -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- ─── Toast Container ─── -->
     <div class="toast-container">
         <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto" id="toastTitle">Notification</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close notification"></button>
             </div>
             <div class="toast-body" id="toastMessage">Message</div>
+        </div>
+    </div>
+
+    <!-- ─── Loading Spinner Overlay ─── -->
+    <div class="loading-overlay" id="loadingOverlay" role="status" aria-live="polite">
+        <div class="spinner-container">
+            <div class="spinner" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="loading-title" id="loadingTitle">Loading Records</div>
+            <p class="loading-subtitle" id="loadingSubtitle">Please wait while we fetch your data...</p>
+            <div class="loading-progress">
+                <div class="progress-bar" id="loadingProgressBar" style="width: 0%;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="loading-percentage" id="loadingPercentage">0%</div>
         </div>
     </div>
 
@@ -1849,50 +2284,53 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Receipt</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close receipt"></button>
                 </div>
                 <div class="modal-body" id="receiptBody">
-
                     <!-- Receipt customization panel -->
                     <div class="receipt-customizer" id="receiptCustomizer">
                         <div class="customizer-row">
-                            <label class="form-label">Company <span class="save-indicator" id="companySaveIndicator">✓ saved</span></label>
-                            <input type="text" class="form-control" id="receiptCompany" value="PayFlow" style="flex:1;min-width:150px;" />
+                            <label class="form-label" for="receiptCompany">Company <span class="save-indicator" id="companySaveIndicator">✓ saved</span></label>
+                            <input type="text" class="form-control" id="receiptCompany" value="PayFlow" style="flex:1;min-width:150px;" aria-label="Receipt company name" />
                         </div>
                         <div class="customizer-row mt-2">
-                            <label class="form-label">Receipt Title <span class="save-indicator" id="titleSaveIndicator">✓ saved</span></label>
-                            <input type="text" class="form-control" id="receiptTitle" value="Payment Receipt" style="flex:1;min-width:150px;" />
+                            <label class="form-label" for="receiptTitle">Receipt Title <span class="save-indicator" id="titleSaveIndicator">✓ saved</span></label>
+                            <input type="text" class="form-control" id="receiptTitle" value="Payment Receipt" style="flex:1;min-width:150px;" aria-label="Receipt title" />
                         </div>
                         <div class="customizer-row mt-2">
-                            <label class="form-label">Footer Message <span class="save-indicator" id="footerSaveIndicator">✓ saved</span></label>
-                            <input type="text" class="form-control" id="receiptFooter" value="Thank you for your payment" style="flex:1;min-width:150px;" />
+                            <label class="form-label" for="receiptFooter">Footer Message <span class="save-indicator" id="footerSaveIndicator">✓ saved</span></label>
+                            <input type="text" class="form-control" id="receiptFooter" value="Thank you for your payment" style="flex:1;min-width:150px;" aria-label="Receipt footer message" />
                         </div>
                         <div class="customizer-row mt-2">
                             <label class="form-label">Fields</label>
-                            <div class="d-flex flex-wrap gap-3">
+                            <div class="d-flex flex-wrap gap-3" role="group" aria-label="Receipt field visibility options">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="showAccount" checked />
+                                    <input class="form-check-input" type="checkbox" id="showAccount" checked aria-label="Show account field" />
                                     <label class="form-check-label" for="showAccount">Account</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="showHolder" checked />
+                                    <input class="form-check-input" type="checkbox" id="showHolder" checked aria-label="Show account name field" />
                                     <label class="form-check-label" for="showHolder">Account Name</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="showDepositor" checked />
+                                    <input class="form-check-input" type="checkbox" id="showDepositor" checked aria-label="Show depositor field" />
                                     <label class="form-check-label" for="showDepositor">Depositor</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="showMethod" checked />
+                                    <input class="form-check-input" type="checkbox" id="showMethod" checked aria-label="Show method field" />
                                     <label class="form-check-label" for="showMethod">Method</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="showReference" checked />
+                                    <input class="form-check-input" type="checkbox" id="showReference" checked aria-label="Show reference field" />
                                     <label class="form-check-label" for="showReference">Reference</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="showDescription" checked />
+                                    <input class="form-check-input" type="checkbox" id="showDescription" checked aria-label="Show description field" />
                                     <label class="form-check-label" for="showDescription">Payment For</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showRecipient" checked aria-label="Show recipient field" />
+                                    <label class="form-check-label" for="showRecipient">Received By</label>
                                 </div>
                             </div>
                         </div>
@@ -1903,13 +2341,13 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-soft-clear" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-sm btn-soft-clear" data-bs-dismiss="modal" aria-label="Close receipt">
                         <i class="bi bi-x"></i> Close
                     </button>
-                    <button type="button" class="btn btn-sm btn-soft-clear" id="shareReceiptBtn">
+                    <button type="button" class="btn btn-sm btn-soft-clear" id="shareReceiptBtn" aria-label="Share receipt">
                         <i class="bi bi-share"></i> Share
                     </button>
-                    <button type="button" class="btn btn-sm btn-primary" id="printReceiptBtn">
+                    <button type="button" class="btn btn-sm btn-primary" id="printReceiptBtn" aria-label="Print receipt">
                         <i class="bi bi-printer"></i> Print
                     </button>
                 </div>
@@ -1917,65 +2355,108 @@
         </div>
     </div>
 
+    <!-- ─── Confirmation Modal ─── -->
+    <div class="modal fade confirmation-modal" id="confirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2" style="color:var(--danger);"></i>Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close confirmation"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="confirmation-icon" aria-hidden="true">🗑️</div>
+                    <div class="confirmation-title" id="confirmTitle">Delete Payment Record?</div>
+                    <div class="confirmation-details" id="confirmDetails">This action cannot be undone.</div>
+                    <div class="confirmation-record-details" id="confirmRecordDetails">
+                        <div class="detail-row">
+                            <span class="detail-label">Receipt #</span>
+                            <span class="detail-value" id="confirmReceipt">—</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Amount</span>
+                            <span class="detail-value" id="confirmAmount">—</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Depositor</span>
+                            <span class="detail-value" id="confirmDepositor">—</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value" id="confirmDate">—</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Cancel deletion">
+                        <i class="bi bi-x"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" aria-label="Confirm delete">
+                        <i class="bi bi-trash"></i> Delete Record
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ─── Main App Container ─── -->
-    <div class="app-container">
+    <div class="app-container" id="main-content">
 
         <!-- ─── App Header ─── -->
-        <header class="app-header">
+        <header class="app-header" role="banner">
             <div class="brand">
-                <div class="logo">💳</div>
+                <div class="logo" aria-hidden="true">💳</div>
                 <h1>PayFlow <span>· Payment Management</span></h1>
             </div>
-            <div class="workflow-indicator">
+            <div class="workflow-indicator" aria-live="polite">
                 <span class="step" data-step="1">📱 Extract</span>
-                <span class="step-arrow">→</span>
+                <span class="step-arrow" aria-hidden="true">→</span>
                 <span class="step" data-step="2">✏️ Review</span>
-                <span class="step-arrow">→</span>
+                <span class="step-arrow" aria-hidden="true">→</span>
                 <span class="step" data-step="3">📊 Ledger</span>
                 <span class="step active" id="currentStepDisplay">Step 1</span>
             </div>
         </header>
 
         <!-- ─── Workflow Progress Bar ─── -->
-        <div class="workflow-progress" id="workflowProgress">
+        <nav class="workflow-progress" id="workflowProgress" aria-label="Workflow progress">
             <div class="progress-step active" data-step="1">
-                <span class="step-num">1</span>
+                <span class="step-num" aria-hidden="true">1</span>
                 <span class="step-label">Extract</span>
             </div>
-            <div class="progress-connector" data-connector="1"></div>
+            <div class="progress-connector" data-connector="1" aria-hidden="true"></div>
             <div class="progress-step" data-step="2">
-                <span class="step-num">2</span>
+                <span class="step-num" aria-hidden="true">2</span>
                 <span class="step-label">Review</span>
             </div>
-            <div class="progress-connector" data-connector="2"></div>
+            <div class="progress-connector" data-connector="2" aria-hidden="true"></div>
             <div class="progress-step" data-step="3">
-                <span class="step-num">3</span>
+                <span class="step-num" aria-hidden="true">3</span>
                 <span class="step-label">Ledger</span>
             </div>
-        </div>
+        </nav>
 
         <!-- ─── Workflow Tabs ─── -->
-        <nav class="workflow-tabs" id="mainTabs" role="tablist">
-            <button class="tab-btn active" id="mpesa-tab" data-target="mpesa-pane" role="tab" aria-selected="true">
-                <span class="badge-step">1</span>
-                <span class="tab-icon">📱</span>
+        <nav class="workflow-tabs" id="mainTabs" role="tablist" aria-label="Workflow steps">
+            <button class="tab-btn active" id="mpesa-tab" data-target="mpesa-pane" role="tab" aria-selected="true" aria-controls="mpesa-pane">
+                <span class="badge-step" aria-hidden="true">1</span>
+                <span class="tab-icon" aria-hidden="true">📱</span>
                 <span class="tab-label">Extract M‑PESA</span>
-                <span class="tab-shortcut">⌘1</span>
-                <span class="workflow-arrow">→</span>
+                <span class="tab-shortcut" aria-hidden="true">⌘1</span>
+                <span class="workflow-arrow" aria-hidden="true">→</span>
             </button>
-            <button class="tab-btn" id="enter-tab" data-target="enter-pane" role="tab" aria-selected="false">
-                <span class="badge-step">2</span>
-                <span class="tab-icon">✏️</span>
+            <button class="tab-btn" id="enter-tab" data-target="enter-pane" role="tab" aria-selected="false" aria-controls="enter-pane">
+                <span class="badge-step" aria-hidden="true">2</span>
+                <span class="tab-icon" aria-hidden="true">✏️</span>
                 <span class="tab-label">Review &amp; Submit</span>
-                <span class="tab-shortcut">⌘2</span>
-                <span class="workflow-arrow">→</span>
+                <span class="tab-shortcut" aria-hidden="true">⌘2</span>
+                <span class="workflow-arrow" aria-hidden="true">→</span>
             </button>
-            <button class="tab-btn" id="ledger-tab" data-target="ledger-pane" role="tab" aria-selected="false">
-                <span class="badge-step">3</span>
-                <span class="tab-icon">📊</span>
+            <button class="tab-btn" id="ledger-tab" data-target="ledger-pane" role="tab" aria-selected="false" aria-controls="ledger-pane">
+                <span class="badge-step" aria-hidden="true">3</span>
+                <span class="tab-icon" aria-hidden="true">📊</span>
                 <span class="tab-label">Payment Ledger</span>
-                <span class="tab-shortcut">⌘3</span>
-                <span class="workflow-arrow">→</span>
+                <span class="tab-shortcut" aria-hidden="true">⌘3</span>
+                <span class="workflow-arrow" aria-hidden="true">→</span>
             </button>
         </nav>
 
@@ -1983,79 +2464,84 @@
         <div class="tab-content-wrapper">
 
             <!-- ─── Tab 1: M-PESA Extractor ─── -->
-            <div class="tab-pane active" id="mpesa-pane" role="tabpanel">
+            <div class="tab-pane active" id="mpesa-pane" role="tabpanel" aria-labelledby="mpesa-tab">
                 <div class="section-header">
                     <div>
-                        <h5><i class="bi bi-phone"></i> Paste M‑PESA Message</h5>
+                        <h5><i class="bi bi-phone" aria-hidden="true"></i> Paste M‑PESA Message</h5>
                         <p class="subtitle">Extract payment details automatically from SMS</p>
                     </div>
-                    <button class="btn-soft-clear" id="clearMpesaBtn" style="background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-600);padding:0.4rem 1.2rem;border-radius:var(--radius-full);font-size:0.75rem;font-weight:500;transition:var(--transition);font-family:'Inter',sans-serif;">
-                        <i class="bi bi-eraser"></i> Clear
+                    <button class="btn-soft-clear" id="clearMpesaBtn" style="background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-600);padding:0.4rem 1.2rem;border-radius:var(--radius-full);font-size:0.75rem;font-weight:500;transition:var(--transition);font-family:'Inter',sans-serif;" aria-label="Clear M-PESA message">
+                        <i class="bi bi-eraser" aria-hidden="true"></i> Clear
                     </button>
                 </div>
 
                 <div class="mpesa-card">
                     <div class="sms-area">
-                        <textarea id="mpesaMessage" placeholder="Paste your M‑PESA transaction message here…" rows="4"></textarea>
+                        <label for="mpesaMessage" class="visually-hidden">Paste M-PESA transaction message</label>
+                        <textarea id="mpesaMessage" placeholder="Paste your M‑PESA transaction message here…" rows="4" aria-describedby="mpesaMessageHelp"></textarea>
+                        <div id="mpesaMessageHelp" class="visually-hidden">Paste the full M-PESA SMS message to extract date, amount, reference, and payer information.</div>
                     </div>
 
                     <div class="action-row">
-                        <button class="btn-extract" id="extractBtn">
-                            <i class="bi bi-magic"></i> Extract
+                        <button class="btn-extract" id="extractBtn" aria-label="Extract data from M-PESA message">
+                            <i class="bi bi-magic" aria-hidden="true"></i> Extract
                         </button>
-                        <span class="extract-success" id="extractSuccess">
-                            <i class="bi bi-check-circle-fill"></i> Extracted
+                        <span class="extract-success" id="extractSuccess" aria-live="polite">
+                            <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Extracted
                         </span>
-                        <span class="action-hint">
-                            <i class="bi bi-info-circle"></i> date · amount · ref · payer
+                        <span class="action-hint" aria-hidden="true">
+                            <i class="bi bi-info-circle" aria-hidden="true"></i> date · amount · ref · payer
                         </span>
                     </div>
 
-                    <div class="extract-grid" id="extractGrid">
+                    <div class="extract-grid" id="extractGrid" role="group" aria-label="Extracted data">
                         <div class="field">
-                            <label><i class="bi bi-calendar3"></i> Date</label>
-                            <div class="value placeholder" id="extractDate">—</div>
+                            <label><i class="bi bi-calendar3" aria-hidden="true"></i> Date</label>
+                            <div class="value placeholder" id="extractDate" aria-live="polite">—</div>
                         </div>
                         <div class="field">
-                            <label><i class="bi bi-coin"></i> Amount</label>
-                            <div class="value placeholder" id="extractAmount">—</div>
+                            <label><i class="bi bi-coin" aria-hidden="true"></i> Amount</label>
+                            <div class="value placeholder" id="extractAmount" aria-live="polite">—</div>
                         </div>
                         <div class="field ref-block">
-                            <label><i class="bi bi-tag"></i> Reference</label>
-                            <div class="value placeholder" id="extractRef">—</div>
+                            <label><i class="bi bi-tag" aria-hidden="true"></i> Reference</label>
+                            <div class="value placeholder" id="extractRef" aria-live="polite">—</div>
                         </div>
-                        <div class="sender-recipient">
+                        <div class="sender-recipient" aria-live="polite">
                             <span id="extractSender">Payer: <strong>—</strong></span>
-                            <span id="extractRecipient">Received By: <strong>Mararo</strong></span>
+                            <span id="extractRecipient">Received By: <strong id="extractRecipientName">—</strong></span>
                         </div>
                     </div>
 
                     <div class="mt-4 d-flex justify-content-end">
-                        <button class="btn-smart-transfer" id="transferToReviewBtn" disabled>
-                            <i class="bi bi-arrow-right-circle"></i> Transfer to Review
+                        <button class="btn-smart-transfer" id="transferToReviewBtn" disabled aria-label="Transfer extracted data to review">
+                            <i class="bi bi-arrow-right-circle" aria-hidden="true"></i> Transfer to Review
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- ─── Tab 2: Enter Payment Record ─── -->
-            <div class="tab-pane" id="enter-pane" role="tabpanel">
+            <div class="tab-pane" id="enter-pane" role="tabpanel" aria-labelledby="enter-tab">
                 <div class="section-header">
                     <div>
-                        <h5><i class="bi bi-pencil-square"></i> Review &amp; Submit Payment</h5>
+                        <h5><i class="bi bi-pencil-square" aria-hidden="true"></i> Review &amp; Submit Payment</h5>
                         <p class="subtitle">Verify extracted data, edit if needed, and submit to ledger</p>
                     </div>
-                    <span id="extractedDataIndicator">
-                        <i class="bi bi-check-circle-fill"></i> Data from M‑PESA
+                    <span id="extractedDataIndicator" aria-live="polite">
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Data from M‑PESA
                     </span>
                 </div>
 
                 <!-- Form Card -->
                 <div class="form-card">
                     <div class="card-header">
-                        <span><i class="bi bi-pencil-square me-2"></i> Payment Details</span>
+                        <span><i class="bi bi-pencil-square me-2" aria-hidden="true"></i> Payment Details</span>
                         <span class="text-muted" style="font-weight:400;font-size:0.7rem;">
-                            <i class="bi bi-asterisk text-danger"></i> Required
+                            <i class="bi bi-asterisk text-danger" aria-hidden="true"></i> Required
+                            <span class="ms-2 text-muted" style="font-weight:400;font-size:0.65rem;">
+                                <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to submit
+                            </span>
                         </span>
                     </div>
                     <div class="card-body">
@@ -2068,34 +2554,34 @@
                             <div class="form-row">
                                 <div class="field-group field-date">
                                     <label for="bankingDate" class="form-label">
-                                        Banking Date <span class="required-star">*</span>
+                                        Banking Date <span class="required-star" aria-hidden="true">*</span>
                                     </label>
-                                    <input type="date" class="form-control" id="bankingDate" required />
+                                    <input type="date" class="form-control" id="bankingDate" required aria-describedby="bankingDateHelp" />
                                     <div class="invalid-feedback">Banking date is required.</div>
-                                    <span class="field-helper"><i class="bi bi-calendar3"></i> Date payment was banked</span>
+                                    <span class="field-helper" id="bankingDateHelp"><i class="bi bi-calendar3" aria-hidden="true"></i> Date payment was banked</span>
                                 </div>
 
                                 <div class="field-group field-receipt">
                                     <label for="receiptNumber" class="form-label">
-                                        Receipt # <span class="required-star">*</span>
-                                        <span class="manual-badge">Manual</span>
+                                        Receipt # <span class="required-star" aria-hidden="true">*</span>
+                                        <span class="manual-badge" aria-hidden="true">Manual</span>
                                     </label>
-                                    <input type="text" class="form-control" id="receiptNumber" placeholder="R-0001" required autofocus />
+                                    <input type="text" class="form-control" id="receiptNumber" placeholder="R-0001" required autofocus aria-describedby="receiptNumberHelp" />
                                     <div class="invalid-feedback">Receipt number is required and must be unique.</div>
-                                    <span class="field-helper"><i class="bi bi-pencil"></i> Internal receipt serial</span>
-                                    <span class="receipt-manual-indicator"><i class="bi bi-person"></i> Manual entry required</span>
+                                    <span class="field-helper" id="receiptNumberHelp"><i class="bi bi-pencil" aria-hidden="true"></i> Internal receipt serial</span>
+                                    <span class="receipt-manual-indicator" aria-hidden="true"><i class="bi bi-person" aria-hidden="true"></i> Manual entry required</span>
                                 </div>
 
                                 <div class="field-group field-amount">
                                     <label for="amountPaid" class="form-label">
-                                        Amount <span class="required-star">*</span>
+                                        Amount <span class="required-star" aria-hidden="true">*</span>
                                     </label>
                                     <div class="amount-input-wrapper">
-                                        <span class="currency-prefix">KES</span>
-                                        <input type="number" class="form-control" id="amountPaid" placeholder="0.00" min="0.01" step="0.01" required />
+                                        <span class="currency-prefix" aria-hidden="true">KES</span>
+                                        <input type="number" class="form-control" id="amountPaid" placeholder="0.00" min="0.01" step="0.01" required aria-describedby="amountPaidHelp" />
                                     </div>
                                     <div class="invalid-feedback">Please enter a valid amount (min 0.01).</div>
-                                    <span class="field-helper"><i class="bi bi-currency-dollar"></i> Amount in Kenyan Shillings (KES)</span>
+                                    <span class="field-helper" id="amountPaidHelp"><i class="bi bi-currency-dollar" aria-hidden="true"></i> Amount in Kenyan Shillings (KES)</span>
                                 </div>
                             </div>
 
@@ -2103,29 +2589,29 @@
                             <div class="form-row">
                                 <div class="field-group field-account">
                                     <label for="accountNumber" class="form-label">
-                                        Account # <span class="required-star">*</span>
+                                        Account # <span class="required-star" aria-hidden="true">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="accountNumber" placeholder="Customer Account Number" required />
+                                    <input type="text" class="form-control" id="accountNumber" placeholder="Customer Account Number" required aria-describedby="accountNumberHelp" />
                                     <div class="invalid-feedback">Account number is required.</div>
-                                    <span class="field-helper"><i class="bi bi-person-badge"></i> Customer account number</span>
+                                    <span class="field-helper" id="accountNumberHelp"><i class="bi bi-person-badge" aria-hidden="true"></i> Customer account number</span>
                                 </div>
 
                                 <div class="field-group field-holder">
                                     <label for="accountHolder" class="form-label">
-                                        Account Name <span class="required-star">*</span>
+                                        Account Name <span class="required-star" aria-hidden="true">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="accountHolder" placeholder="Full account name" required />
+                                    <input type="text" class="form-control" id="accountHolder" placeholder="Full account name" required aria-describedby="accountHolderHelp" />
                                     <div class="invalid-feedback">Account name is required.</div>
-                                    <span class="field-helper"><i class="bi bi-person"></i> Name on the account</span>
+                                    <span class="field-helper" id="accountHolderHelp"><i class="bi bi-person" aria-hidden="true"></i> Name on the account</span>
                                 </div>
 
                                 <div class="field-group field-date">
                                     <label for="receiptDate" class="form-label">
                                         Receipt Date
-                                        <span class="field-badge optional-badge">Optional</span>
+                                        <span class="field-badge optional-badge" aria-hidden="true">Optional</span>
                                     </label>
-                                    <input type="date" class="form-control" id="receiptDate" />
-                                    <span class="field-helper"><i class="bi bi-receipt"></i> Date on physical receipt</span>
+                                    <input type="date" class="form-control" id="receiptDate" aria-describedby="receiptDateHelp" />
+                                    <span class="field-helper" id="receiptDateHelp"><i class="bi bi-receipt" aria-hidden="true"></i> Date on physical receipt</span>
                                 </div>
                             </div>
 
@@ -2133,49 +2619,59 @@
                             <div class="form-row">
                                 <div class="field-group field-depositor">
                                     <label for="depositorName" class="form-label">
-                                        Depositor <span class="required-star">*</span>
+                                        Depositor <span class="required-star" aria-hidden="true">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="depositorName" placeholder="Person who deposited the money" required />
+                                    <input type="text" class="form-control" id="depositorName" placeholder="Person who deposited the money" required aria-describedby="depositorNameHelp" />
                                     <div class="invalid-feedback">Depositor name is required.</div>
-                                    <span class="field-helper"><i class="bi bi-person-check"></i> Person who physically deposited the money</span>
+                                    <span class="field-helper" id="depositorNameHelp"><i class="bi bi-person-check" aria-hidden="true"></i> Person who physically deposited the money</span>
                                 </div>
 
                                 <div class="field-group field-method">
                                     <label for="paymentMethod" class="form-label">
-                                        Payment Method <span class="required-star">*</span>
+                                        Payment Method <span class="required-star" aria-hidden="true">*</span>
                                     </label>
-                                    <select class="form-select" id="paymentMethod" required>
+                                    <select class="form-select" id="paymentMethod" required aria-describedby="paymentMethodHelp">
                                         <option value="">Select…</option>
                                         <option value="M-Pesa" selected>M‑Pesa</option>
+                                        <option value="Bank Slip">Bank Slip</option>
                                         <option value="Bank Transfer">Bank Transfer</option>
                                         <option value="Cheque">Cheque</option>
                                     </select>
                                     <div class="invalid-feedback">Please select a payment method.</div>
-                                    <span class="field-helper"><i class="bi bi-credit-card"></i> Payment method used</span>
+                                    <span class="field-helper" id="paymentMethodHelp"><i class="bi bi-credit-card" aria-hidden="true"></i> Payment method used</span>
                                 </div>
 
                                 <div class="field-group field-reference">
                                     <label for="referenceNumber" class="form-label">
                                         Reference #
-                                        <span class="ref-required-badge" id="refRequiredBadge">(Required for Transfers)</span>
+                                        <span class="ref-required-badge" id="refRequiredBadge" aria-hidden="true">(Required for Transfers)</span>
                                     </label>
-                                    <input type="text" class="form-control" id="referenceNumber" placeholder="MPESA-REF-123" />
-                                    <div class="invalid-feedback">Reference is required for M‑Pesa and Bank Transfers.</div>
+                                    <input type="text" class="form-control" id="referenceNumber" placeholder="MPESA-REF-123" aria-describedby="refHint" />
+                                    <div class="invalid-feedback">Reference is required for M‑Pesa, Bank Slips, and Bank Transfers.</div>
                                     <span class="field-helper" id="refHint">
-                                        <i class="bi bi-info-circle"></i> MPESA Ref or Transfer ID
+                                        <i class="bi bi-info-circle" aria-hidden="true"></i> MPESA Ref, Slip #, or Transfer ID
                                     </span>
                                 </div>
                             </div>
 
-                            <!-- Row 4: Payment For / Description -->
+                            <!-- Row 4: Recipient | Payment For -->
                             <div class="form-row">
+                                <div class="field-group field-recipient">
+                                    <label for="recipientName" class="form-label">
+                                        Received By <span class="required-star" aria-hidden="true">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="recipientName" placeholder="Person who received the payment" required aria-describedby="recipientNameHelp" />
+                                    <div class="invalid-feedback">Recipient name is required.</div>
+                                    <span class="field-helper" id="recipientNameHelp"><i class="bi bi-person-badge" aria-hidden="true"></i> Staff member who received the payment</span>
+                                </div>
+
                                 <div class="field-group field-description">
                                     <label for="paymentDescription" class="form-label">
-                                        Payment For <span class="required-star">*</span>
+                                        Payment For <span class="required-star" aria-hidden="true">*</span>
                                     </label>
-                                    <textarea class="form-control" id="paymentDescription" placeholder="e.g., School fees, Rent, Invoice #123, Goods purchase…" required></textarea>
+                                    <textarea class="form-control" id="paymentDescription" placeholder="e.g., School fees, Rent, Invoice #123, Goods purchase…" required aria-describedby="paymentDescriptionHelp"></textarea>
                                     <div class="invalid-feedback">Please describe what this payment is for.</div>
-                                    <span class="field-helper"><i class="bi bi-info-circle"></i> Specify the purpose or reason for this payment</span>
+                                    <span class="field-helper" id="paymentDescriptionHelp"><i class="bi bi-info-circle" aria-hidden="true"></i> Specify the purpose or reason for this payment</span>
                                 </div>
                             </div>
 
@@ -2183,12 +2679,12 @@
                             <div class="form-row">
                                 <div class="field-group field-full">
                                     <div class="system-dates">
-                                        <span class="label"><i class="bi bi-clock-history"></i> System Dates:</span>
+                                        <span class="label"><i class="bi bi-clock-history" aria-hidden="true"></i> System Dates:</span>
                                         <span class="value">
                                             Entry: <span id="systemEntryDate">Today 00:00</span> |
                                             Modified: <span id="systemModifiedDate">Today 00:00</span>
                                         </span>
-                                        <small class="text-muted ms-2">(Auto-recorded)</small>
+                                        <small class="text-muted ms-2" aria-hidden="true">(Auto-recorded)</small>
                                     </div>
                                 </div>
                             </div>
@@ -2196,9 +2692,9 @@
                             <!-- Duplicate Warning -->
                             <div class="form-row">
                                 <div class="field-group field-full">
-                                    <div class="duplicate-warning" id="duplicateWarning">
+                                    <div class="duplicate-warning" id="duplicateWarning" role="alert">
                                         <div class="d-flex align-items-start">
-                                            <span class="warning-icon">⚠️</span>
+                                            <span class="warning-icon" aria-hidden="true">⚠️</span>
                                             <div class="flex-grow-1">
                                                 <div class="warning-title" id="duplicateTitle">Potential Duplicate Detected</div>
                                                 <div class="duplicate-details" id="duplicateDetails">
@@ -2207,11 +2703,11 @@
                                                 <div id="duplicateMatches"></div>
                                                 <div class="duplicate-actions">
                                                     <span class="text-muted small">What would you like to do?</span>
-                                                    <button class="btn btn-sm btn-override" id="duplicateOverrideBtn">
-                                                        <i class="bi bi-check2"></i> Submit Anyway
+                                                    <button class="btn btn-sm btn-override" id="duplicateOverrideBtn" aria-label="Submit duplicate anyway">
+                                                        <i class="bi bi-check2" aria-hidden="true"></i> Submit Anyway
                                                     </button>
-                                                    <button class="btn btn-sm btn-cancel" id="duplicateCancelBtn">
-                                                        <i class="bi bi-x"></i> Cancel &amp; Edit
+                                                    <button class="btn btn-sm btn-cancel" id="duplicateCancelBtn" aria-label="Cancel duplicate submission">
+                                                        <i class="bi bi-x" aria-hidden="true"></i> Cancel &amp; Edit
                                                     </button>
                                                 </div>
                                             </div>
@@ -2224,24 +2720,24 @@
                             <div class="form-row d-none" id="amendmentReasonContainer">
                                 <div class="field-group field-full">
                                     <label for="amendmentReason" class="form-label">
-                                        Amendment Reason <span class="required-star">*</span>
+                                        Amendment Reason <span class="required-star" aria-hidden="true">*</span>
                                     </label>
-                                    <textarea class="form-control" id="amendmentReason" rows="2" placeholder="Explain why you are amending this record…"></textarea>
+                                    <textarea class="form-control" id="amendmentReason" rows="2" placeholder="Explain why you are amending this record…" aria-describedby="amendmentReasonHelp"></textarea>
                                     <div class="invalid-feedback">Please provide a reason for the amendment.</div>
-                                    <span class="field-helper"><i class="bi bi-pencil"></i> Required when editing existing records</span>
+                                    <span class="field-helper" id="amendmentReasonHelp"><i class="bi bi-pencil" aria-hidden="true"></i> Required when editing existing records</span>
                                 </div>
                             </div>
 
                             <!-- Action Buttons -->
                             <div class="action-row">
-                                <button type="submit" class="btn btn-primary" id="submitBtn">
-                                    <i class="bi bi-check2-circle"></i> Submit Entry
+                                <button type="submit" class="btn btn-primary" id="submitBtn" aria-label="Submit payment entry">
+                                    <i class="bi bi-check2-circle" aria-hidden="true"></i> Submit Entry
                                 </button>
-                                <button type="reset" class="btn btn-outline-secondary" id="resetBtn">
-                                    <i class="bi bi-arrow-counterclockwise"></i> Reset
+                                <button type="reset" class="btn btn-outline-secondary" id="resetBtn" aria-label="Reset form">
+                                    <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reset
                                 </button>
-                                <span class="text-muted ms-2" id="editIndicator" style="display:none;">
-                                    <i class="bi bi-pencil-square"></i> Editing: <strong id="editReceiptDisplay"></strong>
+                                <span class="text-muted ms-2" id="editIndicator" style="display:none;" aria-live="polite">
+                                    <i class="bi bi-pencil-square" aria-hidden="true"></i> Editing: <strong id="editReceiptDisplay"></strong>
                                     <span class="badge bg-secondary ms-1" id="editVersionDisplay">v1</span>
                                 </span>
                             </div>
@@ -2252,18 +2748,19 @@
             </div>
 
             <!-- ─── Tab 3: Payment Ledger ─── -->
-            <div class="tab-pane" id="ledger-pane" role="tabpanel">
+            <div class="tab-pane" id="ledger-pane" role="tabpanel" aria-labelledby="ledger-tab">
                 <div class="section-header">
                     <div>
-                        <h5><i class="bi bi-receipt-cutoff"></i> Payment Ledger</h5>
+                        <h5><i class="bi bi-receipt-cutoff" aria-hidden="true"></i> Payment Ledger</h5>
                         <p class="subtitle">View, filter, and export all payment records</p>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn-soft-clear" id="exportBtn" style="background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-600);padding:0.35rem 1.2rem;border-radius:var(--radius-full);font-size:0.75rem;font-weight:500;transition:var(--transition);font-family:'Inter',sans-serif;">
-                            <i class="bi bi-file-earmark-excel"></i> Export
+                        <button class="btn-soft-clear" id="exportBtn" style="background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-600);padding:0.35rem 1.2rem;border-radius:var(--radius-full);font-size:0.75rem;font-weight:500;transition:var(--transition);font-family:'Inter',sans-serif;" aria-label="Export filtered records">
+                            <i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Export
+                            <span class="filter-count-badge" id="exportCountBadge"></span>
                         </button>
-                        <button class="btn-soft-clear" id="printBtn" style="background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-600);padding:0.35rem 1.2rem;border-radius:var(--radius-full);font-size:0.75rem;font-weight:500;transition:var(--transition);font-family:'Inter',sans-serif;">
-                            <i class="bi bi-printer"></i> Print
+                        <button class="btn-soft-clear" id="printLedgerBtn" style="background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-600);padding:0.35rem 1.2rem;border-radius:var(--radius-full);font-size:0.75rem;font-weight:500;transition:var(--transition);font-family:'Inter',sans-serif;" aria-label="Print ledger">
+                            <i class="bi bi-printer" aria-hidden="true"></i> Print
                         </button>
                     </div>
                 </div>
@@ -2275,17 +2772,17 @@
                             <span class="stat-label">Records</span>
                             <span class="stat-value" id="statTotalRecords">0</span>
                         </div>
-                        <div class="stat-divider"></div>
+                        <div class="stat-divider" aria-hidden="true"></div>
                         <div class="stat-item">
                             <span class="stat-label">Total</span>
                             <span class="stat-value" id="statTotalAmount">KES 0.00</span>
                         </div>
-                        <div class="stat-divider"></div>
+                        <div class="stat-divider" aria-hidden="true"></div>
                         <div class="stat-item">
                             <span class="stat-label">Average</span>
                             <span class="stat-value" id="statAverageAmount">KES 0.00</span>
                         </div>
-                        <div class="stat-divider"></div>
+                        <div class="stat-divider" aria-hidden="true"></div>
                         <div class="stat-item">
                             <span class="stat-label">Month</span>
                             <span class="stat-value" id="statCurrentMonth">—</span>
@@ -2294,34 +2791,38 @@
 
                     <!-- Toolbar -->
                     <div class="toolbar-subtle">
-                        <select id="monthFilter" style="width:auto;">
+                        <label for="monthFilter" class="visually-hidden">Filter by month</label>
+                        <select id="monthFilter" style="width:auto;" aria-label="Filter by month">
                             <option value="all">All Months</option>
                         </select>
                         <div class="search-wrap">
-                            <i class="bi bi-search"></i>
-                            <input type="text" id="searchInput" placeholder="Search records…" />
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                            <label for="searchInput" class="visually-hidden">Search records</label>
+                            <input type="text" id="searchInput" placeholder="Search records…" aria-label="Search payment records" />
+                            <span class="filter-count-badge" id="searchCountBadge"></span>
                         </div>
-                        <span class="spacer"></span>
-                        <span class="hint"><i class="bi bi-dot"></i> clean · monochrome</span>
+                        <span class="spacer" aria-hidden="true"></span>
+                        <span class="hint" aria-hidden="true"><i class="bi bi-dot" aria-hidden="true"></i> clean · monochrome</span>
                     </div>
 
                     <!-- Table -->
-                    <div class="table-wrap">
-                        <table class="table-subtle" id="dataTable">
+                    <div class="table-wrap" id="ledgerTableWrap">
+                        <table class="table-subtle" id="dataTable" aria-label="Payment ledger table">
                             <thead>
                                 <tr>
-                                    <th class="col-index text-center">#</th>
-                                    <th class="col-receipt">Receipt</th>
-                                    <th class="col-banking">Banking Date</th>
-                                    <th class="col-receiptdate">Receipt Date</th>
-                                    <th class="col-account">Account</th>
-                                    <th class="col-holder">Account Name</th>
-                                    <th class="col-depositor">Depositor</th>
-                                    <th class="col-amount text-end">Amount</th>
-                                    <th class="col-method">Method</th>
-                                    <th class="col-ref">Reference</th>
-                                    <th class="col-description">Purpose</th>
-                                    <th class="col-actions text-center">Actions</th>
+                                    <th class="col-index text-center" scope="col">#</th>
+                                    <th class="col-receipt" scope="col">Receipt</th>
+                                    <th class="col-banking" scope="col">Banking Date</th>
+                                    <th class="col-receiptdate" scope="col">Receipt Date</th>
+                                    <th class="col-account" scope="col">Account</th>
+                                    <th class="col-holder" scope="col">Account Name</th>
+                                    <th class="col-depositor" scope="col">Depositor</th>
+                                    <th class="col-amount text-end" scope="col">Amount</th>
+                                    <th class="col-method" scope="col">Method</th>
+                                    <th class="col-ref" scope="col">Reference</th>
+                                    <th class="col-recipient" scope="col">Received By</th>
+                                    <th class="col-description" scope="col">Purpose</th>
+                                    <th class="col-actions text-center" scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
@@ -2353,16 +2854,15 @@
         //  FIREBASE CONFIGURATION
         // ════════════════════════════════════════════════
 
-        // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
         const firebaseConfig = {
-  apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
-  authDomain: "payment-ledger-666f9.firebaseapp.com",
-  projectId: "payment-ledger-666f9",
-  storageBucket: "payment-ledger-666f9.firebasestorage.app",
-  messagingSenderId: "108531489986",
-  appId: "1:108531489986:web:9510d993a9cad71219ef5b",
-  measurementId: "G-H80MK8SSQ1"
-};
+            apiKey: "AIzaSyBvZbe9GazBil1WDTVTdnXYuzm36gkoDZA",
+            authDomain: "payment-ledger-666f9.firebaseapp.com",
+            projectId: "payment-ledger-666f9",
+            storageBucket: "payment-ledger-666f9.firebasestorage.app",
+            messagingSenderId: "108531489986",
+            appId: "1:108531489986:web:9510d993a9cad71219ef5b",
+            measurementId: "G-H80MK8SSQ1"
+        };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -2431,6 +2931,9 @@
                 if (customizations.fields.description !== undefined) {
                     document.getElementById('showDescription').checked = customizations.fields.description;
                 }
+                if (customizations.fields.recipient !== undefined) {
+                    document.getElementById('showRecipient').checked = customizations.fields.recipient;
+                }
             }
         }
 
@@ -2446,6 +2949,7 @@
                     method: document.getElementById('showMethod').checked,
                     reference: document.getElementById('showReference').checked,
                     description: document.getElementById('showDescription').checked,
+                    recipient: document.getElementById('showRecipient').checked,
                 }
             };
             const saved = saveCustomizations(data);
@@ -2462,6 +2966,47 @@
                 });
             }
             return data;
+        }
+
+        // ════════════════════════════════════════════════
+        //  LOADING SPINNER UTILITY
+        // ════════════════════════════════════════════════
+
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingTitle = document.getElementById('loadingTitle');
+        const loadingSubtitle = document.getElementById('loadingSubtitle');
+        const loadingProgressBar = document.getElementById('loadingProgressBar');
+        const loadingPercentage = document.getElementById('loadingPercentage');
+
+        function showLoading(title = 'Loading...', subtitle = 'Please wait...', showProgress = false) {
+            loadingTitle.textContent = title;
+            loadingSubtitle.textContent = subtitle;
+            loadingOverlay.classList.add('show');
+
+            if (showProgress) {
+                loadingProgressBar.style.width = '0%';
+                loadingPercentage.textContent = '0%';
+                loadingProgressBar.parentElement.style.display = 'block';
+                loadingPercentage.style.display = 'block';
+            } else {
+                loadingProgressBar.parentElement.style.display = 'none';
+                loadingPercentage.style.display = 'none';
+            }
+        }
+
+        function updateLoadingProgress(percent, label = null) {
+            const clamped = Math.min(100, Math.max(0, percent));
+            loadingProgressBar.style.width = clamped + '%';
+            loadingProgressBar.setAttribute('aria-valuenow', clamped);
+            loadingPercentage.textContent = Math.round(clamped) + '%';
+            if (label) loadingSubtitle.textContent = label;
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('show');
+            loadingProgressBar.style.width = '0%';
+            loadingProgressBar.setAttribute('aria-valuenow', 0);
+            loadingPercentage.textContent = '0%';
         }
 
         // ════════════════════════════════════════════════
@@ -2492,6 +3037,11 @@
                 const paneId = key + '-pane';
                 const pane = document.getElementById(paneId);
                 pane.classList.toggle('active', paneId === tabId.replace('-tab', '-pane'));
+                if (pane.id === tabId.replace('-tab', '-pane')) {
+                    pane.setAttribute('aria-hidden', 'false');
+                } else {
+                    pane.setAttribute('aria-hidden', 'true');
+                }
             });
 
             const stepMap = {
@@ -2538,6 +3088,11 @@
             if (tabId === 'ledger-tab') {
                 loadRecords();
             }
+
+            const activeTab = document.querySelector(`.tab-btn.active`);
+            if (activeTab) {
+                activeTab.focus();
+            }
         }
 
         tabs.forEach(tab => {
@@ -2562,7 +3117,30 @@
         });
 
         // ════════════════════════════════════════════════
-        //  M-PESA EXTRACTOR LOGIC
+        //  KEYBOARD SHORTCUT: Ctrl+Enter for form submission
+        // ════════════════════════════════════════════════
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                const activePane = document.querySelector('.tab-pane.active');
+                if (activePane && activePane.id === 'enter-pane') {
+                    e.preventDefault();
+                    const form = document.getElementById('paymentForm');
+                    form.dispatchEvent(new Event('submit'));
+
+                    const submitBtn = document.getElementById('submitBtn');
+                    submitBtn.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        submitBtn.style.transform = '';
+                    }, 200);
+
+                    showToast('⌨️ Submitted via keyboard shortcut!', 'Quick Submit', 'success');
+                }
+            }
+        });
+
+        // ════════════════════════════════════════════════
+        //  M-PESA EXTRACTOR LOGIC with Recipient Extraction
         // ════════════════════════════════════════════════
 
         const mpesaTextarea = document.getElementById('mpesaMessage');
@@ -2575,7 +3153,7 @@
         const amountEl = document.getElementById('extractAmount');
         const refEl = document.getElementById('extractRef');
         const senderEl = document.getElementById('extractSender');
-        const recipientEl = document.getElementById('extractRecipient');
+        const recipientEl = document.getElementById('extractRecipientName');
 
         function extractMpesaFields(text) {
             let date = '—',
@@ -2636,6 +3214,17 @@
                 if (fallbackSender && fallbackSender[1]) sender = fallbackSender[1].trim();
             }
 
+            let recipientMatch = text.match(/received\s+by\s+([A-Za-z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$|\.)/i);
+            if (!recipientMatch) {
+                recipientMatch = text.match(/paid\s+to\s+([A-Za-z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$|\.)/i);
+            }
+            if (!recipientMatch) {
+                recipientMatch = text.match(/to\s+([A-Za-z\s]+?)(?:\s+from\s+|\s+for\s+|\s*$|\.)/i);
+            }
+            if (recipientMatch && recipientMatch[1]) {
+                recipient = recipientMatch[1].trim();
+            }
+
             return { date, amount, ref, sender, recipient };
         }
 
@@ -2652,7 +3241,8 @@
             refEl.classList.toggle('placeholder', ref === '—');
 
             senderEl.innerHTML = `Payer: <strong>${sender}</strong>`;
-            recipientEl.innerHTML = `Received By: <strong>${recipient}</strong>`;
+            recipientEl.textContent = recipient;
+            recipientEl.style.fontWeight = '600';
 
             const isComplete = date !== '—' || amount !== '—' || ref !== '—' || sender !== '—';
             if (isComplete) {
@@ -2662,12 +3252,16 @@
                     reference: ref !== '—' ? ref : '',
                     depositor: sender !== '—' ? sender : '',
                     accountHolder: sender !== '—' ? sender : '',
-                    recipient: recipient,
+                    recipient: recipient !== 'Mararo' ? recipient : 'Mararo',
                     raw: text
                 };
                 isMpesaExtracted = true;
                 transferBtn.disabled = false;
                 document.getElementById('extractedDataIndicator').classList.add('show');
+
+                if (extractedData.recipient) {
+                    document.getElementById('recipientName').value = extractedData.recipient;
+                }
             } else {
                 transferBtn.disabled = true;
                 isMpesaExtracted = false;
@@ -2716,12 +3310,13 @@
             refEl.textContent = '—';
             refEl.classList.add('placeholder');
             senderEl.innerHTML = 'Payer: <strong>—</strong>';
-            recipientEl.innerHTML = 'Received By: <strong>Mararo</strong>';
+            recipientEl.textContent = '—';
             successEl.classList.remove('show');
             extractedData = null;
             isMpesaExtracted = false;
             transferBtn.disabled = true;
             document.getElementById('extractedDataIndicator').classList.remove('show');
+            document.getElementById('recipientName').value = '';
         }
 
         extractBtn.addEventListener('click', function() {
@@ -2732,7 +3327,7 @@
                 clearTimeout(successEl._timeout);
                 successEl._timeout = setTimeout(() => {
                     successEl.classList.remove('show');
-                    successEl.innerHTML = '<i class="bi bi-check-circle-fill"></i> Extracted';
+                    successEl.innerHTML = '<i class="bi bi-check-circle-fill" aria-hidden="true"></i> Extracted';
                 }, 2000);
                 return;
             }
@@ -2804,6 +3399,9 @@
                 document.getElementById('depositorName').value = data.depositor;
                 document.getElementById('accountHolder').value = data.depositor;
             }
+            if (data.recipient) {
+                document.getElementById('recipientName').value = data.recipient;
+            }
 
             if (data.reference || data.amount) {
                 document.getElementById('paymentMethod').value = 'M-Pesa';
@@ -2856,6 +3454,7 @@
         const depositorInput = $('depositorName');
         const paymentMethod = $('paymentMethod');
         const referenceInput = $('referenceNumber');
+        const recipientInput = $('recipientName');
         const descriptionInput = $('paymentDescription');
         const submitBtn = $('submitBtn');
         const resetBtn = $('resetBtn');
@@ -2873,6 +3472,52 @@
         const duplicateMatches = $('duplicateMatches');
         const duplicateOverrideBtn = $('duplicateOverrideBtn');
         const duplicateCancelBtn = $('duplicateCancelBtn');
+
+        // ─── Confirmation Modal ───
+        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        let pendingDeleteId = null;
+
+        function showDeleteConfirmation(record) {
+            if (!record) return;
+
+            document.getElementById('confirmReceipt').textContent = record.id;
+            document.getElementById('confirmAmount').textContent = formatCurrency(record.amount);
+            document.getElementById('confirmDepositor').textContent = record.depositorName || '—';
+            document.getElementById('confirmDate').textContent = formatDate(record.bankingDate);
+            document.getElementById('confirmTitle').textContent = `Delete Payment Record #${record.id}?`;
+
+            pendingDeleteId = record.id;
+            confirmationModal.show();
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+            if (!pendingDeleteId) return;
+
+            const recordId = pendingDeleteId;
+            pendingDeleteId = null;
+            confirmationModal.hide();
+
+            showLoading('Deleting Record...', 'Please wait while we remove the record...', true);
+            updateLoadingProgress(30, 'Validating record...');
+
+            try {
+                updateLoadingProgress(60, 'Removing from database...');
+                await db.collection(PAYMENTS_COLLECTION).doc(recordId).delete();
+
+                updateLoadingProgress(90, 'Updating ledger...');
+                await loadRecords();
+
+                updateLoadingProgress(100, 'Done!');
+                setTimeout(() => {
+                    hideLoading();
+                    showToast(`Record #${recordId} deleted successfully.`, 'Deleted', 'success');
+                }, 400);
+            } catch (error) {
+                hideLoading();
+                showToast(error.message || 'Failed to delete record.', 'Error', 'error');
+                console.error('Delete error:', error);
+            }
+        });
 
         function formatDate(dateStr) {
             if (!dateStr) return '-';
@@ -2914,6 +3559,35 @@
         bankingDateInput.value = today;
         receiptDateInput.value = '';
         updateSystemDates();
+
+        // ─── Payment Method Reference Requirements ───
+
+        paymentMethod.addEventListener('change', function() {
+            const refLabel = document.getElementById('refRequiredBadge');
+            const refHint = document.getElementById('refHint');
+            const isRequired = this.value === 'M-Pesa' || this.value === 'Bank Slip' || this.value === 'Bank Transfer';
+
+            if (isRequired) {
+                refLabel.style.display = 'inline';
+                refLabel.textContent = '(Required)';
+                refLabel.style.color = '#EF4444';
+                const methodName = this.value === 'M-Pesa' ? 'M‑Pesa' : this.value === 'Bank Slip' ? 'Bank Slips' :
+                    'Bank Transfers';
+                refHint.innerHTML =
+                    `<i class="bi bi-exclamation-triangle text-danger" aria-hidden="true"></i> Required for ${methodName}`;
+                referenceInput.required = true;
+                referenceInput.placeholder = this.value === 'M-Pesa' ? 'MPESA-REF-123' : this.value === 'Bank Slip' ?
+                    'SLIP-456-2026' : 'TRF-789-2026';
+            } else {
+                refLabel.style.display = 'inline';
+                refLabel.textContent = '(Optional)';
+                refLabel.style.color = '#94A3B8';
+                refHint.innerHTML = '<i class="bi bi-info-circle" aria-hidden="true"></i> Optional for Cheque';
+                referenceInput.required = false;
+                referenceInput.placeholder = 'Optional';
+            }
+            hideDuplicateWarning();
+        });
 
         // ─── Duplicate Detection ───
 
@@ -3030,44 +3704,22 @@
             showToast('Duplicate entry cancelled. Please review your data.', 'Info', 'info');
         });
 
-        // ─── Form Logic ───
-
-        paymentMethod.addEventListener('change', function() {
-            const refLabel = document.getElementById('refRequiredBadge');
-            const refHint = document.getElementById('refHint');
-            const isRequired = this.value === 'M-Pesa' || this.value === 'Bank Transfer';
-
-            if (isRequired) {
-                refLabel.style.display = 'inline';
-                refLabel.textContent = '(Required)';
-                refLabel.style.color = '#EF4444';
-                const methodName = this.value === 'M-Pesa' ? 'M‑Pesa' : 'Bank Transfers';
-                refHint.innerHTML =
-                    `<i class="bi bi-exclamation-triangle text-danger"></i> Required for ${methodName}`;
-                referenceInput.required = true;
-                referenceInput.placeholder = this.value === 'M-Pesa' ? 'MPESA-REF-123' : 'TRF-789-2026';
-            } else {
-                refLabel.style.display = 'inline';
-                refLabel.textContent = '(Optional)';
-                refLabel.style.color = '#94A3B8';
-                refHint.innerHTML = '<i class="bi bi-info-circle"></i> Optional for Cheque';
-                referenceInput.required = false;
-                referenceInput.placeholder = 'Optional';
-            }
-            hideDuplicateWarning();
-        });
-
-        // ─── Load Records ───
+        // ─── Load Records with Loading Spinner ───
 
         async function loadRecords() {
             if (isLoading) return;
             isLoading = true;
 
+            showLoading('Loading Records', 'Fetching payment data from database...', true);
+            updateLoadingProgress(20, 'Connecting to database...');
+
             try {
+                updateLoadingProgress(40, 'Fetching records...');
                 const snapshot = await db.collection(PAYMENTS_COLLECTION)
                     .orderBy('bankingDate', 'desc')
                     .get();
 
+                updateLoadingProgress(70, 'Processing records...');
                 allRecords = [];
                 snapshot.forEach(doc => {
                     allRecords.push({
@@ -3076,12 +3728,21 @@
                     });
                 });
 
+                updateLoadingProgress(90, 'Updating ledger...');
+
                 if (document.getElementById('ledger-pane').classList.contains('active')) {
                     updateLedger();
                 }
+
+                updateLoadingProgress(100, 'Complete!');
+                setTimeout(() => {
+                    hideLoading();
+                }, 400);
             } catch (error) {
                 console.error('Load records error:', error);
                 allRecords = [];
+                hideLoading();
+                showToast(error.message || 'Failed to load records.', 'Error', 'error');
             } finally {
                 isLoading = false;
             }
@@ -3124,6 +3785,13 @@
                 return;
             }
 
+            if (!recipientInput.value.trim()) {
+                showToast('Recipient name is required.', 'Validation Error', 'error');
+                recipientInput.focus();
+                recipientInput.classList.add('is-invalid');
+                return;
+            }
+
             if (!descriptionInput.value.trim()) {
                 showToast('Please describe what this payment is for.', 'Validation Error', 'error');
                 descriptionInput.focus();
@@ -3131,9 +3799,11 @@
                 return;
             }
 
-            const isRefRequired = paymentMethod.value === 'M-Pesa' || paymentMethod.value === 'Bank Transfer';
+            const isRefRequired = paymentMethod.value === 'M-Pesa' || paymentMethod.value === 'Bank Slip' || paymentMethod
+                .value === 'Bank Transfer';
             if (isRefRequired && !referenceInput.value.trim()) {
-                const methodName = paymentMethod.value === 'M-Pesa' ? 'M‑Pesa' : 'Bank Transfers';
+                const methodName = paymentMethod.value === 'M-Pesa' ? 'M‑Pesa' : paymentMethod.value === 'Bank Slip' ?
+                    'Bank Slips' : 'Bank Transfers';
                 showToast(`Reference number is required for ${methodName}.`, 'Validation Error', 'error');
                 referenceInput.focus();
                 referenceInput.classList.add('is-invalid');
@@ -3161,6 +3831,7 @@
             const depositor = depositorInput.value.trim();
             const method = paymentMethod.value;
             const reference = referenceInput.value.trim() || '';
+            const recipient = recipientInput.value.trim();
             const description = descriptionInput.value.trim();
             const reason = amendmentReason.value.trim();
             const now = new Date();
@@ -3176,6 +3847,7 @@
                 depositorName: depositor,
                 paymentMethod: method,
                 referenceNumber: reference,
+                recipientName: recipient,
                 paymentDescription: description,
                 recipient: 'Mararo',
                 month: bankingDate.slice(0, 7),
@@ -3202,16 +3874,25 @@
 
             isDuplicateOverride = false;
 
+            const isEdit = editMode;
+            showLoading(isEdit ? 'Updating Record...' : 'Saving Record...',
+                isEdit ? 'Please wait while we update the record...' : 'Please wait while we save the record...',
+                true);
+            updateLoadingProgress(20, 'Validating data...');
+
             try {
                 if (editMode) {
+                    updateLoadingProgress(40, 'Fetching existing record...');
                     const docRef = db.collection(PAYMENTS_COLLECTION).doc(editDocId);
                     const doc = await docRef.get();
 
                     if (!doc.exists) {
+                        hideLoading();
                         showToast('Record not found.', 'Error', 'error');
                         return;
                     }
 
+                    updateLoadingProgress(60, 'Creating amendment record...');
                     const existingData = doc.data();
                     const currentVersion = existingData.version || 1;
 
@@ -3227,6 +3908,7 @@
                             depositorName: existingData.depositorName,
                             paymentMethod: existingData.paymentMethod,
                             referenceNumber: existingData.referenceNumber || '',
+                            recipientName: existingData.recipientName || '',
                             paymentDescription: existingData.paymentDescription || '',
                         },
                         modifiedAt: new Date().toISOString(),
@@ -3241,6 +3923,7 @@
                     data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
                     data.updatedBy = 'anonymous';
 
+                    updateLoadingProgress(75, 'Saving amendment history...');
                     await db.collection(AMENDMENTS_COLLECTION).doc(`${editDocId}_v${data.version}`).set({
                         receiptNumber: receipt,
                         version: data.version,
@@ -3255,6 +3938,7 @@
                             paymentMethod: { old: existingData.paymentMethod, new: data.paymentMethod },
                             referenceNumber: { old: existingData.referenceNumber || '', new: data.referenceNumber ||
                                     '' },
+                            recipientName: { old: existingData.recipientName || '', new: data.recipientName || '' },
                             paymentDescription: { old: existingData.paymentDescription || '', new: data
                                     .paymentDescription || '' },
                         },
@@ -3263,9 +3947,15 @@
                         amendedAt: firebase.firestore.FieldValue.serverTimestamp(),
                     });
 
+                    updateLoadingProgress(90, 'Updating record...');
                     await docRef.update(data);
-                    showToast(`Record ${receipt} amended successfully! (v${data.version})`, 'Amendment Saved',
-                        'success');
+
+                    updateLoadingProgress(100, 'Done!');
+                    setTimeout(() => {
+                        hideLoading();
+                        showToast(`Record ${receipt} amended successfully! (v${data.version})`, 'Amendment Saved',
+                            'success');
+                    }, 400);
 
                     form.reset();
                     bankingDateInput.value = today;
@@ -3274,7 +3964,7 @@
                     document.getElementById('editMode').value = 'false';
                     document.getElementById('editDocId').value = '';
                     document.getElementById('editVersion').value = '0';
-                    submitBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Submit Entry';
+                    submitBtn.innerHTML = '<i class="bi bi-check2-circle" aria-hidden="true"></i> Submit Entry';
                     amendmentReason.value = '';
                     updateSystemDates();
                     hideDuplicateWarning();
@@ -3286,8 +3976,16 @@
                     }, 500);
 
                 } else {
+                    updateLoadingProgress(60, 'Saving record to database...');
                     await db.collection(PAYMENTS_COLLECTION).doc(receipt).set(data);
-                    showToast(`Record ${receipt} added successfully!`, 'Success', 'success');
+
+                    updateLoadingProgress(90, 'Updating ledger...');
+
+                    updateLoadingProgress(100, 'Done!');
+                    setTimeout(() => {
+                        hideLoading();
+                        showToast(`Record ${receipt} added successfully!`, 'Success', 'success');
+                    }, 400);
 
                     form.reset();
                     bankingDateInput.value = today;
@@ -3308,6 +4006,7 @@
 
             } catch (error) {
                 console.error('Submit error:', error);
+                hideLoading();
                 if (error.code === 'already-exists' || error.message.includes('already exists')) {
                     showToast(`Receipt # "${receipt}" already exists. Please use a unique number.`, 'Duplicate Error',
                         'error');
@@ -3346,7 +4045,7 @@
             document.getElementById('editMode').value = 'false';
             document.getElementById('editDocId').value = '';
             document.getElementById('editVersion').value = '0';
-            submitBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Submit Entry';
+            submitBtn.innerHTML = '<i class="bi bi-check2-circle" aria-hidden="true"></i> Submit Entry';
             form.classList.remove('was-validated');
             receiptInput.focus();
             paymentMethod.dispatchEvent(new Event('change'));
@@ -3363,6 +4062,25 @@
         let currentPage = 1;
         const PAGE_SIZE = 8;
 
+        // ─── Filter Count Badge ───
+        function updateFilterCounts() {
+            const searchCount = document.getElementById('searchCountBadge');
+            const exportCount = document.getElementById('exportCountBadge');
+
+            const count = filteredRecords.length;
+            const total = allRecords.length;
+
+            if (count !== total && count > 0) {
+                searchCount.textContent = `${count} found`;
+                searchCount.classList.add('show');
+                exportCount.textContent = `${count} records`;
+                exportCount.classList.add('show');
+            } else {
+                searchCount.classList.remove('show');
+                exportCount.classList.remove('show');
+            }
+        }
+
         // ─── Receipt Modal with Customization ───
         const receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
         let currentReceiptRecord = null;
@@ -3377,6 +4095,7 @@
             const showMethod = document.getElementById('showMethod').checked;
             const showReference = document.getElementById('showReference').checked;
             const showDescription = document.getElementById('showDescription').checked;
+            const showRecipient = document.getElementById('showRecipient').checked;
 
             const bankingDate = formatDate(record.bankingDate);
             const receiptDate = record.receiptDate ? formatDate(record.receiptDate) : 'N/A';
@@ -3385,6 +4104,7 @@
             const statusClass = record.isAmended ? 'pending' : 'paid';
             const version = record.version || 1;
             const description = record.paymentDescription || '—';
+            const recipient = record.recipientName || record.recipient || 'Mararo';
 
             let bodyRows = '';
 
@@ -3439,6 +4159,14 @@
                             </div>
                         `;
             }
+            if (showRecipient) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Received By</span>
+                                <span class="value">${escapeHtml(recipient)}</span>
+                            </div>
+                        `;
+            }
             if (showDescription) {
                 bodyRows += `
                             <div class="receipt-row">
@@ -3474,7 +4202,7 @@
 
                             <div class="receipt-footer">
                                 <div class="footer-text">
-                                    <i class="bi bi-check-circle"></i> ${escapeHtml(footer)}
+                                    <i class="bi bi-check-circle" aria-hidden="true"></i> ${escapeHtml(footer)}
                                 </div>
                                 <div class="footer-text" style="font-size:0.4rem; margin-top:0.1rem;">
                                     ${new Date().toLocaleString()}
@@ -3516,13 +4244,14 @@
             });
         });
 
-        // ─── Print Receipt (FIXED - No duplicates, clean new window) ───
+        // ─── FIXED: Print Receipt Button ───
         document.getElementById('printReceiptBtn').addEventListener('click', function() {
             if (!currentReceiptRecord) {
                 showToast('No receipt to print.', 'Error', 'error');
                 return;
             }
 
+            // Render the receipt first
             renderReceipt(currentReceiptRecord);
 
             const receiptContent = document.getElementById('receiptContent');
@@ -3531,46 +4260,165 @@
                 return;
             }
 
-            // Open a clean new window for printing
-            const printWindow = window.open('', '_blank', 'width=320,height=600');
+            // Get the current customization values
+            const company = document.getElementById('receiptCompany').value || 'PayFlow';
+            const title = document.getElementById('receiptTitle').value || 'Payment Receipt';
+            const footer = document.getElementById('receiptFooter').value || 'Thank you for your payment';
+            const showAccount = document.getElementById('showAccount').checked;
+            const showHolder = document.getElementById('showHolder').checked;
+            const showDepositor = document.getElementById('showDepositor').checked;
+            const showMethod = document.getElementById('showMethod').checked;
+            const showReference = document.getElementById('showReference').checked;
+            const showDescription = document.getElementById('showDescription').checked;
+            const showRecipient = document.getElementById('showRecipient').checked;
+
+            const record = currentReceiptRecord;
+            const bankingDate = formatDate(record.bankingDate);
+            const receiptDate = record.receiptDate ? formatDate(record.receiptDate) : 'N/A';
+            const amount = formatCurrency(record.amount);
+            const status = record.isAmended ? 'Amended' : 'Paid';
+            const statusClass = record.isAmended ? 'pending' : 'paid';
+            const version = record.version || 1;
+            const description = record.paymentDescription || '—';
+            const recipient = record.recipientName || record.recipient || 'Mararo';
+
+            let bodyRows = '';
+            bodyRows += `
+                        <div class="receipt-row">
+                            <span class="label">Banking Date</span>
+                            <span class="value">${bankingDate}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">Receipt Date</span>
+                            <span class="value">${receiptDate}</span>
+                        </div>
+                    `;
+            if (showAccount) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Account</span>
+                                <span class="value">${escapeHtml(record.accountNumber)}</span>
+                            </div>
+                        `;
+            }
+            if (showHolder) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Account Name</span>
+                                <span class="value">${escapeHtml(record.accountHolder)}</span>
+                            </div>
+                        `;
+            }
+            if (showDepositor) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Depositor</span>
+                                <span class="value">${escapeHtml(record.depositorName)}</span>
+                            </div>
+                        `;
+            }
+            if (showMethod) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Method</span>
+                                <span class="value">${escapeHtml(record.paymentMethod)}</span>
+                            </div>
+                        `;
+            }
+            if (showReference) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Reference</span>
+                                <span class="value">${escapeHtml(record.referenceNumber) || '—'}</span>
+                            </div>
+                        `;
+            }
+            if (showRecipient) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Received By</span>
+                                <span class="value">${escapeHtml(recipient)}</span>
+                            </div>
+                        `;
+            }
+            if (showDescription) {
+                bodyRows += `
+                            <div class="receipt-row">
+                                <span class="label">Payment For</span>
+                                <span class="value description">${escapeHtml(description)}</span>
+                            </div>
+                        `;
+            }
+            bodyRows += `
+                        <div class="receipt-row" style="border-top: 1px dashed #CBD5E1; margin-top: 0.2rem; padding-top: 0.3rem;">
+                            <span class="label" style="font-weight:700;">Amount</span>
+                            <span class="value amount">${amount}</span>
+                        </div>
+                    `;
+
+            const receiptHTML = `
+                        <div class="receipt-wrapper" id="receiptContent">
+                            <div class="receipt-watermark">PAYFLOW</div>
+                            <div class="receipt-header">
+                                <div class="company-name">${escapeHtml(company)}</div>
+                                <div class="receipt-title">${escapeHtml(title)}</div>
+                                <div class="receipt-number">
+                                    <span class="receipt-status ${statusClass}">${status}</span>
+                                    #${escapeHtml(record.id)}
+                                    ${record.isAmended ? ` · v${version}` : ''}
+                                </div>
+                            </div>
+                            <div class="receipt-body">
+                                ${bodyRows}
+                            </div>
+                            <div class="receipt-footer">
+                                <div class="footer-text">
+                                    <i class="bi bi-check-circle" aria-hidden="true"></i> ${escapeHtml(footer)}
+                                </div>
+                                <div class="footer-text" style="font-size:0.4rem; margin-top:0.1rem;">
+                                    ${new Date().toLocaleString()}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+            const printWindow = window.open('', '_blank', 'width=320,height=600,scrollbars=yes');
             if (!printWindow) {
                 showToast('Please allow popups for printing.', 'Error', 'error');
                 return;
             }
 
-            const receiptHTML = receiptContent.outerHTML;
-
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Payment Receipt</title>
                     <style>
-                        * { 
-                            margin: 0; 
-                            padding: 0; 
-                            box-sizing: border-box; 
-                        }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
                         body { 
                             font-family: 'Courier New', 'Courier', monospace; 
-                            background: white; 
+                            background: white;
                             display: flex;
                             justify-content: center;
                             align-items: center;
                             min-height: 100vh;
-                            padding: 10px;
+                            padding: 5mm;
+                            margin: 0;
                         }
                         .receipt-wrapper {
                             max-width: 80mm;
                             width: 100%;
                             background: white;
-                            padding: 3mm 4mm;
-                            font-size: 9pt;
-                            line-height: 1.3;
+                            padding: 2mm 3mm;
+                            font-size: 8pt;
+                            line-height: 1.2;
                             border: none;
                             box-shadow: none;
+                            margin: 0 auto;
+                            overflow: hidden;
                         }
-                        .receipt-wrapper .receipt-watermark { display: none; }
                         .receipt-wrapper .receipt-header {
                             text-align: center;
                             border-bottom: 1px dashed #CBD5E1;
@@ -3578,54 +4426,54 @@
                             margin-bottom: 2mm;
                         }
                         .receipt-wrapper .receipt-header .company-name {
-                            font-size: 16pt;
+                            font-size: 14pt;
                             font-weight: 800;
                             color: #0F172A;
                         }
                         .receipt-wrapper .receipt-header .company-name span { color: #4F46E5; }
                         .receipt-wrapper .receipt-header .receipt-title {
-                            font-size: 11pt;
+                            font-size: 9pt;
                             font-weight: 700;
                             color: #475569;
-                            letter-spacing: 1px;
                             text-transform: uppercase;
+                            letter-spacing: 1px;
                         }
                         .receipt-wrapper .receipt-header .receipt-number {
-                            font-size: 8pt;
-                            font-weight: 600;
+                            font-size: 7pt;
                             color: #94A3B8;
+                            margin-top: 0.5mm;
                         }
                         .receipt-wrapper .receipt-body .receipt-row {
                             display: flex;
                             justify-content: space-between;
-                            padding: 1.2mm 0;
+                            padding: 0.8mm 0;
                             border-bottom: 1px dotted #F1F5F9;
-                            font-size: 9pt;
+                            font-size: 7.5pt;
                         }
+                        .receipt-wrapper .receipt-body .receipt-row:last-child { border-bottom: none; }
                         .receipt-wrapper .receipt-body .receipt-row .label {
                             color: #64748B;
                             font-weight: 600;
-                            font-size: 8pt;
+                            font-size: 6.5pt;
                             text-transform: uppercase;
-                            letter-spacing: 0.5px;
                         }
                         .receipt-wrapper .receipt-body .receipt-row .value {
                             font-weight: 700;
                             color: #0F172A;
-                            font-size: 9pt;
+                            font-size: 7.5pt;
                             text-align: right;
                             max-width: 55%;
                             word-break: break-word;
                         }
                         .receipt-wrapper .receipt-body .receipt-row .value.amount {
-                            font-size: 16pt;
+                            font-size: 13pt;
                             color: #4F46E5;
                             font-weight: 800;
                         }
                         .receipt-wrapper .receipt-body .receipt-row .value.description {
                             font-style: italic;
                             color: #475569;
-                            font-size: 8pt;
+                            font-size: 6.5pt;
                         }
                         .receipt-wrapper .receipt-footer {
                             margin-top: 2mm;
@@ -3634,15 +4482,16 @@
                             text-align: center;
                         }
                         .receipt-wrapper .receipt-footer .footer-text {
-                            font-size: 7pt;
+                            font-size: 6pt;
                             font-weight: 600;
                             color: #64748B;
+                            line-height: 1.2;
                         }
                         .receipt-wrapper .receipt-status {
                             display: inline-block;
-                            padding: 0.5mm 3mm;
+                            padding: 0.3mm 2.5mm;
                             border-radius: 9999px;
-                            font-size: 7pt;
+                            font-size: 5.5pt;
                             font-weight: 700;
                             text-transform: uppercase;
                         }
@@ -3655,16 +4504,30 @@
                             color: #92400E;
                         }
                         @media print {
-                            body { padding: 0; }
-                            .receipt-wrapper { max-width: 100%; }
-                            .receipt-wrapper .receipt-status.paid {
-                                -webkit-print-color-adjust: exact;
-                                print-color-adjust: exact;
+                            body { padding: 0; margin: 0; display: block; background: white; }
+                            .receipt-wrapper {
+                                max-width: 80mm;
+                                width: 80mm;
+                                margin: 0 auto;
+                                padding: 2mm 3mm;
+                                background: white;
+                                border: none;
+                                box-shadow: none;
+                                page-break-after: avoid;
                             }
+                            .receipt-wrapper .receipt-status.paid,
                             .receipt-wrapper .receipt-status.pending {
                                 -webkit-print-color-adjust: exact;
                                 print-color-adjust: exact;
                             }
+                        }
+                        @page {
+                            size: A6 portrait;
+                            margin: 3mm;
+                        }
+                        @page {
+                            size: auto;
+                            margin: 5mm;
                         }
                     </style>
                 </head>
@@ -3672,16 +4535,275 @@
                     ${receiptHTML}
                     <script>
                         window.onload = function() {
-                            setTimeout(function() {
-                                window.print();
-                                setTimeout(function() { window.close(); }, 1500);
-                            }, 300);
+                            setTimeout(function() { window.print(); }, 500);
                         };
                     <\/script>
                 </body>
                 </html>
             `);
             printWindow.document.close();
+
+            setTimeout(() => {
+                printWindow.focus();
+            }, 300);
+        });
+
+        // ─── FIXED: Print Ledger Button ───
+        document.getElementById('printLedgerBtn').addEventListener('click', function() {
+            // Get the table and stats
+            const tableWrap = document.getElementById('ledgerTableWrap');
+            const statsBar = document.getElementById('statsBar');
+            const paginationInfo = document.getElementById('paginationInfo');
+            
+            if (!tableWrap) {
+                showToast('No ledger data to print.', 'Error', 'error');
+                return;
+            }
+
+            // Clone the table and stats for printing
+            const tableClone = tableWrap.cloneNode(true);
+            const statsClone = statsBar.cloneNode(true);
+            const paginationClone = paginationInfo.cloneNode(true);
+
+            // Create print window
+            const printWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
+            if (!printWindow) {
+                showToast('Please allow popups for printing.', 'Error', 'error');
+                return;
+            }
+
+            const recordCount = filteredRecords.length || allRecords.length;
+            const totalAmount = filteredRecords.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0) || 
+                               allRecords.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Payment Ledger</title>
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { 
+                            font-family: 'Inter', -apple-system, sans-serif;
+                            background: white;
+                            padding: 20px;
+                            margin: 0;
+                        }
+                        .print-header {
+                            text-align: center;
+                            padding-bottom: 15px;
+                            border-bottom: 2px solid #E2E8F0;
+                            margin-bottom: 20px;
+                        }
+                        .print-header h1 {
+                            font-size: 18pt;
+                            color: #0F172A;
+                            font-weight: 700;
+                        }
+                        .print-header .subtitle {
+                            color: #64748B;
+                            font-size: 10pt;
+                            margin-top: 4px;
+                        }
+                        .print-stats {
+                            display: flex;
+                            gap: 30px;
+                            padding: 10px 15px;
+                            background: #F8FAFC;
+                            border-radius: 8px;
+                            margin-bottom: 15px;
+                            border: 1px solid #E2E8F0;
+                            font-size: 10pt;
+                        }
+                        .print-stats .stat-item {
+                            display: flex;
+                            gap: 6px;
+                            align-items: baseline;
+                        }
+                        .print-stats .stat-label {
+                            color: #94A3B8;
+                            font-weight: 400;
+                            text-transform: uppercase;
+                            font-size: 8pt;
+                            letter-spacing: 0.4px;
+                        }
+                        .print-stats .stat-value {
+                            font-weight: 600;
+                            color: #0F172A;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            font-size: 9pt;
+                        }
+                        table thead th {
+                            background: #F1F5F9;
+                            color: #475569;
+                            font-weight: 600;
+                            font-size: 7pt;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            padding: 8px 6px;
+                            border-bottom: 2px solid #E2E8F0;
+                            text-align: left;
+                            white-space: nowrap;
+                        }
+                        table thead th.text-end { text-align: right; }
+                        table thead th.text-center { text-align: center; }
+                        table tbody td {
+                            padding: 6px 6px;
+                            border-bottom: 1px solid #F1F5F9;
+                            vertical-align: middle;
+                            color: #334155;
+                            font-size: 8.5pt;
+                        }
+                        table tbody tr:nth-child(even) td {
+                            background: #F8FAFC;
+                        }
+                        table .amount-cell {
+                            font-weight: 600;
+                            text-align: right;
+                        }
+                        table .badge-soft {
+                            background: #F1F5F9;
+                            color: #64748B;
+                            font-size: 6pt;
+                            padding: 1px 6px;
+                            border-radius: 9999px;
+                            font-weight: 500;
+                            margin-left: 4px;
+                            display: inline-block;
+                        }
+                        table .badge-soft.current {
+                            background: #D1FAE5;
+                            color: #065F46;
+                        }
+                        table .badge-soft.amend {
+                            background: #FEF3C7;
+                            color: #92400E;
+                        }
+                        table .badge-soft.method {
+                            font-size: 6pt;
+                            padding: 1px 8px;
+                        }
+                        table .badge-soft.method.mpesa { background: #D1FAE5; color: #065F46; }
+                        table .badge-soft.method.transfer { background: #DBEAFE; color: #1E40AF; }
+                        table .badge-soft.method.cheque { background: #FEF3C7; color: #92400E; }
+                        table .badge-soft.method.bankslip { background: #E0E7FF; color: #3730A3; }
+                        table .ref-cell { color: #94A3B8; font-size: 7.5pt; }
+                        table .desc-cell { color: #64748B; font-size: 7.5pt; font-style: italic; }
+                        table .depositor-cell, .table .holder-cell { color: #475569; }
+                        table .recipient-cell { color: #475569; font-weight: 500; }
+                        table code {
+                            background: #F1F5F9;
+                            padding: 0 4px;
+                            border-radius: 4px;
+                            font-size: 7pt;
+                            color: #64748B;
+                        }
+                        table .daily-total-row td {
+                            background: #F1F5F9 !important;
+                            border-top: 2px solid #E2E8F0;
+                            border-bottom: 2px solid #E2E8F0;
+                            font-weight: 600;
+                            color: #475569;
+                        }
+                        table .grand-total-row td {
+                            background: #E2E8F0 !important;
+                            border-top: 3px double #CBD5E1;
+                            font-weight: 700;
+                            color: #0F172A;
+                        }
+                        .print-footer {
+                            margin-top: 20px;
+                            padding-top: 10px;
+                            border-top: 1px solid #E2E8F0;
+                            text-align: center;
+                            font-size: 8pt;
+                            color: #94A3B8;
+                        }
+                        .empty-state {
+                            text-align: center;
+                            padding: 40px;
+                            color: #94A3B8;
+                        }
+                        .empty-state i { font-size: 24px; display: block; margin-bottom: 8px; }
+                        @media print {
+                            body { padding: 10px; }
+                            .no-print { display: none; }
+                            table tbody tr:nth-child(even) td {
+                                background: #F8FAFC !important;
+                                -webkit-print-color-adjust: exact;
+                                print-color-adjust: exact;
+                            }
+                            table .daily-total-row td,
+                            table .grand-total-row td,
+                            table thead th {
+                                -webkit-print-color-adjust: exact;
+                                print-color-adjust: exact;
+                            }
+                            table .badge-soft,
+                            table .badge-soft.current,
+                            table .badge-soft.amend,
+                            table .badge-soft.method {
+                                -webkit-print-color-adjust: exact;
+                                print-color-adjust: exact;
+                            }
+                        }
+                        @page {
+                            size: A4 landscape;
+                            margin: 8mm;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-header">
+                        <h1>📊 Payment Ledger</h1>
+                        <div class="subtitle">Generated on ${new Date().toLocaleString()}</div>
+                    </div>
+                    
+                    <div class="print-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Records</span>
+                            <span class="stat-value">${recordCount}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Total</span>
+                            <span class="stat-value">${formatCurrency(totalAmount)}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Average</span>
+                            <span class="stat-value">${recordCount > 0 ? formatCurrency(totalAmount / recordCount) : 'KES 0.00'}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Month</span>
+                            <span class="stat-value">${new Date().toISOString().slice(0, 7)}</span>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        ${tableClone.innerHTML}
+                    </div>
+
+                    <div class="print-footer">
+                        PayFlow Payment Management System · ${new Date().toLocaleString()}
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() { window.print(); }, 500);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+
+            setTimeout(() => {
+                printWindow.focus();
+            }, 300);
         });
 
         // ─── Share Receipt as Image ───
@@ -3792,7 +4914,8 @@
                     const str = [
                         r.id, r.accountNumber, r.accountHolder, r.depositorName,
                         r.referenceNumber, r.paymentMethod, r.amount ? r.amount.toString() : '',
-                        r.bankingDate || '', r.receiptDate || '', r.paymentDescription || '', r.recipient || ''
+                        r.bankingDate || '', r.receiptDate || '', r.paymentDescription || '',
+                        r.recipient || '', r.recipientName || ''
                     ].join(' ').toLowerCase();
                     if (!str.includes(search)) match = false;
                 }
@@ -3801,6 +4924,7 @@
 
             renderLedgerTable();
             updateLedgerStats();
+            updateFilterCounts();
         }
 
         function updateLedgerStats() {
@@ -3834,7 +4958,7 @@
 
             if (pageRecords.length === 0 && totalRecords === 0) {
                 tableBody.innerHTML =
-                    `<tr><td colspan="12" class="empty-subtle"><i class="bi bi-inbox"></i>No records found</td></tr>`;
+                    `<tr><td colspan="13" class="empty-subtle"><i class="bi bi-inbox" aria-hidden="true"></i>No records found</td></tr>`;
                 document.getElementById('paginationInfo').textContent = 'Showing 0–0 of 0';
                 document.getElementById('paginationControls').innerHTML = '';
                 return;
@@ -3857,7 +4981,7 @@
                     if (lastDate !== null && dailyTotals[lastDate] !== undefined) {
                         html += `
                                 <tr class="daily-total-row">
-                                    <td colspan="7" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
+                                    <td colspan="8" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
                                     <td class="amount-cell" style="padding-right:0.5rem;">${formatCurrency(dailyTotals[lastDate])}</td>
                                     <td colspan="4"></td>
                                 </tr>
@@ -3869,6 +4993,8 @@
                 const holderShort = r.accountHolder.length > 14 ? r.accountHolder.slice(0, 13) + '…' : r.accountHolder;
                 const depositorShort = r.depositorName.length > 14 ? r.depositorName.slice(0, 13) + '…' : r.depositorName;
                 const descShort = r.paymentDescription ? truncateText(r.paymentDescription, 18) : '—';
+                const recipientShort = r.recipientName ? truncateText(r.recipientName, 14) : (r.recipient ?
+                    truncateText(r.recipient, 14) : '—');
 
                 html += `
                         <tr class="${rowClass}">
@@ -3886,13 +5012,17 @@
                             <td class="col-amount amount-cell">${formatCurrency(r.amount)}</td>
                             <td class="col-method">${getMethodBadge(r.paymentMethod)}</td>
                             <td class="col-ref ref-cell" title="${escapeHtml(r.referenceNumber)||''}">${escapeHtml(r.referenceNumber)||'-'}</td>
+                            <td class="col-recipient recipient-cell" title="${escapeHtml(r.recipientName || r.recipient)}">${escapeHtml(recipientShort)}</td>
                             <td class="col-description desc-cell" title="${escapeHtml(r.paymentDescription)||''}">${escapeHtml(descShort)}</td>
                             <td class="col-actions text-center">
-                                <button class="btn-action-icon receipt-btn" onclick="handleReceipt('${r.id}')" title="Generate Receipt">
-                                    <i class="bi bi-receipt"></i>
+                                <button class="btn-action-icon receipt-btn" onclick="handleReceipt('${r.id}')" title="Generate Receipt" aria-label="Generate receipt for ${r.id}">
+                                    <i class="bi bi-receipt" aria-hidden="true"></i>
                                 </button>
-                                <button class="btn-action-icon edit-btn" onclick="handleEdit('${r.id}')" title="Edit Record">
-                                    <i class="bi bi-pencil"></i>
+                                <button class="btn-action-icon edit-btn" onclick="handleEdit('${r.id}')" title="Edit Record" aria-label="Edit record ${r.id}">
+                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                </button>
+                                <button class="btn-action-icon delete-btn" onclick="handleDelete('${r.id}')" title="Delete Record" aria-label="Delete record ${r.id}">
+                                    <i class="bi bi-trash" aria-hidden="true"></i>
                                 </button>
                             </td>
                         </tr>
@@ -3902,7 +5032,7 @@
             if (lastDate !== null && dailyTotals[lastDate] !== undefined) {
                 html += `
                         <tr class="daily-total-row">
-                            <td colspan="7" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
+                            <td colspan="8" style="text-align:right; padding-right:0.5rem;">Daily Total · ${formatDate(lastDate)}</td>
                             <td class="amount-cell" style="padding-right:0.5rem;">${formatCurrency(dailyTotals[lastDate])}</td>
                             <td colspan="4"></td>
                         </tr>
@@ -3913,7 +5043,7 @@
             if (isLastPage && totalRecords > 0) {
                 html += `
                         <tr class="grand-total-row">
-                            <td colspan="7" style="text-align:right; padding-right:0.5rem; font-weight:600;">GRAND TOTAL · ${totalRecords} records</td>
+                            <td colspan="8" style="text-align:right; padding-right:0.5rem; font-weight:600;">GRAND TOTAL · ${totalRecords} records</td>
                             <td class="amount-cell" style="padding-right:0.5rem; font-size:0.95rem;">${formatCurrency(grandTotal)}</td>
                             <td colspan="4"></td>
                         </tr>
@@ -3927,11 +5057,11 @@
             const totalPages = Math.ceil(totalRecords / PAGE_SIZE);
             let pgHtml = '';
             if (totalPages > 1) {
-                pgHtml += `<a class="${currentPage===1?'disabled':''}" data-page="${currentPage-1}">‹</a>`;
+                pgHtml += `<a class="${currentPage===1?'disabled':''}" data-page="${currentPage-1}" aria-label="Previous page">‹</a>`;
                 for (let i = 1; i <= totalPages; i++) {
-                    pgHtml += `<a class="${i===currentPage?'active':''}" data-page="${i}">${i}</a>`;
+                    pgHtml += `<a class="${i===currentPage?'active':''}" data-page="${i}" aria-label="Page ${i}">${i}</a>`;
                 }
-                pgHtml += `<a class="${currentPage===totalPages?'disabled':''}" data-page="${currentPage+1}">›</a>`;
+                pgHtml += `<a class="${currentPage===totalPages?'disabled':''}" data-page="${currentPage+1}" aria-label="Next page">›</a>`;
             }
             document.getElementById('paginationControls').innerHTML = pgHtml;
 
@@ -3976,18 +5106,28 @@
                 document.getElementById('depositorName').value = record.depositorName;
                 document.getElementById('paymentMethod').value = record.paymentMethod;
                 document.getElementById('referenceNumber').value = record.referenceNumber || '';
+                document.getElementById('recipientName').value = record.recipientName || record.recipient || '';
                 document.getElementById('paymentDescription').value = record.paymentDescription || '';
 
                 document.getElementById('editIndicator').style.display = 'block';
                 document.getElementById('editReceiptDisplay').textContent = record.id;
                 document.getElementById('editVersionDisplay').textContent = `v${record.version || 1}`;
-                document.getElementById('submitBtn').innerHTML = '<i class="bi bi-check2-circle"></i> Update Entry';
+                document.getElementById('submitBtn').innerHTML = '<i class="bi bi-check2-circle" aria-hidden="true"></i> Update Entry';
                 document.getElementById('amendmentReasonContainer').classList.remove('d-none');
 
                 showToast(`Editing record ${record.id}. Please provide a reason for the amendment.`, 'Edit Mode',
                     'info');
 
                 document.getElementById('enter-pane').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                showToast('Record not found.', 'Error', 'error');
+            }
+        };
+
+        window.handleDelete = function(recordId) {
+            const record = allRecords.find(r => r.id === recordId);
+            if (record) {
+                showDeleteConfirmation(record);
             } else {
                 showToast('Record not found.', 'Error', 'error');
             }
@@ -4024,6 +5164,7 @@
         function getMethodBadge(method) {
             const map = {
                 'M-Pesa': 'mpesa',
+                'Bank Slip': 'bankslip',
                 'Bank Transfer': 'transfer',
                 'Cheque': 'cheque'
             };
@@ -4050,85 +5191,118 @@
             updateLedger();
         });
 
+        // ─── Export with Progress Indicator ───
+
         document.getElementById('exportBtn').addEventListener('click', function() {
             if (filteredRecords.length === 0) {
                 alert('No records to export.');
                 return;
             }
-            const data = [...filteredRecords].sort((a, b) => a.bankingDate > b.bankingDate ? -1 : 1);
-            const rows = [];
-            let idx = 0;
-            const groups = groupByDate(data);
-            const dates = Object.keys(groups).sort((a, b) => a > b ? -1 : 1);
-            dates.forEach(d => {
-                const recs = groups[d].sort((a, b) => a.id.localeCompare(b.id));
-                recs.forEach(r => {
-                    idx++;
-                    rows.push({
-                        '#': idx,
-                        'Receipt': r.id,
-                        'Banking Date': formatDate(r.bankingDate),
-                        'Receipt Date': r.receiptDate ? formatDate(r.receiptDate) : '',
-                        'Amount': parseFloat(r.amount).toFixed(2),
-                        'Account': r.accountNumber,
-                        'Account Name': r.accountHolder,
-                        'Depositor': r.depositorName,
-                        'Method': r.paymentMethod,
-                        'Reference': r.referenceNumber || '',
-                        'Payment For': r.paymentDescription || '',
-                        'Received By': r.recipient || 'Mararo',
-                        'Status': r.isAmended ? `Amended v${r.version}` : 'Original'
+
+            const totalRecords = filteredRecords.length;
+            let processed = 0;
+
+            showLoading('Exporting Data', `Processing ${totalRecords} records...`, true);
+            updateLoadingProgress(0, 'Preparing data...');
+
+            setTimeout(() => {
+                try {
+                    const data = [...filteredRecords].sort((a, b) => a.bankingDate > b.bankingDate ? -1 : 1);
+                    const rows = [];
+                    let idx = 0;
+                    const groups = groupByDate(data);
+                    const dates = Object.keys(groups).sort((a, b) => a > b ? -1 : 1);
+
+                    let completed = 0;
+                    const totalSteps = dates.length + 2;
+
+                    dates.forEach((d, dateIndex) => {
+                        const recs = groups[d].sort((a, b) => a.id.localeCompare(b.id));
+                        recs.forEach(r => {
+                            idx++;
+                            rows.push({
+                                '#': idx,
+                                'Receipt': r.id,
+                                'Banking Date': formatDate(r.bankingDate),
+                                'Receipt Date': r.receiptDate ? formatDate(r.receiptDate) : '',
+                                'Amount': parseFloat(r.amount).toFixed(2),
+                                'Account': r.accountNumber,
+                                'Account Name': r.accountHolder,
+                                'Depositor': r.depositorName,
+                                'Method': r.paymentMethod,
+                                'Reference': r.referenceNumber || '',
+                                'Received By': r.recipientName || r.recipient || '',
+                                'Payment For': r.paymentDescription || '',
+                                'Status': r.isAmended ? `Amended v${r.version}` : 'Original'
+                            });
+                        });
+                        const daily = recs.reduce((s, r) => s + parseFloat(r.amount), 0);
+                        idx++;
+                        rows.push({
+                            '#': '─',
+                            'Receipt': 'DAILY TOTAL',
+                            'Banking Date': formatDate(d),
+                            'Receipt Date': '',
+                            'Amount': daily.toFixed(2),
+                            'Account': '',
+                            'Account Name': '──────────────',
+                            'Depositor': '',
+                            'Method': '',
+                            'Reference': '',
+                            'Received By': '',
+                            'Payment For': '',
+                            'Status': ''
+                        });
+
+                        completed++;
+                        const progress = Math.round((completed / totalSteps) * 80) + 10;
+                        updateLoadingProgress(progress, `Processed ${completed} of ${totalSteps} groups...`);
                     });
-                });
-                const daily = recs.reduce((s, r) => s + parseFloat(r.amount), 0);
-                idx++;
-                rows.push({
-                    '#': '─',
-                    'Receipt': 'DAILY TOTAL',
-                    'Banking Date': formatDate(d),
-                    'Receipt Date': '',
-                    'Amount': daily.toFixed(2),
-                    'Account': '',
-                    'Account Name': '──────────────',
-                    'Depositor': '',
-                    'Method': '',
-                    'Reference': '',
-                    'Payment For': '',
-                    'Received By': '',
-                    'Status': ''
-                });
-            });
-            const grand = data.reduce((s, r) => s + parseFloat(r.amount), 0);
-            rows.push({
-                '#': '🎯',
-                'Receipt': 'GRAND TOTAL',
-                'Banking Date': `${data.length} records`,
-                'Receipt Date': '',
-                'Amount': grand.toFixed(2),
-                'Account': '',
-                'Account Name': '──────────────',
-                'Depositor': '',
-                'Method': '',
-                'Reference': '',
-                'Payment For': '',
-                'Received By': '',
-                'Status': ''
-            });
 
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(rows);
-            ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 16 }, { wch: 16 }, { wch: 14 }, { wch: 14 }, { wch: 20 },
-                { wch: 20 }, { wch: 14 }, { wch: 16 }, { wch: 25 }, { wch: 16 }, { wch: 14 }
-            ];
-            XLSX.utils.book_append_sheet(wb, ws, 'Ledger');
-            const label = document.getElementById('monthFilter').value !== 'all' ? document.getElementById('monthFilter')
-                .value : 'All';
-            XLSX.writeFile(wb, `Payment_Ledger_${label}_${new Date().toISOString().slice(0,10)}.xlsx`);
-            alert(`Exported ${data.length} records. Grand Total: KES ${grand.toFixed(2)}`);
-        });
+                    const grand = data.reduce((s, r) => s + parseFloat(r.amount), 0);
+                    rows.push({
+                        '#': '🎯',
+                        'Receipt': 'GRAND TOTAL',
+                        'Banking Date': `${data.length} records`,
+                        'Receipt Date': '',
+                        'Amount': grand.toFixed(2),
+                        'Account': '',
+                        'Account Name': '──────────────',
+                        'Depositor': '',
+                        'Method': '',
+                        'Reference': '',
+                        'Received By': '',
+                        'Payment For': '',
+                        'Status': ''
+                    });
 
-        document.getElementById('printBtn').addEventListener('click', function() {
-            window.print();
+                    updateLoadingProgress(95, 'Creating Excel file...');
+
+                    const wb = XLSX.utils.book_new();
+                    const ws = XLSX.utils.json_to_sheet(rows);
+                    ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 16 }, { wch: 16 }, { wch: 14 }, { wch: 14 }, { wch: 20 },
+                        { wch: 20 }, { wch: 14 }, { wch: 16 }, { wch: 20 }, { wch: 25 }, { wch: 14 }
+                    ];
+                    XLSX.utils.book_append_sheet(wb, ws, 'Ledger');
+                    const label = document.getElementById('monthFilter').value !== 'all' ? document.getElementById('monthFilter')
+                        .value : 'All';
+
+                    updateLoadingProgress(100, 'Done!');
+
+                    setTimeout(() => {
+                        XLSX.writeFile(wb,
+                            `Payment_Ledger_${label}_${new Date().toISOString().slice(0,10)}.xlsx`);
+                        hideLoading();
+                        showToast(`Exported ${data.length} records. Grand Total: KES ${grand.toFixed(2)}`,
+                            'Export Complete', 'success');
+                    }, 300);
+
+                } catch (error) {
+                    console.error('Export error:', error);
+                    hideLoading();
+                    showToast('Failed to export data. Please try again.', 'Export Error', 'error');
+                }
+            }, 300);
         });
 
         // ─── Populate Month Filter ───
@@ -4174,11 +5348,16 @@
 
         console.log('💳 PayFlow · Payment Management System initialized');
         console.log('📋 Workflow: M-PESA → Review → Ledger');
-        console.log('⌨️  Keyboard shortcuts: ⌘1, ⌘2, ⌘3');
+        console.log('⌨️  Keyboard shortcuts: ⌘1, ⌘2, ⌘3, ⌘+Enter to submit');
         console.log('🧾 POS-optimized receipt (80mm) with bold print');
         console.log('💾 Receipt customizations auto-saved to localStorage');
-        console.log('🖨️  Print opens in clean new window - NO DUPLICATES');
+        console.log('🖨️  Print Ledger - prints the full table with stats');
         console.log('📱 Share → Converts receipt to JPEG and shares');
+        console.log('🗑️  Delete with confirmation dialog');
+        console.log('📊 Filter count badges show active filters');
+        console.log('👤 Received By field extracted from SMS');
+        console.log('🏦 Bank Slip added as payment method');
+        console.log('♿ Improved ARIA labels and focus states');
 
         const origLoadRecords = loadRecords;
         loadRecords = async function() {
