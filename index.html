@@ -133,7 +133,7 @@
             opacity: 0.7;
         }
 
-        /* ─── Workflow Progress Bar (Combined with Tabs) ─── */
+        /* ─── Workflow Navigation ─── */
         .workflow-nav {
             background: var(--gray-50);
             border-bottom: 1px solid var(--gray-200);
@@ -1889,7 +1889,6 @@
         <!-- ─── Combined Workflow Navigation ─── -->
         <nav class="workflow-nav" id="workflowNav" aria-label="Workflow steps">
             <div class="workflow-steps">
-                <!-- Step 1: Extract -->
                 <button class="workflow-step active" data-step="1" data-tab="mpesa-tab" role="tab" aria-selected="true" aria-controls="mpesa-pane">
                     <span class="step-num" aria-hidden="true">1</span>
                     <span class="step-icon" aria-hidden="true">📱</span>
@@ -1897,7 +1896,6 @@
                 </button>
                 <div class="workflow-connector" data-connector="1" aria-hidden="true"></div>
 
-                <!-- Step 2: Review -->
                 <button class="workflow-step" data-step="2" data-tab="enter-tab" role="tab" aria-selected="false" aria-controls="enter-pane">
                     <span class="step-num" aria-hidden="true">2</span>
                     <span class="step-icon" aria-hidden="true">✏️</span>
@@ -1905,7 +1903,6 @@
                 </button>
                 <div class="workflow-connector" data-connector="2" aria-hidden="true"></div>
 
-                <!-- Step 3: Ledger -->
                 <button class="workflow-step" data-step="3" data-tab="ledger-tab" role="tab" aria-selected="false" aria-controls="ledger-pane">
                     <span class="step-num" aria-hidden="true">3</span>
                     <span class="step-icon" aria-hidden="true">📊</span>
@@ -1913,7 +1910,6 @@
                 </button>
             </div>
 
-            <!-- Action Buttons (Ellipse) -->
             <div class="workflow-actions">
                 <button class="btn-ellipse" id="exportBtn" aria-label="Export records">
                     <i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Export
@@ -2011,7 +2007,6 @@
                             <input type="hidden" id="editDocId" value="" />
                             <input type="hidden" id="editVersion" value="0" />
 
-                            <!-- Row 1 -->
                             <div class="form-row">
                                 <div class="field-group field-date">
                                     <label for="bankingDate" class="form-label">
@@ -2043,7 +2038,6 @@
                                 </div>
                             </div>
 
-                            <!-- Row 2 -->
                             <div class="form-row">
                                 <div class="field-group field-account">
                                     <label for="accountNumber" class="form-label">
@@ -2070,7 +2064,6 @@
                                 </div>
                             </div>
 
-                            <!-- Row 3 -->
                             <div class="form-row">
                                 <div class="field-group field-depositor">
                                     <label for="depositorName" class="form-label">
@@ -2104,7 +2097,6 @@
                                 </div>
                             </div>
 
-                            <!-- Row 4 -->
                             <div class="form-row">
                                 <div class="field-group field-recipient">
                                     <label for="recipientName" class="form-label">
@@ -2123,7 +2115,6 @@
                                 </div>
                             </div>
 
-                            <!-- System Dates -->
                             <div class="form-row">
                                 <div class="field-group field-full">
                                     <div class="system-dates">
@@ -2137,7 +2128,6 @@
                                 </div>
                             </div>
 
-                            <!-- Duplicate Warning -->
                             <div class="form-row">
                                 <div class="field-group field-full">
                                     <div class="duplicate-warning" id="duplicateWarning" role="alert">
@@ -2164,7 +2154,6 @@
                                 </div>
                             </div>
 
-                            <!-- Amendment Reason -->
                             <div class="form-row d-none" id="amendmentReasonContainer">
                                 <div class="field-group field-full">
                                     <label for="amendmentReason" class="form-label">
@@ -2175,7 +2164,6 @@
                                 </div>
                             </div>
 
-                            <!-- Action Buttons -->
                             <div class="action-row">
                                 <button type="submit" class="btn btn-primary" id="submitBtn">
                                     <i class="bi bi-check2-circle" aria-hidden="true"></i> Submit Entry
@@ -2204,7 +2192,6 @@
                 </div>
 
                 <div class="ledger-paper">
-                    <!-- Stats -->
                     <div class="stats-subtle" id="statsBar">
                         <div class="stat-item">
                             <span class="stat-label">Records</span>
@@ -2234,7 +2221,6 @@
                         </div>
                     </div>
 
-                    <!-- Toolbar -->
                     <div class="toolbar-subtle">
                         <label for="monthFilter" class="visually-hidden">Filter by month</label>
                         <select id="monthFilter" style="width:auto;" aria-label="Filter by month">
@@ -2250,7 +2236,6 @@
                         <span class="hint" aria-hidden="true"><i class="bi bi-dot" aria-hidden="true"></i> clean · monochrome</span>
                     </div>
 
-                    <!-- Table -->
                     <div class="table-wrap" id="ledgerTableWrap">
                         <div id="skeletonLoader" class="skeleton-loader">
                             <div class="skeleton-row"><div class="skeleton-cell" style="flex:0.5;"></div><div class="skeleton-cell" style="flex:1.5;"></div><div class="skeleton-cell" style="flex:1.2;"></div><div class="skeleton-cell" style="flex:1.2;"></div><div class="skeleton-cell" style="flex:1;"></div><div class="skeleton-cell" style="flex:1.5;"></div><div class="skeleton-cell" style="flex:1.5;"></div><div class="skeleton-cell" style="flex:1.2;"></div><div class="skeleton-cell" style="flex:1;"></div><div class="skeleton-cell" style="flex:1.2;"></div><div class="skeleton-cell" style="flex:1.3;"></div><div class="skeleton-cell" style="flex:1.8;"></div><div class="skeleton-cell" style="flex:1;"></div></div>
@@ -2283,7 +2268,6 @@
                         </table>
                     </div>
 
-                    <!-- Pagination -->
                     <div class="pagination-subtle">
                         <span class="page-info" id="paginationInfo">Showing 0–0 of 0</span>
                         <div class="page-links" id="paginationControls"></div>
@@ -2316,14 +2300,10 @@
             measurementId: "G-H80MK8SSQ1"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Enable offline persistence
-        db.enablePersistence({
-                synchronizeTabs: true
-            })
+        db.enablePersistence({ synchronizeTabs: true })
             .then(() => {
                 console.log('📶 Offline persistence enabled');
                 document.getElementById('onlineStatusBadge').textContent = '● Online';
@@ -2335,7 +2315,6 @@
                 document.getElementById('onlineStatusBadge').className = 'badge bg-warning text-dark';
             });
 
-        // Monitor online/offline
         window.addEventListener('online', () => {
             document.getElementById('onlineStatusBadge').textContent = '● Online';
             document.getElementById('onlineStatusBadge').className = 'badge bg-success';
@@ -2350,6 +2329,43 @@
 
         const PAYMENTS_COLLECTION = 'payments';
         const AMENDMENTS_COLLECTION = 'amendments';
+
+        // ════════════════════════════════════════════════
+        //  UTILITY FUNCTIONS - COMMA SEPARATED NUMBERS
+        // ════════════════════════════════════════════════
+
+        function formatNumberWithCommas(number) {
+            if (number === null || number === undefined || isNaN(number)) return '0';
+            return number.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function formatCurrency(number) {
+            if (number === null || number === undefined || isNaN(number)) return 'KES 0.00';
+            return 'KES ' + number.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function parseAmount(value) {
+            if (!value) return 0;
+            if (typeof value === 'number') return value;
+            // Remove commas and convert to number
+            const cleaned = String(value).replace(/,/g, '');
+            const parsed = parseFloat(cleaned);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function displayAmount(value) {
+            if (value === null || value === undefined || isNaN(value)) return '0';
+            return value.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+        }
 
         // ════════════════════════════════════════════════
         //  TOAST UTILITY
@@ -2445,7 +2461,6 @@
         let isMpesaExtracted = false;
 
         function switchTab(tabId) {
-            // Update workflow steps
             const stepMap = {
                 'mpesa-tab': 1,
                 'enter-tab': 2,
@@ -2478,14 +2493,12 @@
             const stepLabels = ['Extract', 'Review', 'Ledger'];
             currentStepDisplay.textContent = `Step ${currentStep}: ${stepLabels[currentStep - 1]}`;
 
-            // Update tab content
             document.querySelectorAll('.tab-pane').forEach(pane => {
                 const isActive = pane.id === tabId.replace('-tab', '-pane');
                 pane.classList.toggle('active', isActive);
                 pane.setAttribute('aria-hidden', !isActive);
             });
 
-            // Update badge numbers
             workflowSteps.forEach((step, index) => {
                 const stepNum = index + 1;
                 const badge = step.querySelector('.step-num');
@@ -2505,7 +2518,6 @@
             }
         }
 
-        // Click handler for workflow steps
         workflowSteps.forEach(step => {
             step.addEventListener('click', function() {
                 const tabId = this.dataset.tab;
@@ -2540,12 +2552,10 @@
 
             if (!text || text.trim() === '') return { date, amount, ref, sender, recipient };
 
-            // Date
             const datePattern = /(\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4})/i;
             let dateMatch = text.match(datePattern);
             if (dateMatch) date = dateMatch[1];
 
-            // Amount
             const amountPattern = /KES\s*([\d,]+\.\d{2})/i;
             let amountMatch = text.match(amountPattern);
             if (amountMatch) {
@@ -2553,16 +2563,13 @@
                 amount = !isNaN(parseFloat(raw)) ? parseFloat(raw).toFixed(2) : amountMatch[1];
             }
 
-            // Reference
             let refMatch = text.match(/MPESA\s+Ref\s+([A-Za-z0-9]+)/i);
             if (!refMatch) refMatch = text.match(/Ref(?:erence)?\.?\s*([A-Za-z0-9]+)/i);
             if (refMatch && refMatch[1]) ref = refMatch[1].trim();
 
-            // Sender
             let senderMatch = text.match(/from\s+([A-Z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$)/i);
             if (senderMatch && senderMatch[1]) sender = senderMatch[1].trim();
 
-            // Recipient
             let recipientMatch = text.match(/received\s+by\s+([A-Za-z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$|\.)/i);
             if (!recipientMatch) recipientMatch = text.match(/paid\s+to\s+([A-Za-z\s]+?)(?:\s+on\s+|\s+for\s+|\s*$|\.)/i);
             if (recipientMatch && recipientMatch[1]) recipient = recipientMatch[1].trim();
@@ -2575,19 +2582,25 @@
 
             dateEl.textContent = date;
             dateEl.classList.toggle('placeholder', date === '—');
-            amountEl.textContent = amount;
+
+            // Display amount with commas
+            const displayAmount = amount !== '—' ? formatNumberWithCommas(parseFloat(amount)) : '—';
+            amountEl.textContent = displayAmount;
             amountEl.classList.toggle('placeholder', amount === '—');
+
             refEl.textContent = ref;
             refEl.classList.toggle('placeholder', ref === '—');
+
             senderEl.innerHTML = `Payer: <strong>${sender}</strong>`;
             recipientEl.textContent = recipient;
             recipientEl.style.fontWeight = '600';
 
             const isComplete = date !== '—' || amount !== '—' || ref !== '—' || sender !== '—';
             if (isComplete) {
+                const parsedAmount = amount !== '—' ? parseFloat(amount) : null;
                 extractedData = {
                     date: formatDateForInput(date),
-                    amount: amount !== '—' ? parseFloat(amount) : null,
+                    amount: parsedAmount,
                     reference: ref !== '—' ? ref : '',
                     depositor: sender !== '—' ? sender : '',
                     accountHolder: sender !== '—' ? sender : '',
@@ -2768,8 +2781,6 @@
         receiptDateInput.value = '';
         updateSystemDates();
 
-        // ─── Payment Method Reference Requirements ───
-
         paymentMethod.addEventListener('change', function() {
             const refLabel = document.getElementById('refRequiredBadge');
             const isRequired = this.value === 'M-Pesa' || this.value === 'Bank Slip' || this.value === 'Bank Transfer';
@@ -2806,11 +2817,11 @@
                     matchType.push('Receipt #');
                 }
                 if (r.referenceNumber && r.referenceNumber === newRecord.referenceNumber &&
-                    parseFloat(r.amount) === parseFloat(newRecord.amount)) {
+                    parseAmount(r.amount) === parseAmount(newRecord.amount)) {
                     matchType.push('Reference + Amount');
                 }
                 if (r.bankingDate === newRecord.bankingDate &&
-                    parseFloat(r.amount) === parseFloat(newRecord.amount) &&
+                    parseAmount(r.amount) === parseAmount(newRecord.amount) &&
                     r.depositorName === newRecord.depositorName) {
                     matchType.push('Date + Amount + Depositor');
                 }
@@ -2833,7 +2844,7 @@
             duplicates.forEach((d, i) => {
                 html += `<div class="duplicate-match">
                             <strong>#${i+1}:</strong> Receipt: <strong>${escapeHtml(d.id)}</strong> • 
-                            Date: ${formatDate(d.bankingDate)} • Amount: ${formatCurrency(d.amount)} • 
+                            Date: ${formatDate(d.bankingDate)} • Amount: ${formatCurrency(parseAmount(d.amount))} • 
                             Depositor: ${escapeHtml(d.depositorName)}
                         </div>`;
             });
@@ -2870,7 +2881,6 @@
 
             const editMode = document.getElementById('editMode').value === 'true';
 
-            // Validation
             if (!depositorInput.value.trim()) {
                 showToast('Depositor name is required.', 'Validation Error', 'error');
                 depositorInput.focus();
@@ -3104,8 +3114,6 @@
             isDuplicateOverride = false;
         });
 
-        // ─── Highlight New Record ───
-
         function highlightNewRecord(receiptNumber) {
             setTimeout(() => {
                 const rows = document.querySelectorAll('#tableBody tr');
@@ -3132,11 +3140,6 @@
             if (!dateStr) return '-';
             const d = new Date(dateStr + 'T00:00:00');
             return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-        }
-
-        function formatCurrency(amount) {
-            if (!amount && amount !== 0) return 'KES 0.00';
-            return `KES ${parseFloat(amount).toFixed(2)}`;
         }
 
         function escapeHtml(text) {
@@ -3180,13 +3183,13 @@
             const groups = groupByDate(records);
             const totals = {};
             Object.keys(groups).forEach(d => {
-                totals[d] = groups[d].reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+                totals[d] = groups[d].reduce((s, r) => s + (parseAmount(r.amount) || 0), 0);
             });
             return totals;
         }
 
         function calcGrandTotal(records) {
-            return records.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+            return records.reduce((s, r) => s + (parseAmount(r.amount) || 0), 0);
         }
 
         function updateFilterCounts() {
@@ -3230,7 +3233,7 @@
         }
 
         function updateLedgerStats() {
-            const total = filteredRecords.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+            const total = filteredRecords.reduce((s, r) => s + (parseAmount(r.amount) || 0), 0);
             const count = filteredRecords.length;
             const avg = count > 0 ? total / count : 0;
             document.getElementById('statTotalRecords').textContent = count;
@@ -3310,7 +3313,7 @@
                             <td class="col-account"><code>${escapeHtml(r.accountNumber)}</code></td>
                             <td class="col-holder" title="${escapeHtml(r.accountHolder)}">${escapeHtml(holderShort)}</td>
                             <td class="col-depositor" title="${escapeHtml(r.depositorName)}">${escapeHtml(depositorShort)}</td>
-                            <td class="col-amount amount-cell">${formatCurrency(r.amount)}</td>
+                            <td class="col-amount amount-cell">${formatCurrency(parseAmount(r.amount))}</td>
                             <td class="col-method">${getMethodBadge(r.paymentMethod)}</td>
                             <td class="col-ref" title="${escapeHtml(r.referenceNumber)||''}">${escapeHtml(r.referenceNumber)||'-'}</td>
                             <td class="col-recipient" title="${escapeHtml(r.recipientName || r.recipient)}">${escapeHtml(recipientShort)}</td>
@@ -3430,7 +3433,7 @@
             if (!record) return;
 
             document.getElementById('confirmReceipt').textContent = record.id;
-            document.getElementById('confirmAmount').textContent = formatCurrency(record.amount);
+            document.getElementById('confirmAmount').textContent = formatCurrency(parseAmount(record.amount));
             document.getElementById('confirmDepositor').textContent = record.depositorName || '—';
             document.getElementById('confirmDate').textContent = formatDate(record.bankingDate);
             document.getElementById('confirmTitle').textContent = `Delete Payment Record #${record.id}?`;
@@ -3479,7 +3482,7 @@
 
             const bankingDate = formatDate(record.bankingDate);
             const receiptDate = record.receiptDate ? formatDate(record.receiptDate) : 'N/A';
-            const amount = formatCurrency(record.amount);
+            const amount = formatCurrency(parseAmount(record.amount));
             const status = record.isAmended ? 'Amended' : 'Paid';
             const statusClass = record.isAmended ? 'pending' : 'paid';
             const version = record.version || 1;
@@ -3675,7 +3678,7 @@
                 });
         });
 
-        // ─── Print Ledger (Ellipse Button) ───
+        // ─── Print Ledger ───
 
         document.getElementById('printLedgerBtn').addEventListener('click', function() {
             const tableWrap = document.getElementById('ledgerTableWrap');
@@ -3696,8 +3699,8 @@
             }
 
             const recordCount = filteredRecords.length || allRecords.length;
-            const totalAmount = filteredRecords.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0) ||
-                allRecords.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+            const totalAmount = filteredRecords.reduce((s, r) => s + (parseAmount(r.amount) || 0), 0) ||
+                allRecords.reduce((s, r) => s + (parseAmount(r.amount) || 0), 0);
 
             printWindow.document.write(`
                         <!DOCTYPE html>
@@ -3760,7 +3763,7 @@
             printWindow.document.close();
         });
 
-        // ─── Export (Ellipse Button) ───
+        // ─── Export ───
 
         document.getElementById('exportBtn').addEventListener('click', function() {
             if (filteredRecords.length === 0) {
@@ -3783,7 +3786,7 @@
                         'Receipt': r.id,
                         'Banking Date': formatDate(r.bankingDate),
                         'Receipt Date': r.receiptDate ? formatDate(r.receiptDate) : '',
-                        'Amount': parseFloat(r.amount).toFixed(2),
+                        'Amount': parseAmount(r.amount).toFixed(2),
                         'Account': r.accountNumber,
                         'Account Name': r.accountHolder,
                         'Depositor': r.depositorName,
@@ -3794,7 +3797,7 @@
                         'Status': r.isAmended ? `Amended v${r.version}` : 'Original'
                     });
                 });
-                const daily = recs.reduce((s, r) => s + parseFloat(r.amount), 0);
+                const daily = recs.reduce((s, r) => s + parseAmount(r.amount), 0);
                 idx++;
                 rows.push({
                     '#': '─',
@@ -3813,7 +3816,7 @@
                 });
             });
 
-            const grand = data.reduce((s, r) => s + parseFloat(r.amount), 0);
+            const grand = data.reduce((s, r) => s + parseAmount(r.amount), 0);
             rows.push({
                 '#': '🎯',
                 'Receipt': 'GRAND TOTAL',
@@ -3919,6 +3922,7 @@
         console.log('📋 Features: M-PESA Extraction · Review & Submit · Ledger');
         console.log('📶 Offline persistence enabled');
         console.log('⌨️  Shortcuts: ⌘1, ⌘2, ⌘3, ⌘Enter, ⌘F, ⌘R');
+        console.log('💵 Amounts displayed with comma separators (e.g., 1,000)');
         console.log('🚀 Ready!');
     </script>
 
